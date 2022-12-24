@@ -5,10 +5,11 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start",
+    "clean-android-build": "cd android && ./gradlew clean && cd ..",
+    "start": "react-native start --reset-cache",
     "test": "jest",
     "lint": "eslint .",
-    "rebuild": "yarn install --force",
+    "rebuild": "yarn install --force && cd ios && pod install && cd ..",
     "ios-open": "open ios/*.xcworkspace"
   },
   "dependencies": {
