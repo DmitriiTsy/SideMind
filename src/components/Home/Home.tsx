@@ -4,14 +4,19 @@ import { StyleSheet, Text, View } from 'react-native'
 export const Home = () => {
   return (
     <View style={SS.container}>
-      <Text>Home Screen</Text>
+      <Text style={SS.title}>Home Screen</Text>
     </View>
   )
 }
 
 const SS = StyleSheet.create({
   container: {
-    backgroundColor: 'red',
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1
+  },
+  title: {
+    color: 'white'
   }
 })

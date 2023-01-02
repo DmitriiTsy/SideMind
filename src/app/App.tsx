@@ -8,12 +8,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import { StatusBar } from 'react-native'
 
-import { HomeScreen } from 'screens/HomeScreen/HomeScreen'
-
 import { useInject } from 'IoC'
 import { IAppVM, IAppVMTid } from 'app'
 
-import { Boot } from 'components/Boot/Boot'
+import { BootScreen, HomeScreen } from 'screens'
 
 import { CommonScreenName, ScreenParamTypes } from '../constants/screen.types'
 
@@ -34,7 +32,7 @@ export const App = () => {
         screenOptions={{ headerShown: false }}
         initialRouteName={CommonScreenName.Boot}
       >
-        <Stack.Screen name={CommonScreenName.Boot} component={Boot} />
+        <Stack.Screen name={CommonScreenName.Boot} component={BootScreen} />
         <Stack.Screen name={CommonScreenName.Main} component={HomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
