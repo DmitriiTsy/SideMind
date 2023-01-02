@@ -1,3 +1,5 @@
 export * from './Logo'
 
-export * from './SvgCheck'
+export * from './Check'
+
+export * from './Avatar'
