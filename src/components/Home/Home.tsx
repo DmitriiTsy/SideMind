@@ -1,9 +1,12 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
+import { ChatPreview } from './components/ChatPreview'
+
 export const Home = () => {
   return (
     <View style={SS.container}>
+      <ChatPreview />
       <Text style={SS.title}>Home Screen</Text>
     </View>
   )
