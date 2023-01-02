@@ -15,7 +15,7 @@ export const Boot = () => {
   const t = useInject<ILocalizationServiceVM>(ILocalizationServiceVMTid)
   const navigation = useInject<INavigationServiceVM>(INavigationServiceVMTid)
   useEffect(() => {
-    setTimeout(() => navigation.navigate(CommonScreenName.Main), 1000)
+    setTimeout(() => navigation.navigate(CommonScreenName.Home), 1000)
   })
   return (
     <View style={SS.container}>
@@ -33,6 +33,8 @@ const SS = StyleSheet.create({
     alignItems: 'center'
   },
   title: {
-    color: 'white'
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 20
   }
 })

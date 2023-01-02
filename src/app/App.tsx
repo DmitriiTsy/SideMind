@@ -33,7 +33,7 @@ export const App = () => {
         initialRouteName={CommonScreenName.Boot}
       >
         <Stack.Screen name={CommonScreenName.Boot} component={BootScreen} />
-        <Stack.Screen name={CommonScreenName.Main} component={HomeScreen} />
+        <Stack.Screen name={CommonScreenName.Home} component={HomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
