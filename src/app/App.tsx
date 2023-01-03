@@ -22,6 +22,7 @@ export const App = () => {
   const navigationContainerRef = useNavigationContainerRef<ScreenParamTypes>()
 
   useEffect(() => {
+    appVM.init()
     appVM.initNavigation(navigationContainerRef)
   })
 

@@ -13,6 +13,7 @@
     "ios-open": "open ios/*.xcworkspace"
   },
   "dependencies": {
+    "@delightfulstudio/react-native-safe-area-insets": "^0.2.1",
     "@react-navigation/native": "^6.1.1",
     "@react-navigation/native-stack": "^6.9.7",
     "inversify": "^6.0.1",

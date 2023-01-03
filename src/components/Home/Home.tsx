@@ -1,11 +1,13 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
+
+import { ScreenContainer } from 'components/ScreenContainer'
 
 export const Home = () => {
   return (
-    <View style={SS.container}>
+    <ScreenContainer topInsetColor={'black'} bottomInsetColor={'black'}>
       <Text style={SS.title}>Home Screen</Text>
-    </View>
+    </ScreenContainer>
   )
 }
 

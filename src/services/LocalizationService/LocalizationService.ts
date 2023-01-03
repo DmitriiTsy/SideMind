@@ -9,16 +9,16 @@ import {
 
 import en from './locales/en/translation.json'
 
-export const ILocalizationServiceVMTid = Symbol.for('ILocalizationServiceVMTid')
+export const ILocalizationServiceTid = Symbol.for('ILocalizationServiceTid')
 
-export interface ILocalizationServiceVM {
+export interface ILocalizationService {
   readonly locales: Locales
 
   get<K extends keyof Translation>(key: K): Translation[K]
 }
 
 @Injectable()
-export class LocalizationServiceVM implements ILocalizationServiceVM {
+export class LocalizationService implements ILocalizationService {
   readonly locales: Locales = {
     [LocaleCode.En]: {
       name: 'English',
