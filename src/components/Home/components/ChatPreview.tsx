@@ -49,7 +49,7 @@ export const ChatPreview = () => {
 
 const SS = StyleSheet.create({
   container: {
-    backgroundColor: '#1C1C1D',
+    backgroundColor: '#1C1C1E',
     width: '100%',
     height: 45,
     alignItems: 'center',
@@ -69,7 +69,11 @@ const SS = StyleSheet.create({
     marginRight: 12,
     borderRadius: 250
   },
-  container_avatar_source: {},
+  container_avatar_source: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 250
+  },
   text_wrapper: {},
   text_wrapper_header: {
     color: 'white',
@@ -99,7 +103,6 @@ const SS = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 250,
-    backgroundColor: '#1C1C1D',
     marginRight: 18
   },
   filled_source: {
