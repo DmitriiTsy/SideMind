@@ -1,15 +1,15 @@
 import React, { useState, useMemo } from 'react'
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
-import { useInject } from 'IoC'
+// import { useInject } from 'IoC'
 
 import { Svg } from 'components/ui/Svg'
 
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
+// import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 export const Bot = () => {
   const [ChoosenChat, setChoosenChat] = useState(false)
-  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  // const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   const ChoosenChatHandler = () =>
     ChoosenChat ? setChoosenChat(false) : setChoosenChat(true)
