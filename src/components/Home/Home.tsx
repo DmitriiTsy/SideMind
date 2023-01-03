@@ -4,7 +4,7 @@ import { ScreenContainer } from 'components/ScreenContainer'
 
 import { ChatPreview } from './components/ChatPreview'
 import { InChatPreview } from './components/InChatPreview'
-import { ChatHeaders } from './components/ChatHeaders'
+import { ChatHeaders } from './components/Bot'
 
 export const Home = () => {
   return (
