@@ -11,7 +11,7 @@ import { StatusBar } from 'react-native'
 import { useInject } from 'IoC'
 import { IAppVM, IAppVMTid } from 'app'
 
-import { BootScreen, SelectSideMindsScreen } from 'screens'
+import { BootScreen, SelectBotsScreen } from 'screens'
 
 import { CommonScreenName, ScreenParamTypes } from '../constants/screen.types'
 
@@ -35,8 +35,8 @@ export const App = () => {
       >
         <Stack.Screen name={CommonScreenName.Boot} component={BootScreen} />
         <Stack.Screen
-          name={CommonScreenName.SelectSideMinds}
-          component={SelectSideMindsScreen}
+          name={CommonScreenName.SelectBots}
+          component={SelectBotsScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

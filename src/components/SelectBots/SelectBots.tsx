@@ -2,9 +2,9 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
-import { SelectSideMindsHeader } from 'components/SelectSideMinds/components'
+import { SelectBotsHeader } from 'components/SelectBots/components'
 
-export const SelectSideMinds = () => {
+export const SelectBots = () => {
   return (
     <ScreenContainer
       topInsetColor={'black'}
@@ -12,7 +12,7 @@ export const SelectSideMinds = () => {
       style={SS.screenContainer}
     >
       <View style={SS.container}>
-        <SelectSideMindsHeader />
+        <SelectBotsHeader />
       </View>
     </ScreenContainer>
   )

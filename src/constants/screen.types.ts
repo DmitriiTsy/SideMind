@@ -1,10 +1,10 @@
 export enum CommonScreenName {
-  SelectSideMinds = 'SelectSideMinds',
+  SelectBots = 'SelectBots',
   Boot = 'Boot'
 }
 
 export interface CommonScreenParamsMap {
-  SelectSideMinds: undefined
+  SelectBots: undefined
   Boot: undefined
 }
 

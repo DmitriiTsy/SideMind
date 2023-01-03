@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
-export const SelectSideMindsHeader = () => {
+export const SelectBotsHeader = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   return (
