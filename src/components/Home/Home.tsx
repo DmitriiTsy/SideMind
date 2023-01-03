@@ -2,16 +2,14 @@ import React from 'react'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
-import { ChatPreview } from './components/ChatPreview'
-import { InChatPreview } from './components/InChatPreview'
-import { ChatHeaders } from './components/Bot'
+import { Bot, InChatPreview, ChatHeaders } from './components'
 
 export const Home = () => {
   return (
     <ScreenContainer topInsetColor={'black'} bottomInsetColor={'black'}>
       <ChatHeaders />
-      <ChatPreview />
-      <ChatPreview />
+      <Bot />
+      <Bot />
       <InChatPreview />
       <InChatPreview />
     </ScreenContainer>

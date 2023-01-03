@@ -1,32 +1,31 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
 import { useInject } from 'IoC'
 
-import { Svg } from 'components/ui/Svg'
+import { Avatar } from './assets/Bot_Avatar.jpg'
+
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 export const InChatPreview = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   return (
-    <TouchableOpacity>
-      <View style={SS.container}>
-        <View style={SS.container_avatar}>
-          <Svg name={'AvatarInChat'} style={SS.container_avatar_source} />
-        </View>
-        <View style={SS.container_right}>
-          <View style={SS.text_wrapper}>
-            <Text style={SS.text_wrapper_header}>
-              {t.get('chat_preview_header')}
-            </Text>
-            <Text style={SS.text_wrapper_description}>
-              {t.get('chat_preview_text')}
-            </Text>
-          </View>
+    <Pressable style={SS.container}>
+      <View style={SS.container_avatar}>
+        <Image source={Avatar} style={SS.container_avatar_source} />
+      </View>
+      <View style={SS.container_right}>
+        <View style={SS.text_wrapper}>
+          <Text style={SS.text_wrapper_header}>
+            {t.get('chat_preview_header')}
+          </Text>
+          <Text style={SS.text_wrapper_description}>
+            {t.get('chat_preview_text')}
+          </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 

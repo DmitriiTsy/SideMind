@@ -1,3 +1,3 @@
-export * from './ChatPreview'
+export * from './Bot'
 export * from './InChatPreview'
-./Bot
+export * from './ChatHeaders'
