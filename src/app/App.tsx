@@ -13,7 +13,7 @@ import { IAppVM, IAppVMTid } from 'app'
 
 import { BootScreen, SelectBotsScreen } from 'screens'
 
-import { CommonScreenName, ScreenParamTypes } from '../constants/screen.types'
+import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
 
 const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
