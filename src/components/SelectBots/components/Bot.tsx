@@ -5,8 +5,6 @@ import { useInject } from 'IoC'
 
 import { Svg } from 'components/ui/Svg'
 
-import { Avatar } from './assets/Bot_Avatar.jpg'
-
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 export const Bot = () => {
@@ -17,29 +15,17 @@ export const Bot = () => {
     ChoosenChat ? setChoosenChat(false) : setChoosenChat(true)
 
   const ChoosenChatStylesHandler = useMemo(
-    () =>
-      !ChoosenChat ? (
-        <View style={SS.empty}></View>
-      ) : (
-        <View style={SS.filled}>
-          <Svg name={'Check'} style={SS.filled_source} />
-        </View>
-      ),
+    () => <View style={SS.empty}>{ChoosenChat && <Svg name={'Check'} />}</View>,
     [ChoosenChat]
   )
   return (
     <Pressable onPress={ChoosenChatHandler} style={SS.container}>
-      <View style={SS.container_avatar}>
-        <Image source={Avatar} style={SS.container_avatar_source} />
-      </View>
-      <View style={SS.container_right}>
-        <View style={SS.text_wrapper}>
-          <Text style={SS.text_wrapper_header}>
-            {t.get('chat_preview_header')}
-          </Text>
-          <Text style={SS.text_wrapper_description}>
-            {t.get('chat_preview_text')}
-          </Text>
+      <Image source={require('assets/AvatarTest.png')} />
+
+      <View style={SS.containerRight}>
+        <View>
+          <Text style={SS.botName}>{t.get('chat_preview_header')}</Text>
+          <Text style={SS.botDesc}>{t.get('chat_preview_text')}</Text>
         </View>
         {ChoosenChatStylesHandler}
       </View>
@@ -49,15 +35,15 @@ export const Bot = () => {
 
 const SS = StyleSheet.create({
   container: {
-    backgroundColor: '#1C1C1E',
     width: '100%',
     height: 45,
     alignItems: 'center',
     flexDirection: 'row',
     paddingLeft: 18
   },
-  container_right: {
+  containerRight: {
     alignItems: 'center',
+    marginLeft: 12,
     flex: 1,
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -65,25 +51,14 @@ const SS = StyleSheet.create({
     borderColor: '#333333',
     height: '100%'
   },
-  container_avatar: {
-    marginRight: 12,
-    borderRadius: 250
-  },
-  container_avatar_source: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 250
-  },
-  text_wrapper: {},
-  text_wrapper_header: {
+  botName: {
     color: 'white',
     fontWeight: '500',
     fontSize: 16,
     lineHeight: 16,
-    alignItems: 'flex-end',
     letterSpacing: -0.2
   },
-  text_wrapper_description: {
+  botDesc: {
     color: '#98989E',
     fontWeight: '400',
     fontSize: 12,
@@ -94,21 +69,9 @@ const SS = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 250,
-    backgroundColor: '#1C1C1D',
     borderWidth: 1,
     borderColor: '#484849',
-    marginRight: 18
-  },
-  filled: {
-    width: 20,
-    height: 20,
-    borderRadius: 250,
-    marginRight: 18
-  },
-  filled_source: {
-    borderRadius: 250,
-    borderWidth: 1,
-    borderColor: '#484849',
+    marginRight: 18,
     alignItems: 'center',
     justifyContent: 'center'
   }

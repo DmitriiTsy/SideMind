@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "typeRoots" : ["node_modules/@types", "src/types"],
     /* Basic Options */
     "target": "esnext",
     /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
@@ -64,10 +63,10 @@
         "./src/components/*"
       ],
       "constants": [
-        ".src/constants"
+        "./src/constants"
       ],
       "constants/*": [
-        ".src/constants/*"
+        "./src/constants/*"
       ],
       "screens": [
         "./src/screens"
