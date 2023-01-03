@@ -1,4 +1,4 @@
-import { IBot } from 'components/SelectSideMinds/types'
+import { IBot } from 'components/SelectBots/types'
 
 export const BOTS_MAP: IBot[][] = [
   [
