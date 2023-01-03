@@ -7,14 +7,17 @@ export const Home = () => {
   return (
     <View style={SS.container}>
       <ChatPreview />
-      {/* <Text style={SS.title}>Home Screen</Text> */}
+      <ChatPreview />
+      <ChatPreview />
+      <ChatPreview />
+      <ChatPreview />
     </View>
   )
 }
 
 const SS = StyleSheet.create({
   container: {
-    backgroundColor: 'black',
+    backgroundColor: '#1C1C1D',
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1
