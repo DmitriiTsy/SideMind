@@ -2,13 +2,10 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import { useInject } from 'IoC'
-import {
-  ILocalizationServiceVM,
-  ILocalizationServiceVMTid
-} from 'services/LocalizationService/LocalizationService'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 export const ChatHeaders = () => {
-  const t = useInject<ILocalizationServiceVM>(ILocalizationServiceVMTid)
+  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   return (
     <View style={SS.container}>
