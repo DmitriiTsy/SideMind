@@ -2,7 +2,12 @@ import { RefObject } from 'react'
 import { NavigationContainerRef } from '@react-navigation/native'
 
 import { Inject, Injectable } from 'IoC'
-import { INavigationServiceVM, INavigationServiceVMTid } from 'services'
+import {
+  ILayoutService,
+  ILayoutServiceTid,
+  INavigationService,
+  INavigationServiceTid
+} from 'services'
 
 import { ScreenParamTypes } from '../constants/screen.types'
 
@@ -19,11 +24,14 @@ export interface IAppVM {
 @Injectable()
 export class AppVM implements IAppVM {
   constructor(
-    @Inject(INavigationServiceVMTid)
-    private _navigationService: INavigationServiceVM
+    @Inject(INavigationServiceTid)
+    private _navigationService: INavigationService,
+    @Inject(ILayoutServiceTid) private _layoutService: ILayoutService
   ) {}
 
-  init() {}
+  init() {
+    this._layoutService.init()
+  }
 
   initNavigation(
     navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
