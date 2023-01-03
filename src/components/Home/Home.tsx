@@ -2,15 +2,17 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { ChatPreview } from './components/ChatPreview'
+import { InChatPreview } from './components/InChatPreview'
+import { ChatHeaders } from './components/ChatHeaders'
 
 export const Home = () => {
   return (
     <View style={SS.container}>
+      <ChatHeaders />
       <ChatPreview />
       <ChatPreview />
-      <ChatPreview />
-      <ChatPreview />
-      <ChatPreview />
+      <InChatPreview />
+      <InChatPreview />
     </View>
   )
 }
