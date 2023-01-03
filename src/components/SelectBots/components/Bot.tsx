@@ -1,15 +1,15 @@
 import React, { useState, useMemo } from 'react'
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
-// import { useInject } from 'IoC'
+import { useInject } from 'IoC'
 
 import { Svg } from 'components/ui/Svg'
 
-// import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 export const Bot = () => {
   const [ChoosenChat, setChoosenChat] = useState(false)
-  // const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   const ChoosenChatHandler = () =>
     ChoosenChat ? setChoosenChat(false) : setChoosenChat(true)
@@ -18,6 +18,7 @@ export const Bot = () => {
     () => <View style={SS.empty}>{ChoosenChat && <Svg name={'Check'} />}</View>,
     [ChoosenChat]
   )
+
   return (
     <Pressable onPress={ChoosenChatHandler} style={SS.container}>
       <Image source={require('assets/AvatarTest.png')} />
@@ -39,7 +40,8 @@ const SS = StyleSheet.create({
     height: 45,
     alignItems: 'center',
     flexDirection: 'row',
-    paddingLeft: 18
+    paddingLeft: 18,
+    backgroundColor: '#1C1C1E'
   },
   containerRight: {
     alignItems: 'center',

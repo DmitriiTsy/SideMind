@@ -18,19 +18,19 @@ export const BOTS_MAP: IBot[][] = [
   [
     {
       name: 'Roxy the Relaxer',
-      tagLine: 'Welcome! Let me show you around.',
+      tagLine: 'Annihilate stress with my help!',
       prompt: '',
       category: ''
     },
     {
       name: 'Journaling Jamie',
-      tagLine: 'Wanna report a bug or have a feature request?',
+      tagLine: "Let's journal",
       prompt: '',
       category: ''
     },
     {
       name: 'Self-Help Sally',
-      tagLine: 'Wanna report a bug or have a feature request?',
+      tagLine: 'Let me be your personal growth coach',
       prompt: '',
       category: ''
     }
@@ -38,7 +38,7 @@ export const BOTS_MAP: IBot[][] = [
   [
     {
       name: 'CV Claudia',
-      tagLine: 'Cover letter success, guaranteed! ',
+      tagLine: 'Cover letter success, guaranteed!',
       prompt: '',
       category: ''
     },
@@ -116,7 +116,7 @@ export const BOTS_MAP: IBot[][] = [
     },
     {
       name: 'Nervous Nelly',
-      tagLine: 'Together, we can conquer anxiety, one deep breath at a time. ',
+      tagLine: 'Together, we can conquer anxiety, one deep breath at ...',
       prompt: '',
       category: ''
     },

@@ -9,19 +9,25 @@ export const ChatHeader = () => {
 
   return (
     <View style={SS.container}>
-      <Text style={SS.title}>{t.get('chat_headers')}</Text>
+      <View style={SS.container_border}>
+        <Text style={SS.title}>{t.get('chat_headers')}</Text>
+      </View>
     </View>
   )
 }
 
 const SS = StyleSheet.create({
   container: {
-    marginLeft: 18,
-    marginTop: 21,
+    paddingLeft: 18,
+    paddingTop: 21,
     paddingBottom: 8,
+    width: '100%',
+    backgroundColor: '#1C1C1E'
+  },
+  container_border: {
     borderBottomWidth: 0.5,
     borderColor: '#333333',
-    width: '100%'
+    paddingBottom: 8
   },
   title: {
     color: '#99989E',
