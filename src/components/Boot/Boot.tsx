@@ -3,19 +3,19 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import { useInject } from 'IoC'
 import {
-  ILocalizationServiceVM,
-  ILocalizationServiceVMTid
+  ILocalizationService,
+  ILocalizationServiceTid
 } from 'services/LocalizationService/LocalizationService'
 import { Svg } from 'components/ui/Svg'
-import { INavigationServiceVM, INavigationServiceVMTid } from 'services'
+import { INavigationService, INavigationServiceTid } from 'services'
 
 import { CommonScreenName } from '../../constants/screen.types'
 
 export const Boot = () => {
-  const t = useInject<ILocalizationServiceVM>(ILocalizationServiceVMTid)
-  const navigation = useInject<INavigationServiceVM>(INavigationServiceVMTid)
+  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
   useEffect(() => {
-    setTimeout(() => navigation.navigate(CommonScreenName.Main), 1000)
+    setTimeout(() => navigation.navigate(CommonScreenName.Home), 1000)
   })
   return (
     <View style={SS.container}>
@@ -33,6 +33,8 @@ const SS = StyleSheet.create({
     alignItems: 'center'
   },
   title: {
-    color: 'white'
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 20
   }
 })

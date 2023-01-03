@@ -1,10 +1,10 @@
 export enum CommonScreenName {
-  Main = 'Main',
+  Home = 'Home',
   Boot = 'Boot'
 }
 
 export interface CommonScreenParamsMap {
-  Main: undefined
+  Home: undefined
   Boot: undefined
 }
 

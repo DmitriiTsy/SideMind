@@ -9,9 +9,9 @@ import { Injectable } from 'IoC'
 
 import { ScreenName, ScreenParamTypes } from '../../constants/screen.types'
 
-export const INavigationServiceVMTid = Symbol.for('INavigationServiceVMTid')
+export const INavigationServiceTid = Symbol.for('INavigationServiceTid')
 
-export interface INavigationServiceVM<RouteName extends ScreenName = any> {
+export interface INavigationService<RouteName extends ScreenName = any> {
   canGoBack: boolean
   currentRoute?: Route<string>
   params: ScreenParamTypes[RouteName]
@@ -29,7 +29,7 @@ export interface INavigationServiceVM<RouteName extends ScreenName = any> {
 }
 
 @Injectable()
-export class NavigationServiceVM implements INavigationServiceVM {
+export class NavigationService implements INavigationService {
   @observable.ref currentRoute?: Route<string>
   private _navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
 
