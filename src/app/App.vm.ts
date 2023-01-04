@@ -9,6 +9,8 @@ import {
   INavigationServiceTid
 } from 'services'
 
+import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+
 import { ScreenParamTypes } from '../constants/screen.types'
 
 export const IAppVMTid = Symbol.for('IAppVMTid')
@@ -26,11 +28,13 @@ export class AppVM implements IAppVM {
   constructor(
     @Inject(INavigationServiceTid)
     private _navigationService: INavigationService,
-    @Inject(ILayoutServiceTid) private _layoutService: ILayoutService
+    @Inject(ILayoutServiceTid) private _layoutService: ILayoutService,
+    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService
   ) {}
 
-  init() {
+  async init() {
     this._layoutService.init()
+    await this._firebaseService.init()
   }
 
   initNavigation(
