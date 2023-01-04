@@ -50,6 +50,7 @@ export const SelectBots = () => {
         return BOTS_MAP[1].map((element, index) => (
           <Bot
             key={index}
+            botId={index * Math.random()}
             props={element}
             source={ImprovementImages[0][index]}
           />

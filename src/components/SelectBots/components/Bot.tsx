@@ -7,20 +7,22 @@ import { Svg } from 'components/ui/Svg'
 
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
-export const Bot = ({ props, source }) => {
+export const Bot = ({ props, source, botId }) => {
   const name = props.name
   const tagline = props.tagLine
   const [ChoosenChat, setChoosenChat] = useState(false)
+  const [idStorage, setIdStorage] = useState([])
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
-  const ChoosenChatHandler = () =>
-    ChoosenChat ? setChoosenChat(false) : setChoosenChat(true)
+  const ChoosenChatHandler = () => {
+    idStorage.length < 3 ? setIdStorage([...idStorage, botId]) : idStorage.pop()
+  }
 
   const ChoosenChatStylesHandler = useMemo(
     () => <View style={SS.empty}>{ChoosenChat && <Svg name={'Check'} />}</View>,
     [ChoosenChat]
   )
-
+  console.log(idStorage)
   return (
     <Pressable onPress={ChoosenChatHandler} style={SS.container}>
       <Image source={source} />

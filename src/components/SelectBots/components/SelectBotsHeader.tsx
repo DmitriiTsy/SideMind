@@ -10,7 +10,7 @@ export const SelectBotsHeader = () => {
   return (
     <View style={SS.container}>
       <Pressable>
-        <Text style={SS.activeText}>{t.get('cancel')}</Text>
+        <Text style={SS.activeText}></Text>
       </Pressable>
 
       <View>
@@ -19,7 +19,7 @@ export const SelectBotsHeader = () => {
       </View>
 
       <Pressable>
-        <Text style={[SS.activeText, SS.inactiveText]}>{t.get('add')}</Text>
+        <Text style={[SS.activeText, SS.inactiveText]}></Text>
       </Pressable>
     </View>
   )
