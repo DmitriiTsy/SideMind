@@ -14,6 +14,7 @@ import { IAppVM, IAppVMTid } from 'app'
 import { BootScreen, SelectBotsScreen } from 'screens'
 
 import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
+import { MainFeed } from 'components/MainFeed'
 
 const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
@@ -38,6 +39,7 @@ export const App = () => {
           name={CommonScreenName.SelectBots}
           component={SelectBotsScreen}
         />
+        <Stack.Screen name={CommonScreenName.MainFeed} component={MainFeed} />
       </Stack.Navigator>
     </NavigationContainer>
   )
