@@ -11,42 +11,93 @@ import { BOTS_MAP } from './constants'
 import { Bot } from './components/Bot'
 
 const ImprovementImages = [
-  require('assets/small/Alex.png'),
-  require('assets/small/Bob.png'),
-  require('assets/small/BadComedian.png')
+  [
+    require('assets/small/Roxy.png'),
+    require('assets/small/Jamie.png'),
+    require('assets/small/Sally.png')
+  ],
+  [
+    require('assets/small/Elaine.png'),
+    require('assets/small/Claudia.png'),
+    require('assets/small/Emily.png'),
+    require('assets/small/Isla.png')
+  ],
+  [
+    require('assets/small/Charlie.png'),
+    require('assets/small/Chrissy.png'),
+    require('assets/small/Alex.png')
+  ],
+  [
+    require('assets/small/Sawyer.png'),
+    require('assets/small/Lee.png'),
+    require('assets/small/Larry.png'),
+    require('assets/small/Tinder.png')
+  ],
+  [
+    require('assets/small/Henry.png'),
+    require('assets/small/Nelly.png'),
+    require('assets/small/Greg.png'),
+    require('assets/small/BadComedian.png'),
+    require('assets/small/Nancy.png'),
+    require('assets/small/Bob.png')
+  ]
 ]
 
 export const SelectBots = () => {
   const BotsSectionsHandler = (params: any) => {
     switch (params) {
       case 'Self-Improvement':
-        return BOTS_MAP[0].map((element, index) => (
-          <Bot key={index} props={element} source={ImprovementImages[0]} />
+        return BOTS_MAP[1].map((element, index) => (
+          <Bot
+            key={index}
+            props={element}
+            source={ImprovementImages[0][index]}
+          />
         ))
         break
       case 'Productivity':
-        return BOTS_MAP[1].map((element, index) => (
-          <Bot key={index} props={element} source={ImprovementImages[1]} />
+        return BOTS_MAP[2].map((element, index) => (
+          <Bot
+            key={index}
+            props={element}
+            source={ImprovementImages[1][index]}
+          />
         ))
         break
       case 'Hobbies':
-        return BOTS_MAP[2].map((element, index) => (
-          <Bot key={index} props={element} source={ImprovementImages[2]} />
+        return BOTS_MAP[3].map((element, index) => (
+          <Bot
+            key={index}
+            props={element}
+            source={ImprovementImages[2][index]}
+          />
         ))
         break
       case 'Relationships':
-        return BOTS_MAP[3].map((element, index) => (
-          <Bot key={index} props={element} source={ImprovementImages[2]} />
+        return BOTS_MAP[4].map((element, index) => (
+          <Bot
+            key={index}
+            props={element}
+            source={ImprovementImages[3][index]}
+          />
         ))
         break
       case 'Entertainment':
-        return BOTS_MAP[4].map((element, index) => (
-          <Bot key={index} props={element} source={ImprovementImages[2]} />
+        return BOTS_MAP[5].map((element, index) => (
+          <Bot
+            key={index}
+            props={element}
+            source={ImprovementImages[4][index]}
+          />
         ))
         break
       default:
-        return BOTS_MAP[0].map((element, index) => (
-          <Bot key={index} props={element} source={ImprovementImages[0]} />
+        return BOTS_MAP[5].map((element, index) => (
+          <Bot
+            key={index}
+            props={element}
+            source={ImprovementImages[5][index]}
+          />
         ))
     }
   }
@@ -60,7 +111,7 @@ export const SelectBots = () => {
       <View style={SS.container}>
         <SelectBotsHeader />
       </View>
-      <ScrollView>
+      <ScrollView style={SS.container_scroll}>
         <ChatHeader props="Self-Improvement" />
         {BotsSectionsHandler('Self-Improvement')}
         <ChatHeader props="Productivity" />
@@ -79,12 +130,15 @@ export const SelectBots = () => {
 const SS = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1C1C1E',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12
   },
   screenContainer: {
-    backgroundColor: '#1C1C1E'
+    backgroundColor: 'black',
+    height: 52
+  },
+  container_scroll: {
+    marginTop: 52
   }
 })
 

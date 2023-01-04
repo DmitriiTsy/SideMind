@@ -14,8 +14,8 @@ export const SelectBotsHeader = () => {
       </Pressable>
 
       <View>
-        <Text style={SS.title}>{t.get('add sideMinds')}</Text>
-        <Text style={SS.counter}>0/20</Text>
+        <Text style={SS.title}>Choose 3 to start</Text>
+        <Text style={SS.counter}>You can add more later</Text>
       </View>
 
       <Pressable>
@@ -28,10 +28,13 @@ export const SelectBotsHeader = () => {
 const SS = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 28,
+    height: 52,
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 12
+
+    backgroundColor: '#303030',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12
   },
   activeText: {
     fontWeight: '500',
