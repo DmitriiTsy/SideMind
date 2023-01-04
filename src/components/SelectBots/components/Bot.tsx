@@ -22,7 +22,6 @@ export const Bot = ({ props, source, botId }) => {
     () => <View style={SS.empty}>{ChoosenChat && <Svg name={'Check'} />}</View>,
     [ChoosenChat]
   )
-  console.log(idStorage)
   return (
     <Pressable onPress={ChoosenChatHandler} style={SS.container}>
       <Image source={source} />

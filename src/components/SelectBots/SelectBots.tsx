@@ -1,5 +1,5 @@
 import React from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View, FlatList, Text, ListRenderItem, ListRenderItemInfo } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 import { SelectBotsHeader } from 'components/SelectBots/components'
@@ -9,8 +9,10 @@ import { ChatHeader } from './components/ChatHeader'
 import { BOTS_MAP } from './constants'
 
 import { Bot } from './components/Bot'
+import { IBot } from './types'
 
 const ImprovementImages = [
+  [require('assets/small/Sam.png'), require('assets/small/Fiona.png')],
   [
     require('assets/small/Roxy.png'),
     require('assets/small/Jamie.png'),
@@ -44,65 +46,23 @@ const ImprovementImages = [
 ]
 
 export const SelectBots = () => {
-  const BotsSectionsHandler = (params: any) => {
-    switch (params) {
-      case 'Self-Improvement':
-        return BOTS_MAP[1].map((element, index) => (
-          <Bot
-            key={index}
-            botId={index * Math.random()}
-            props={element}
-            source={ImprovementImages[0][index]}
-          />
-        ))
-        break
-      case 'Productivity':
-        return BOTS_MAP[2].map((element, index) => (
-          <Bot
-            key={index}
-            props={element}
-            source={ImprovementImages[1][index]}
-          />
-        ))
-        break
-      case 'Hobbies':
-        return BOTS_MAP[3].map((element, index) => (
-          <Bot
-            key={index}
-            props={element}
-            source={ImprovementImages[2][index]}
-          />
-        ))
-        break
-      case 'Relationships':
-        return BOTS_MAP[4].map((element, index) => (
-          <Bot
-            key={index}
-            props={element}
-            source={ImprovementImages[3][index]}
-          />
-        ))
-        break
-      case 'Entertainment':
-        return BOTS_MAP[5].map((element, index) => (
-          <Bot
-            key={index}
-            props={element}
-            source={ImprovementImages[4][index]}
-          />
-        ))
-        break
-      default:
-        return BOTS_MAP[5].map((element, index) => (
-          <Bot
-            key={index}
-            props={element}
-            source={ImprovementImages[5][index]}
-          />
-        ))
-    }
+  const keyExtractorHandler = (item) => {
+    return item.name
   }
 
+  const renderItem = ({ item, index }: ListRenderItemInfo<IBot[]>) => (
+    <View>
+      <ChatHeader props={item[0].category} />
+      {item.map((element, keys) => (
+        <Bot
+          key={keys}
+          props={element}
+          botId={undefined}
+          source={ImprovementImages[index][keys]}
+        />
+      ))}
+    </View>
+  )
   return (
     <ScreenContainer
       topInsetColor={'black'}
@@ -113,16 +73,11 @@ export const SelectBots = () => {
         <SelectBotsHeader />
       </View>
       <ScrollView style={SS.container_scroll}>
-        <ChatHeader props="Self-Improvement" />
-        {BotsSectionsHandler('Self-Improvement')}
-        <ChatHeader props="Productivity" />
-        {BotsSectionsHandler('Productivity')}
-        <ChatHeader props="Hobbies" />
-        {BotsSectionsHandler('Hobbies')}
-        <ChatHeader props="Relationships" />
-        {BotsSectionsHandler('Relationships')}
-        <ChatHeader props="Entertainment" />
-        {BotsSectionsHandler('Entertainment')}
+        <FlatList
+          data={BOTS_MAP}
+          renderItem={renderItem}
+          keyExtractor={keyExtractorHandler} //
+        />
       </ScrollView>
     </ScreenContainer>
   )
@@ -139,7 +94,14 @@ const SS = StyleSheet.create({
     height: 52
   },
   container_scroll: {
-    marginTop: 52
+    marginTop: 52,
+    backgroundColor: '#1C1C1E'
+  },
+  title: {
+    color: 'white'
+  },
+  item: {
+    color: 'white'
   }
 })
 

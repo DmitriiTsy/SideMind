@@ -18,8 +18,8 @@ export const SelectBotsHeader = () => {
         <Text style={SS.counter}>You can add more later</Text>
       </View>
 
-      <Pressable>
-        <Text style={[SS.activeText, SS.inactiveText]}></Text>
+      <Pressable style={SS.done_container}>
+        <Text style={[SS.activeText, SS.inactiveText]}>Done</Text>
       </Pressable>
     </View>
   )
@@ -29,12 +29,11 @@ const SS = StyleSheet.create({
   container: {
     flexDirection: 'row',
     height: 52,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-
     backgroundColor: '#303030',
     borderTopLeftRadius: 12,
-    borderTopRightRadius: 12
+    borderTopRightRadius: 12,
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   activeText: {
     fontWeight: '500',
@@ -44,6 +43,10 @@ const SS = StyleSheet.create({
   },
   inactiveText: {
     color: '#484849'
+  },
+  done_container: {
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   title: {
     fontWeight: '700',
