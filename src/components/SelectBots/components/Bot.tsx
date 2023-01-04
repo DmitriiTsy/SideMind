@@ -7,7 +7,9 @@ import { Svg } from 'components/ui/Svg'
 
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
-export const Bot = () => {
+export const Bot = ({ props, source }) => {
+  const name = props.name
+  const tagline = props.tagLine
   const [ChoosenChat, setChoosenChat] = useState(false)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
@@ -21,12 +23,12 @@ export const Bot = () => {
 
   return (
     <Pressable onPress={ChoosenChatHandler} style={SS.container}>
-      <Image source={require('assets/AvatarTest.png')} />
+      <Image source={source} />
 
       <View style={SS.containerRight}>
         <View>
-          <Text style={SS.botName}>{t.get('chat_preview_header')}</Text>
-          <Text style={SS.botDesc}>{t.get('chat_preview_text')}</Text>
+          <Text style={SS.botName}>{name}</Text>
+          <Text style={SS.botDesc}>{tagline}</Text>
         </View>
         {ChoosenChatStylesHandler}
       </View>
@@ -65,7 +67,8 @@ const SS = StyleSheet.create({
     fontWeight: '400',
     fontSize: 12,
     lineHeight: 12,
-    letterSpacing: 0.2
+    letterSpacing: 0.2,
+    maxWidth: 250
   },
   empty: {
     width: 20,

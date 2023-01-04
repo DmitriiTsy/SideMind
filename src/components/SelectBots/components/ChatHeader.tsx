@@ -4,13 +4,13 @@ import { StyleSheet, Text, View } from 'react-native'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
-export const ChatHeader = () => {
+export const ChatHeader = ({ props }) => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   return (
     <View style={SS.container}>
       <View style={SS.container_border}>
-        <Text style={SS.title}>{t.get('chat_headers')}</Text>
+        <Text style={SS.title}>{props}</Text>
       </View>
     </View>
   )

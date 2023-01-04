@@ -5,5 +5,10 @@
   "add sideMinds": "Add SideMinds",
   "chat_preview_header": "SideMind Sam",
   "chat_preview_text": "Annihilate stress with my help!",
-  "chat_headers": "Self-Improvement"
+  "chat_headers": "Self-Improvement",
+  "header_self_improvement": "Self-Improvement",
+  "header_productivity": "Productivity",
+  "header_hobbies": "Hobbies",
+  "header_relationships": "Relationships",
+  "header_entertainment": "Entertainment"
 }
