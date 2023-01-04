@@ -1,7 +1,13 @@
-import { SvgLogo, SvgCheck, SvgAddNote } from 'components/ui/Svg/General'
+import {
+  SvgLogo,
+  SvgCheck,
+  SvgAddNote,
+  SvgWhiteLogo
+} from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
   Logo: SvgLogo,
   Check: SvgCheck,
-  AddNote: SvgAddNote
+  AddNote: SvgAddNote,
+  WhiteLogo: SvgWhiteLogo
 }

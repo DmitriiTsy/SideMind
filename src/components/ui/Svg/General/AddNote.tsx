@@ -27,6 +27,6 @@ const Component: FC<SvgStyleProps> = (props) => (
 
 export const SvgAddNote = createSvg({
   component: Component,
-  originalHeight: 21,
+  originalHeight: 20,
   originalWidth: 20
 })

@@ -4,6 +4,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
+import { Svg } from 'components/ui/Svg'
+
 export const MainFeedHeader = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
@@ -12,14 +14,14 @@ export const MainFeedHeader = () => {
       <Pressable>
         <Text style={SS.activeText}></Text>
       </Pressable>
-
+      
       <View>
         <Text style={SS.title}>{t.get('add sideMinds')}</Text>
-        <Text style={SS.counter}>0/20</Text>
+        <Svg name={'WhiteLogo'} />
       </View>
 
       <Pressable>
-        <Text style={[SS.activeText, SS.inactiveText]}>{t.get('add')}</Text>
+        <Svg name={'AddNote'} />
       </Pressable>
     </View>
   )
