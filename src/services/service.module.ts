@@ -14,6 +14,16 @@ import {
   ILayoutServiceTid,
   LayoutService
 } from 'services/LayoutService'
+import {
+  FirebaseService,
+  IFirebaseService,
+  IFirebaseServiceTid
+} from 'services/FirebaseService'
+import {
+  ISystemInfoService,
+  ISystemInfoServiceTid,
+  SystemInfoService
+} from 'services/SystemInfoService'
 
 export class ServiceModule implements IoCModule {
   public Configure(ioc: Container) {
@@ -28,6 +38,14 @@ export class ServiceModule implements IoCModule {
     ioc
       .bind<ILayoutService>(ILayoutServiceTid)
       .to(LayoutService)
+      .inSingletonScope()
+    ioc
+      .bind<IFirebaseService>(IFirebaseServiceTid)
+      .to(FirebaseService)
+      .inSingletonScope()
+    ioc
+      .bind<ISystemInfoService>(ISystemInfoServiceTid)
+      .to(SystemInfoService)
       .inSingletonScope()
   }
 }
