@@ -13,7 +13,6 @@ export const InChatPreview = () => {
       <View style={SS.avatarContainer}>
         <Image source={require('assets/AvatarTest2.png')} />
       </View>
-
       <View style={SS.containerRight}>
         <Text style={SS.botName}>{t.get('chat_preview_header')}</Text>
         <Text style={SS.botDesc}>{t.get('chat_preview_text')}</Text>
