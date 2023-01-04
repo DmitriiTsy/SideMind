@@ -28,19 +28,20 @@ const SS = StyleSheet.create({
     height: 77,
     alignItems: 'center',
     flexDirection: 'row',
-    paddingLeft: 18,
-    paddingTop: 12
+    paddingLeft: 18
   },
   containerRight: {
     alignItems: 'flex-start',
+    paddingTop: 12,
     flex: 1,
-    borderBottomWidth: 0.5,
+    borderTopWidth: 0.5,
     borderColor: '#333333',
     height: '100%'
   },
   avatarContainer: {
     height: '100%',
-    marginRight: 14
+    marginRight: 14,
+    paddingTop: 12
   },
   botName: {
     color: 'white',

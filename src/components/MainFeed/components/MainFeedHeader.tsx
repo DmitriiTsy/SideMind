@@ -11,16 +11,12 @@ export const MainFeedHeader = () => {
 
   return (
     <View style={SS.container}>
-      <Pressable>
-        <Text style={SS.activeText}></Text>
-      </Pressable>
-      
-      <View>
-        <Text style={SS.title}>{t.get('add sideMinds')}</Text>
+      <View style={SS.false_element}></View>
+      <View style={SS.title_container}>
         <Svg name={'WhiteLogo'} />
+        <Text style={SS.title}>SideMind</Text>
       </View>
-
-      <Pressable>
+      <Pressable style={SS.add_note}>
         <Svg name={'AddNote'} />
       </Pressable>
     </View>
@@ -30,31 +26,32 @@ export const MainFeedHeader = () => {
 const SS = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 28,
-    justifyContent: 'space-between',
     alignItems: 'center',
+    height: 44,
     marginTop: 12,
-    backgroundColor: 'black'
-  },
-  activeText: {
-    fontWeight: '500',
-    fontSize: 16,
-    color: '#559EF8',
-    marginHorizontal: 18
-  },
-  inactiveText: {
-    color: '#484849'
+    backgroundColor: '#000000',
+    justifyContent: 'space-between'
   },
   title: {
-    fontWeight: '700',
-    fontSize: 16,
+    fontWeight: '600',
+    fontSize: 20,
+    lineHeight: 28,
+    letterSpacing: 0.15,
     color: '#FFFFFF',
-    textAlign: 'center'
+    textAlign: 'center',
+    paddingLeft: 10.5
   },
-  counter: {
-    fontWeight: '400',
-    fontSize: 11,
-    color: '#FFFFFF',
-    textAlign: 'center'
+  title_container: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  add_note: {
+    paddingRight: 7.5
+  },
+  false_element: {
+    width: 20,
+    height: 20,
+    paddingLeft: 7.5
   }
 })
