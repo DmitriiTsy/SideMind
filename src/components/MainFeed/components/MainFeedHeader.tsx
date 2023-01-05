@@ -11,12 +11,12 @@ export const MainFeedHeader = () => {
 
   return (
     <View style={SS.container}>
-      <View style={SS.false_element}></View>
-      <View style={SS.title_container}>
-        <Svg name={'WhiteLogo'} />
+      <View style={SS.falseElement}></View>
+      <View style={SS.titleContainer}>
+        <Svg name={'Logo'} />
         <Text style={SS.title}>SideMind</Text>
       </View>
-      <Pressable style={SS.add_note}>
+      <Pressable style={SS.addNote}>
         <Svg name={'AddNote'} />
       </Pressable>
     </View>
@@ -41,15 +41,15 @@ const SS = StyleSheet.create({
     textAlign: 'center',
     paddingLeft: 10.5
   },
-  title_container: {
+  titleContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
   },
-  add_note: {
+  addNote: {
     paddingRight: 7.5
   },
-  false_element: {
+  falseElement: {
     width: 20,
     height: 20,
     paddingLeft: 7.5

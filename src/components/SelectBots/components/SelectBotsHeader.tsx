@@ -26,7 +26,7 @@ export const SelectBotsHeader = observer(() => {
         <Text style={SS.counter}>{t.get('add more later')}</Text>
       </View>
 
-      <Pressable style={SS.done_container}>
+      <Pressable style={SS.doneContainer}>
         <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
           {t.get('done')}
         </Text>
@@ -54,7 +54,7 @@ const SS = StyleSheet.create({
   inactiveText: {
     color: '#484849'
   },
-  done_container: {
+  doneContainer: {
     justifyContent: 'center',
     alignItems: 'center'
   },
