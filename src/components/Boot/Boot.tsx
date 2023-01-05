@@ -9,7 +9,7 @@ import {
 import { Svg } from 'components/ui/Svg'
 import { INavigationService, INavigationServiceTid } from 'services'
 
-import { CommonScreenName } from '../../constants/screen.types'
+import { CommonScreenName } from 'constants/screen.types'
 
 export const Boot = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
