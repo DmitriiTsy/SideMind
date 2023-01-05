@@ -1,37 +1,49 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
+
+import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import {
+  ISelectBotsVM,
+  ISelectBotsVMTid
+} from 'components/SelectBots/SelectBots.vm'
 
-export const SelectBotsHeader = () => {
+export const SelectBotsHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const selectBotVM = useInject<ISelectBotsVM>(ISelectBotsVMTid)
+
+  const enabled = useMemo(
+    () => selectBotVM.selected.length === 3,
+    [selectBotVM.selected.length]
+  )
 
   return (
     <View style={SS.container}>
-      <Pressable>
-        <Text style={SS.activeText}>{t.get('cancel')}</Text>
-      </Pressable>
-
-      <View>
-        <Text style={SS.title}>{t.get('add sideMinds')}</Text>
-        <Text style={SS.counter}>0/20</Text>
+      <View style={{ marginRight: 60 }}>
+        <Text style={SS.title}>{t.get('choose bots')}</Text>
+        <Text style={SS.counter}>{t.get('add more later')}</Text>
       </View>
 
-      <Pressable>
-        <Text style={[SS.activeText, SS.inactiveText]}>{t.get('add')}</Text>
+      <Pressable style={SS.done_container}>
+        <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
+          {t.get('done')}
+        </Text>
       </Pressable>
     </View>
   )
-}
+})
 
 const SS = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 28,
-    justifyContent: 'space-between',
+    height: 52,
+    backgroundColor: '#303030',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
     alignItems: 'center',
-    marginTop: 12
+    justifyContent: 'flex-end'
   },
   activeText: {
     fontWeight: '500',
@@ -41,6 +53,10 @@ const SS = StyleSheet.create({
   },
   inactiveText: {
     color: '#484849'
+  },
+  done_container: {
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   title: {
     fontWeight: '700',
