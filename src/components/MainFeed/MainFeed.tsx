@@ -5,11 +5,11 @@ import { ScreenContainer } from 'components/ScreenContainer'
 
 import { BotModel } from 'services/FirebaseService/types'
 
-import { MainFeedHeader } from './components'
-
-import { InChatPreview } from './components/InChatPreview'
-
-import { MainFeedNewSideMind } from './components'
+import {
+  MainFeedHeader,
+  MainFeedNewSideMind,
+  InChatPreview
+} from './components'
 
 export const MainFeed = () => {
   const renderItem = ({ item }: ListRenderItemInfo<BotModel[]>) => (
