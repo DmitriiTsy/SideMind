@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 import { ChatHeader } from 'components/Chat/components/ChatHeader'
+import { ChatBottom } from './components'
 
 export const Chat = () => {
   return (
@@ -14,6 +15,7 @@ export const Chat = () => {
       <View style={SS.container}>
         <ChatHeader />
       </View>
+      <ChatBottom />
     </ScreenContainer>
   )
 }
