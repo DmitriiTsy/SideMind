@@ -5,8 +5,7 @@ import {
   View,
   TextInput,
   KeyboardAvoidingView,
-  ScrollView,
-  TouchableWithoutFeedback
+  ScrollView
 } from 'react-native'
 
 import { useInject } from 'IoC'
@@ -21,17 +20,18 @@ export const ChatBottom = () => {
     <View style={SS.container}>
       <ScrollView></ScrollView>
       <Pressable>
-        <KeyboardAvoidingView
-          keyboardVerticalOffset={160}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          <TextInput
-            keyboardAppearance="dark"
-            placeholder="Start message"
-            placeholderTextColor="grey"
-            fontStyle="italic"
-            style={SS.container_text}
-          />
+        <KeyboardAvoidingView behavior="padding">
+          <ScrollView>
+            <TextInput
+              blurOnSubmit={false}
+              multiline={true}
+              keyboardAppearance="dark"
+              placeholder="Start message"
+              placeholderTextColor="grey"
+              fontStyle="italic"
+              style={SS.container_text}
+            />
+          </ScrollView>
         </KeyboardAvoidingView>
       </Pressable>
       <Pressable style={SS.wrapper_enter}>

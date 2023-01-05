@@ -2,7 +2,9 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
+
 import { ChatHeader } from 'components/Chat/components/ChatHeader'
+
 import { ChatBottom } from './components'
 
 export const Chat = () => {
