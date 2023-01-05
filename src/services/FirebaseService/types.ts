@@ -7,6 +7,7 @@ export interface BotModel {
   tagLine: string
   imagePath: string
   category: string
+  id: number
 }
 
 export interface IFirebaseResponseBots {

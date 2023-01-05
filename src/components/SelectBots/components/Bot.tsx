@@ -1,50 +1,50 @@
-import React, { useState, useMemo } from 'react'
+import React, { FC, useCallback } from 'react'
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
-import { useInject } from 'IoC'
+import { observer } from 'mobx-react'
 
 import { Svg } from 'components/ui/Svg'
 
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import { BotModel } from 'services/FirebaseService/types'
+import { useInject } from 'IoC'
+import {
+  ISelectBotsVM,
+  ISelectBotsVMTid
+} from 'components/SelectBots/SelectBots.vm'
 
-export const Bot = ({ props, source, botId }) => {
-  const name = props.name
-  const tagline = props.tagLine
-  const [ChoosenChat, setChoosenChat] = useState(false)
-  const [idStorage, setIdStorage] = useState([])
-  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+interface IBotProps {
+  bot: BotModel
+}
 
-  const ChoosenChatHandler = () => {
-    idStorage.length < 3 ? setIdStorage([...idStorage, botId]) : idStorage.pop()
-  }
+export const Bot: FC<IBotProps> = observer(({ bot }) => {
+  const selectBotsVM = useInject<ISelectBotsVM>(ISelectBotsVMTid)
 
-  const ChoosenChatStylesHandler = useMemo(
-    () => <View style={SS.empty}>{ChoosenChat && <Svg name={'Check'} />}</View>,
-    [ChoosenChat]
-  )
+  const selected = selectBotsVM.selected.find((el) => el === bot.id)
+
+  const onPress = useCallback(() => {
+    selectBotsVM.addBot(bot.id)
+  }, [bot.id, selectBotsVM])
+
   return (
-    <Pressable onPress={ChoosenChatHandler} style={SS.container}>
-      <Image source={source} />
+    <Pressable onPress={onPress} style={SS.container}>
+      <Image source={{ uri: bot.imagePath }} style={SS.image} />
 
       <View style={SS.containerRight}>
         <View>
-          <Text style={SS.botName}>{name}</Text>
-          <Text style={SS.botDesc}>{tagline}</Text>
+          <Text style={SS.botName}>{bot.name}</Text>
+          <Text style={SS.botDesc}>{bot.tagLine}</Text>
         </View>
-        {ChoosenChatStylesHandler}
+        <View style={SS.empty}>{selected && <Svg name={'Check'} />}</View>
       </View>
     </Pressable>
   )
-}
+})
 
 const SS = StyleSheet.create({
   container: {
     width: '100%',
-    height: 45,
     alignItems: 'center',
-    flexDirection: 'row',
-    paddingLeft: 18,
-    backgroundColor: '#1C1C1E'
+    flexDirection: 'row'
   },
   containerRight: {
     alignItems: 'center',
@@ -53,15 +53,15 @@ const SS = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     borderBottomWidth: 0.5,
-    borderColor: '#333333',
-    height: '100%'
+    borderColor: '#333333'
   },
   botName: {
     color: 'white',
     fontWeight: '500',
     fontSize: 16,
     lineHeight: 16,
-    letterSpacing: -0.2
+    letterSpacing: -0.2,
+    marginTop: 3.5
   },
   botDesc: {
     color: '#98989E',
@@ -69,7 +69,8 @@ const SS = StyleSheet.create({
     fontSize: 12,
     lineHeight: 12,
     letterSpacing: 0.2,
-    maxWidth: 250
+    marginTop: 2,
+    marginBottom: 7.5
   },
   empty: {
     width: 20,
@@ -80,5 +81,6 @@ const SS = StyleSheet.create({
     marginRight: 18,
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  image: { width: 36, height: 36 }
 })

@@ -1,29 +1,39 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
+
+import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import {
+  ISelectBotsVM,
+  ISelectBotsVMTid
+} from 'components/SelectBots/SelectBots.vm'
 
-export const SelectBotsHeader = () => {
+export const SelectBotsHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const selectBotVM = useInject<ISelectBotsVM>(ISelectBotsVMTid)
+
+  const enabled = useMemo(
+    () => selectBotVM.selected.length === 3,
+    [selectBotVM.selected.length]
+  )
 
   return (
     <View style={SS.container}>
-      <Pressable>
-        <Text style={SS.activeText}></Text>
-      </Pressable>
-
-      <View>
-        <Text style={SS.title}>Choose 3 to start</Text>
-        <Text style={SS.counter}>You can add more later</Text>
+      <View style={{ marginRight: 60 }}>
+        <Text style={SS.title}>{t.get('choose bots')}</Text>
+        <Text style={SS.counter}>{t.get('add more later')}</Text>
       </View>
 
       <Pressable style={SS.done_container}>
-        <Text style={[SS.activeText, SS.inactiveText]}>Done</Text>
+        <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
+          {t.get('done')}
+        </Text>
       </Pressable>
     </View>
   )
-}
+})
 
 const SS = StyleSheet.create({
   container: {
@@ -32,8 +42,8 @@ const SS = StyleSheet.create({
     backgroundColor: '#303030',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'flex-end'
   },
   activeText: {
     fontWeight: '500',
