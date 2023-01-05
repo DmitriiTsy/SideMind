@@ -12,23 +12,18 @@ import {
   ISelectBotsVMTid
 } from 'components/SelectBots/SelectBots.vm'
 
-import { CommonScreenName } from 'constants/screen.types'
-import { INavigationService, INavigationServiceTid } from 'services'
-
 interface IBotProps {
   bot: BotModel
 }
 
 export const Bot: FC<IBotProps> = observer(({ bot }) => {
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
   const selectBotsVM = useInject<ISelectBotsVM>(ISelectBotsVMTid)
 
   const selected = selectBotsVM.selected.find((el) => el === bot.id)
 
   const onPress = useCallback(() => {
     selectBotsVM.addBot(bot.id)
-    navigation.navigate(CommonScreenName.MainFeed)
-  }, [bot.id, navigation, selectBotsVM])
+  }, [bot.id, selectBotsVM])
 
   return (
     <Pressable onPress={onPress} style={SS.container}>

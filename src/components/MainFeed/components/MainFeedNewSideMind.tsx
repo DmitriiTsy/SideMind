@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { StyleSheet, Text, Pressable } from 'react-native'
 
 import { useInject } from 'IoC'
@@ -7,11 +7,20 @@ import { Svg } from 'components/ui/Svg'
 
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
+import { INavigationService, INavigationServiceTid } from 'services'
+
+import { CommonScreenName } from 'constants/screen.types'
+
 export const MainFeedNewSideMind = () => {
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
+  const onPress = useCallback(() => {
+    navigation.navigate(CommonScreenName.SelectBots)
+  }, [navigation])
+
   return (
-    <Pressable style={SS.container}>
+    <Pressable style={SS.container} onPress={onPress}>
       <Text style={SS.title}>Add another SideMind</Text>
       <Svg name={'PointerRight'} />
     </Pressable>

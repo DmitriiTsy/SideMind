@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
@@ -10,7 +10,11 @@ import {
   ISelectBotsVMTid
 } from 'components/SelectBots/SelectBots.vm'
 
+import { CommonScreenName } from 'constants/screen.types'
+import { INavigationService, INavigationServiceTid } from 'services'
+
 export const SelectBotsHeader = observer(() => {
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const selectBotVM = useInject<ISelectBotsVM>(ISelectBotsVMTid)
 
@@ -18,6 +22,9 @@ export const SelectBotsHeader = observer(() => {
     () => selectBotVM.selected.length === 3,
     [selectBotVM.selected.length]
   )
+  const onPress = useCallback(() => {
+    enabled && navigation.navigate(CommonScreenName.MainFeed)
+  }, [enabled, navigation])
 
   return (
     <View style={SS.container}>
@@ -26,7 +33,7 @@ export const SelectBotsHeader = observer(() => {
         <Text style={SS.counter}>{t.get('add more later')}</Text>
       </View>
 
-      <Pressable style={SS.doneContainer}>
+      <Pressable style={SS.doneContainer} onPress={onPress}>
         <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
           {t.get('done')}
         </Text>

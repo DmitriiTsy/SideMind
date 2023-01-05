@@ -1,13 +1,21 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 import { Svg } from 'components/ui/Svg'
+import { INavigationService, INavigationServiceTid } from 'services'
+
+import { CommonScreenName } from 'constants/screen.types'
 
 export const MainFeedHeader = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
+
+  const onPress = useCallback(() => {
+    navigation.navigate(CommonScreenName.SelectBots)
+  }, [navigation])
 
   return (
     <View style={SS.container}>
@@ -16,7 +24,7 @@ export const MainFeedHeader = () => {
         <Svg name={'Logo'} />
         <Text style={SS.title}>SideMind</Text>
       </View>
-      <Pressable style={SS.addNote}>
+      <Pressable style={SS.addNote} onPress={onPress}>
         <Svg name={'AddNote'} />
       </Pressable>
     </View>
