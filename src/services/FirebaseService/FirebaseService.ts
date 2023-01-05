@@ -3,7 +3,7 @@ import firestore, {
 } from '@react-native-firebase/firestore'
 import storage from '@react-native-firebase/storage'
 
-import { observable } from 'mobx'
+import { observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 
@@ -45,7 +45,6 @@ export class FirebaseService implements IFirebaseService {
     try {
       await this.getBotsList()
       await this.checkExistUser()
-      console.log(this.botsList)
     } catch (e) {
       console.log('FirebaseService error:', e)
     }
@@ -60,11 +59,13 @@ export class FirebaseService implements IFirebaseService {
 
   async getBotsList() {
     const data = (await this._bots.doc('bots').get()).data()
+    const array: BotModel[][] = []
     for (const el of Object.entries(data)) {
       for (const _el of Object.values(el[1])) {
         _el.imagePath = await storage().ref(_el.imagePath).getDownloadURL()
       }
-      this.botsList.push(el[1])
+      array.push(el[1])
     }
+    runInAction(() => (this.botsList = array))
   }
 }
