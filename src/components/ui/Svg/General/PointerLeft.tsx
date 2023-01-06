@@ -6,7 +6,7 @@ import { SvgStyleProps } from 'components/ui/Svg/Svg.types'
 import { createSvg } from 'utils/createSvg'
 
 const Component: FC<SvgStyleProps> = (props) => (
-  <Svg viewBox="0 0 10 18" fill="none" {...props}>
+  <Svg width={10} height={18} fill="none" {...props}>
     <Path
       d="M9 16.5 1 9l8-7.5"
       stroke="#fff"
@@ -19,6 +19,6 @@ const Component: FC<SvgStyleProps> = (props) => (
 
 export const SvgPointerLeft = createSvg({
   component: Component,
-  originalHeight: 15,
-  originalWidth: 8
+  originalHeight: 18,
+  originalWidth: 10
 })
