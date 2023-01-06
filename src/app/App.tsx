@@ -15,6 +15,8 @@ import { BootScreen, SelectBotsScreen } from 'screens'
 
 import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
 
+import { Chat } from 'components/Chat'
+
 const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
 export const App = () => {
@@ -38,6 +40,7 @@ export const App = () => {
           name={CommonScreenName.SelectBots}
           component={SelectBotsScreen}
         />
+        <Stack.Screen name={CommonScreenName.Chat} component={Chat} />
       </Stack.Navigator>
     </NavigationContainer>
   )

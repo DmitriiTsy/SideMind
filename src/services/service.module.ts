@@ -24,6 +24,11 @@ import {
   ISystemInfoServiceTid,
   SystemInfoService
 } from 'services/SystemInfoService'
+import {
+  IOpenAIService,
+  IOpenAIServiceTid,
+  OpenAIService
+} from 'services/OpenAIService'
 
 export class ServiceModule implements IoCModule {
   public Configure(ioc: Container) {
@@ -46,6 +51,10 @@ export class ServiceModule implements IoCModule {
     ioc
       .bind<ISystemInfoService>(ISystemInfoServiceTid)
       .to(SystemInfoService)
+      .inSingletonScope()
+    ioc
+      .bind<IOpenAIService>(IOpenAIServiceTid)
+      .to(OpenAIService)
       .inSingletonScope()
   }
 }
