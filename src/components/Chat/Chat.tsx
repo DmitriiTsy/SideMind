@@ -1,22 +1,35 @@
-import React, { useMemo } from 'react'
+import React, { useEffect } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
 import { Svg } from 'components/ui/Svg'
 
+import { useInject } from 'IoC'
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
+
+import { INavigationService, INavigationServiceTid } from 'services'
+
 import { ChatInput, List } from './components'
 
 export const Chat = () => {
-  const header = useMemo(
-    () => (
-      <View style={SS.container}>
-        <Svg name={'PointerLeft'} style={{ marginRight: 30 }} />
-        <Image source={require('assets/AvatarTest2.png')} style={SS.avatar} />
-        <Text style={SS.title}>Self-Help Sally</Text>
-      </View>
-    ),
-    []
+  const chatVM = useInject<IChatVM>(IChatVMTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
+
+  useEffect(() => {
+    chatVM.getFirstMessage()
+  })
+
+  const goBack = () => {
+    navigation.goBack()
+  }
+
+  const header = () => (
+    <View style={SS.container}>
+      <Svg name={'PointerLeft'} style={{ marginRight: 30 }} onPress={goBack} />
+      <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
+      <Text style={SS.title}>{chatVM.bot.name}</Text>
+    </View>
   )
 
   return (
@@ -25,7 +38,7 @@ export const Chat = () => {
       bottomInsetColor={'#000000'}
       style={SS.screenContainer}
     >
-      {header}
+      {header()}
       <List />
       <ChatInput />
     </ScreenContainer>

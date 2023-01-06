@@ -13,6 +13,7 @@ const plugins = [
     {
       root: ['.'],
       alias: {
+        store: './src/store',
         assets: './src/assets',
         components: './src/components',
         constants: './src/constants',

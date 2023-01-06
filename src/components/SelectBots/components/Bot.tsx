@@ -7,23 +7,20 @@ import { Svg } from 'components/ui/Svg'
 
 import { BotModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
-import {
-  ISelectBotsVM,
-  ISelectBotsVMTid
-} from 'components/SelectBots/SelectBots.vm'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 interface IBotProps {
   bot: BotModel
 }
 
 export const Bot: FC<IBotProps> = observer(({ bot }) => {
-  const selectBotsVM = useInject<ISelectBotsVM>(ISelectBotsVMTid)
+  const appStore = useInject<IAppStore>(IAppStoreTid)
 
-  const selected = selectBotsVM.selected.find((el) => el === bot.id)
+  const selected = appStore.selected.find((el) => el === bot.id)
 
   const onPress = useCallback(() => {
-    selectBotsVM.addBot(bot.id)
-  }, [bot.id, selectBotsVM])
+    appStore.addSelected(bot.id)
+  }, [bot.id, appStore])
 
   return (
     <Pressable onPress={onPress} style={SS.container}>

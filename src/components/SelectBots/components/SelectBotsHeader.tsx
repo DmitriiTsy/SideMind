@@ -1,23 +1,30 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-import {
-  ISelectBotsVM,
-  ISelectBotsVMTid
-} from 'components/SelectBots/SelectBots.vm'
+
+import { CommonScreenName } from 'constants/screen.types'
+import { INavigationService, INavigationServiceTid } from 'services'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 export const SelectBotsHeader = observer(() => {
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const selectBotVM = useInject<ISelectBotsVM>(ISelectBotsVMTid)
+  const appStore = useInject<IAppStore>(IAppStoreTid)
 
   const enabled = useMemo(
-    () => selectBotVM.selected.length === 3,
-    [selectBotVM.selected.length]
+    () => appStore.selected.length === 3,
+    [appStore.selected.length]
   )
+  const onPress = useCallback(() => {
+    if (enabled) {
+      appStore.setUsedBots()
+      navigation.navigate(CommonScreenName.MainFeed)
+    }
+  }, [appStore, enabled, navigation])
 
   return (
     <View style={SS.container}>
@@ -26,7 +33,7 @@ export const SelectBotsHeader = observer(() => {
         <Text style={SS.counter}>{t.get('add more later')}</Text>
       </View>
 
-      <Pressable style={SS.done_container}>
+      <Pressable style={SS.doneContainer} onPress={onPress}>
         <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
           {t.get('done')}
         </Text>
@@ -54,9 +61,10 @@ const SS = StyleSheet.create({
   inactiveText: {
     color: '#484849'
   },
-  done_container: {
+  doneContainer: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: 120
   },
   title: {
     fontWeight: '700',

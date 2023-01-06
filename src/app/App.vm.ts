@@ -8,10 +8,8 @@ import {
   INavigationService,
   INavigationServiceTid
 } from 'services'
-
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
-
-import { ScreenParamTypes } from '../constants/screen.types'
+import { ScreenParamTypes } from 'constants/screen.types'
 
 export const IAppVMTid = Symbol.for('IAppVMTid')
 

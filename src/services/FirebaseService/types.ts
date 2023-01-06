@@ -1,4 +1,4 @@
-export interface IFirebaseResponse {
+export interface IFirebaseResponseUsers {
   message?: string[]
 }
 
@@ -8,6 +8,7 @@ export interface BotModel {
   imagePath: string
   category: string
   id: number
+  prompt: string
 }
 
 export interface IFirebaseResponseBots {
