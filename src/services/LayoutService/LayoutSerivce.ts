@@ -1,5 +1,11 @@
-import { observable } from 'mobx'
-import { StatusBar } from 'react-native'
+import { observable, runInAction } from 'mobx'
+import {
+  Animated,
+  Keyboard,
+  KeyboardEvent,
+  Platform,
+  StatusBar
+} from 'react-native'
 import { currentInsets } from '@delightfulstudio/react-native-safe-area-insets'
 
 import { Injectable } from 'IoC'
@@ -17,6 +23,9 @@ export interface ILayoutService {
   readonly insets: IInsets
   readonly statusBarHeight: number
 
+  keyboardHeight: Animated.Value
+  keyboardIsVisible: boolean
+
   init(): void
 }
 
@@ -29,6 +38,9 @@ export class LayoutService implements ILayoutService {
     right: 0
   }
 
+  keyboardHeight: Animated.Value
+  @observable keyboardIsVisible: boolean
+
   get statusBarHeight() {
     return StatusBar.currentHeight || 0
   }
@@ -36,5 +48,32 @@ export class LayoutService implements ILayoutService {
   async init() {
     const insets = await currentInsets()
     this.insets = { ...insets, top: insets.top + this.statusBarHeight }
+    this.keyboardHeight = new Animated.Value(0)
+
+    const keyboardWillShowSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      this._keyboardWillShow
+    )
+    const keyboardWillHideSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      this._keyboardWillHide
+    )
+  }
+
+  _keyboardWillShow = (e: KeyboardEvent) => {
+    runInAction(() => (this.keyboardIsVisible = true))
+    Animated.timing(this.keyboardHeight, {
+      toValue: e.endCoordinates.height,
+      duration: e.duration || 0,
+      useNativeDriver: false
+    }).start()
+  }
+
+  _keyboardWillHide = (e: KeyboardEvent) => {
+    Animated.timing(this.keyboardHeight, {
+      toValue: 0,
+      duration: e.duration || 0,
+      useNativeDriver: false
+    }).start(() => runInAction(() => (this.keyboardIsVisible = false)))
   }
 }

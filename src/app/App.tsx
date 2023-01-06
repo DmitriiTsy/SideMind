@@ -13,6 +13,8 @@ import { useInject } from 'IoC'
 import { BootScreen, SelectBotsScreen } from 'screens'
 import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
 
+import { Chat } from 'components/Chat'
+
 import { MainFeed } from 'components/MainFeed'
 
 import { IAppVM, IAppVMTid } from '../store/Store.vm'
@@ -40,6 +42,7 @@ export const App = () => {
           name={CommonScreenName.SelectBots}
           component={SelectBotsScreen}
         />
+        <Stack.Screen name={CommonScreenName.Chat} component={Chat} />
         <Stack.Screen name={CommonScreenName.MainFeed} component={MainFeed} />
       </Stack.Navigator>
     </NavigationContainer>

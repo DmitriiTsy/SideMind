@@ -16,6 +16,7 @@ import {
   IFirebaseResponse,
   IFirebaseResponseBots
 } from 'services/FirebaseService/types'
+import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
@@ -33,7 +34,8 @@ export class FirebaseService implements IFirebaseService {
 
   constructor(
     @Inject(ISystemInfoServiceTid)
-    private _systemInfoService: ISystemInfoService
+    private _systemInfoService: ISystemInfoService,
+    @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService
   ) {
     this._users = firestore().collection('usersList')
     this._bots = firestore().collection('botsList')
@@ -41,6 +43,7 @@ export class FirebaseService implements IFirebaseService {
 
   async init() {
     await this._systemInfoService.init()
+    this._openAIService.init()
 
     try {
       await this.getBotsList()

@@ -4,6 +4,8 @@ import {
   ISelectBotsVM,
   ISelectBotsVMTid,
   SelectBotsVM
+} from 'components/SelectBots/SelectBots.vm'
+import { ChatVM, IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 } from '../store/Store.vm'
 
 export class ComponentsModule implements IoCModule {
@@ -12,5 +14,6 @@ export class ComponentsModule implements IoCModule {
       .bind<ISelectBotsVM>(ISelectBotsVMTid)
       .to(SelectBotsVM)
       .inSingletonScope()
+    ioc.bind<IChatVM>(IChatVMTid).to(ChatVM).inSingletonScope()
   }
 }

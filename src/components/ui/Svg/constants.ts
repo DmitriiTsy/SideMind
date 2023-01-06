@@ -1,13 +1,15 @@
 import {
   SvgLogo,
   SvgCheck,
+  SvgPointerLeft,
+  SvgEnter,
   SvgAddNote,
-  SvgPointerRight
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
   Logo: SvgLogo,
   Check: SvgCheck,
   AddNote: SvgAddNote,
-  PointerRight: SvgPointerRight
+  PointerLeft: SvgPointerLeft,
+  Enter: SvgEnter
 }
