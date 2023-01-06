@@ -9,12 +9,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { StatusBar } from 'react-native'
 
 import { useInject } from 'IoC'
-import { IAppVM, IAppVMTid } from 'app'
 
 import { BootScreen, SelectBotsScreen } from 'screens'
-
 import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
+
 import { MainFeed } from 'components/MainFeed'
+
+import { IAppVM, IAppVMTid } from '../store/Store.vm'
 
 const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
