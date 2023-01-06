@@ -53,6 +53,12 @@
     "baseUrl": "./",
     "rootDir": "./",
     "paths": {
+      "store": [
+        "./src/store"
+      ],
+      "store/*": [
+        "./src/store/*"
+      ],
       "assets": [
         "./src/assets"
       ],

@@ -8,21 +8,23 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 import { CommonScreenName } from 'constants/screen.types'
 import { INavigationService, INavigationServiceTid } from 'services'
-
-import { ISelectBotsVM, ISelectBotsVMTid } from '../../../store/Store.vm'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 export const SelectBotsHeader = observer(() => {
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const selectBotVM = useInject<ISelectBotsVM>(ISelectBotsVMTid)
+  const appStore = useInject<IAppStore>(IAppStoreTid)
 
   const enabled = useMemo(
-    () => selectBotVM.selected.length === 3,
-    [selectBotVM.selected.length]
+    () => appStore.selected.length === 3,
+    [appStore.selected.length]
   )
   const onPress = useCallback(() => {
-    enabled && navigation.navigate(CommonScreenName.MainFeed)
-  }, [enabled, navigation])
+    if (enabled) {
+      appStore.setUsedBots()
+      navigation.navigate(CommonScreenName.MainFeed)
+    }
+  }, [appStore, enabled, navigation])
 
   return (
     <View style={SS.container}>

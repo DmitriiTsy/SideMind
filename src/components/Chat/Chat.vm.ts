@@ -2,6 +2,7 @@ import { action, observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
+import { BotModel } from 'services/FirebaseService/types'
 
 export const IChatVMTid = Symbol.for('IChatVMTid')
 
@@ -17,13 +18,16 @@ export interface IMessage {
 
 export interface IChatVM {
   messages: IMessage[]
+  bot: BotModel
 
   sendMessage(message: string): void
+  setBot(bot: BotModel): void
 }
 
 @Injectable()
 export class ChatVM implements IChatVM {
   @observable messages: IMessage[] = []
+  @observable bot: BotModel
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService
@@ -37,5 +41,10 @@ export class ChatVM implements IChatVM {
       () =>
         (this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages])
     )
+  }
+
+  @action.bound
+  setBot(bot: BotModel) {
+    this.bot = bot
   }
 }

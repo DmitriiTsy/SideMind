@@ -1,3 +1,2 @@
-export * from './InChatPreview'
-export * from './MainFeedHeader'
-export * from './MainFeedNewSideMind'
+export * from './ChatPreview'
+export * from './NewBot'

@@ -1,4 +1,4 @@
-export interface IFirebaseResponse {
+export interface IFirebaseResponseUsers {
   message?: string[]
 }
 

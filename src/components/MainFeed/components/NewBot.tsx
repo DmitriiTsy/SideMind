@@ -7,22 +7,20 @@ import { Svg } from 'components/ui/Svg'
 
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
-import { INavigationService, INavigationServiceTid } from 'services'
-
-import { CommonScreenName } from 'constants/screen.types'
-
-export const MainFeedNewSideMind = () => {
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
+export const NewBot = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   const onPress = useCallback(() => {
-    navigation.navigate(CommonScreenName.SelectBots)
-  }, [navigation])
+    // navigation.navigate(CommonScreenName.SelectBots)
+  }, [])
 
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      <Text style={SS.title}>Add another SideMind</Text>
-      <Svg name={'PointerRight'} />
+      <Text style={SS.title}>{t.get('add another')}</Text>
+      <Svg
+        name={'PointerLeft'}
+        style={{ transform: [{ rotateZ: '180deg' }] }}
+      />
     </Pressable>
   )
 }

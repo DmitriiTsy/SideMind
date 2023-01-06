@@ -5,18 +5,29 @@ import { ScreenContainer } from 'components/ScreenContainer'
 
 import { Svg } from 'components/ui/Svg'
 
+import { useInject } from 'IoC'
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
+
+import { INavigationService, INavigationServiceTid } from 'services'
+
 import { ChatInput, List } from './components'
 
 export const Chat = () => {
+  const chatVM = useInject<IChatVM>(IChatVMTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
   const header = useMemo(
     () => (
       <View style={SS.container}>
-        <Svg name={'PointerLeft'} style={{ marginRight: 30 }} />
-        <Image source={require('assets/AvatarTest2.png')} style={SS.avatar} />
-        <Text style={SS.title}>Self-Help Sally</Text>
+        <Svg
+          name={'PointerLeft'}
+          style={{ marginRight: 30 }}
+          onPress={navigation.goBack}
+        />
+        <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
+        <Text style={SS.title}>{chatVM.bot.name}</Text>
       </View>
     ),
-    []
+    [chatVM.bot.imagePath, chatVM.bot.name, navigation.goBack]
   )
 
   return (

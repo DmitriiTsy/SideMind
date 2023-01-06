@@ -3,8 +3,6 @@ import firestore, {
 } from '@react-native-firebase/firestore'
 import storage from '@react-native-firebase/storage'
 
-import { observable, runInAction } from 'mobx'
-
 import { Inject, Injectable } from 'IoC'
 
 import {
@@ -13,32 +11,31 @@ import {
 } from 'services/SystemInfoService'
 import {
   BotModel,
-  IFirebaseResponse,
+  IFirebaseResponseUsers,
   IFirebaseResponseBots
 } from 'services/FirebaseService/types'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
 export interface IFirebaseService {
-  botsList: BotModel[][]
   init(): Promise<void>
 }
 
 @Injectable()
 export class FirebaseService implements IFirebaseService {
-  private _users: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponse>
-  private _bots: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
-
-  @observable botsList: BotModel[][] = []
+  private _usersCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseUsers>
+  private _botsCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
 
   constructor(
     @Inject(ISystemInfoServiceTid)
     private _systemInfoService: ISystemInfoService,
-    @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService
+    @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
+    @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {
-    this._users = firestore().collection('usersList')
-    this._bots = firestore().collection('botsList')
+    this._usersCollection = firestore().collection('usersList')
+    this._botsCollection = firestore().collection('botsList')
   }
 
   async init() {
@@ -54,21 +51,24 @@ export class FirebaseService implements IFirebaseService {
   }
 
   async checkExistUser() {
-    const { exists } = await this._users
+    const { exists } = await this._usersCollection
       .doc(this._systemInfoService.deviceId)
       .get()
-    !exists && (await this._users.doc(this._systemInfoService.deviceId).set({}))
+    !exists &&
+      (await this._usersCollection
+        .doc(this._systemInfoService.deviceId)
+        .set({}))
   }
 
   async getBotsList() {
-    const data = (await this._bots.doc('bots').get()).data()
-    const array: BotModel[][] = []
+    const data = (await this._botsCollection.doc('bots').get()).data()
+    const botsList: BotModel[][] = []
     for (const el of Object.entries(data)) {
       for (const _el of Object.values(el[1])) {
         _el.imagePath = await storage().ref(_el.imagePath).getDownloadURL()
       }
-      array.push(el[1])
+      botsList.push(el[1])
     }
-    runInAction(() => (this.botsList = array))
+    this._appStore.setAvailableBots(botsList)
   }
 }

@@ -9,12 +9,12 @@ import { SelectBotsHeader } from 'components/SelectBots/components'
 import { GroupedBots } from 'components/SelectBots/components/GroupedBots'
 
 import { useInject } from 'IoC'
-import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
 import { BotModel } from 'services/FirebaseService/types'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 export const SelectBots = observer(() => {
-  const firebase = useInject<IFirebaseService>(IFirebaseServiceTid)
+  const appStore = useInject<IAppStore>(IAppStoreTid)
   const renderItem = ({ item }: ListRenderItemInfo<BotModel[]>) => (
     <GroupedBots bots={item} />
   )
@@ -29,7 +29,7 @@ export const SelectBots = observer(() => {
     >
       <SelectBotsHeader />
       <FlatList
-        data={firebase.botsList}
+        data={appStore.availableBots}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
