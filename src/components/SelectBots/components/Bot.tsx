@@ -7,10 +7,8 @@ import { Svg } from 'components/ui/Svg'
 
 import { BotModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
-import {
-  ISelectBotsVM,
-  ISelectBotsVMTid
-} from 'components/SelectBots/SelectBots.vm'
+
+import { ISelectBotsVM, ISelectBotsVMTid } from '../../../store/Store.vm'
 
 interface IBotProps {
   bot: BotModel

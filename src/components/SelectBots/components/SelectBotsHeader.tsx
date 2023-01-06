@@ -5,13 +5,11 @@ import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-import {
-  ISelectBotsVM,
-  ISelectBotsVMTid
-} from 'components/SelectBots/SelectBots.vm'
 
 import { CommonScreenName } from 'constants/screen.types'
 import { INavigationService, INavigationServiceTid } from 'services'
+
+import { ISelectBotsVM, ISelectBotsVMTid } from '../../../store/Store.vm'
 
 export const SelectBotsHeader = observer(() => {
   const navigation = useInject<INavigationService>(INavigationServiceTid)
