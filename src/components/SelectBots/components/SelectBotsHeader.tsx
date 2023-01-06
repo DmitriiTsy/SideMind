@@ -63,7 +63,8 @@ const SS = StyleSheet.create({
   },
   doneContainer: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: 120
   },
   title: {
     fontWeight: '700',
