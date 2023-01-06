@@ -8,6 +8,8 @@ export interface IOpenAIService {
   init(): void
 
   createCompletion(prompt: string): Promise<string>
+
+  clearHistory(): void
 }
 
 @Injectable()
@@ -39,5 +41,9 @@ export class OpenAIService implements IOpenAIService {
     } catch (e) {
       return 'Some error occurred, now chat is unavailable'
     }
+  }
+
+  clearHistory() {
+    this._history = []
   }
 }

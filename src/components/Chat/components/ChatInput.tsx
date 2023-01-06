@@ -30,12 +30,14 @@ export const ChatInput = () => {
     e: NativeSyntheticEvent<TextInputContentSizeChangeEventData>
   ) => {
     const { height } = e.nativeEvent.contentSize
-    setInputHeight(height > MIN_HEIGHT ? height + 10 : MIN_HEIGHT)
+    setInputHeight(height > MIN_HEIGHT ? height + 15 : MIN_HEIGHT)
   }
 
   const submit = () => {
-    chatVM.sendMessage(value)
-    setValue('')
+    if (value) {
+      chatVM.sendMessage(value)
+      setValue('')
+    }
   }
 
   return (
@@ -49,6 +51,7 @@ export const ChatInput = () => {
           onChangeText={onChangeText}
           onContentSizeChange={onContentSizeChange}
           style={[SS.input, { height: inputHeight }]}
+          keyboardAppearance={'dark'}
         />
       </View>
       <Svg name={'Enter'} style={{ marginVertical: 6 }} onPress={submit} />
@@ -73,6 +76,6 @@ const SS = StyleSheet.create({
   input: {
     color: '#FFF',
     width: deviceWidth * 0.8,
-    padding: 5
+    paddingHorizontal: 8
   }
 })

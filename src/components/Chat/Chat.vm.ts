@@ -19,15 +19,18 @@ export interface IMessage {
 export interface IChatVM {
   messages: IMessage[]
   bot: BotModel
+  pending: boolean
 
   sendMessage(message: string): void
   setBot(bot: BotModel): void
+  getFirstMessage(): void
 }
 
 @Injectable()
 export class ChatVM implements IChatVM {
   @observable messages: IMessage[] = []
   @observable bot: BotModel
+  @observable pending = false
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService
@@ -35,16 +38,34 @@ export class ChatVM implements IChatVM {
 
   @action.bound
   async sendMessage(message: string) {
+    this.pending = true
+
+    if (
+      !message.endsWith('.') &&
+      !message.endsWith('?') &&
+      !message.endsWith('!')
+    ) {
+      message = message + '.'
+    }
+
     this.messages = [{ sender: ESender.HUMAN, text: message }, ...this.messages]
     const res = await this._openAIService.createCompletion(message)
-    runInAction(
-      () =>
-        (this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages])
-    )
+    console.log(res)
+    runInAction(() => {
+      this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages]
+      this.pending = false
+    })
   }
 
   @action.bound
   setBot(bot: BotModel) {
     this.bot = bot
+  }
+
+  async getFirstMessage() {
+    this.messages = []
+    this._openAIService.clearHistory()
+    const res = await this._openAIService.createCompletion(this.bot.prompt)
+    runInAction(() => (this.messages = [{ sender: ESender.BOT, text: res }]))
   }
 }
