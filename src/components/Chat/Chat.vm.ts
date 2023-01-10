@@ -50,7 +50,6 @@ export class ChatVM implements IChatVM {
 
     this.messages = [{ sender: ESender.HUMAN, text: message }, ...this.messages]
     const res = await this._openAIService.createCompletion(message)
-    console.log(res)
     runInAction(() => {
       this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages]
       this.pending = false
@@ -65,7 +64,10 @@ export class ChatVM implements IChatVM {
   async getFirstMessage() {
     this.messages = []
     this._openAIService.clearHistory()
-    const res = await this._openAIService.createCompletion(this.bot.prompt)
+    const res = await this._openAIService.createCompletion(
+      this.bot.prompt,
+      true
+    )
     runInAction(() => (this.messages = [{ sender: ESender.BOT, text: res }]))
   }
 }
