@@ -8,6 +8,7 @@ import { Svg } from 'components/ui/Svg'
 import { BotModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { deviceWidth } from 'utils/dimentions'
 
 interface IBotProps {
   bot: BotModel
@@ -67,7 +68,8 @@ const SS = StyleSheet.create({
     lineHeight: 12,
     letterSpacing: 0.2,
     marginTop: 2,
-    marginBottom: 7.5
+    marginBottom: 7.5,
+    maxWidth: deviceWidth * 0.75
   },
   empty: {
     width: 20,
@@ -79,5 +81,5 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  image: { width: 36, height: 36 }
+  image: { width: 36, height: 36, borderRadius: 250 }
 })
