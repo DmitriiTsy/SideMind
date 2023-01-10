@@ -43,8 +43,11 @@ export class FirebaseService implements IFirebaseService {
     this._openAIService.init()
 
     try {
-      await this.getBotsList()
-      await this.checkExistUser()
+      await Promise.all([
+        this.getBotsList(),
+        this.checkExistUser(),
+        this.getStartingBotsList()
+      ])
     } catch (e) {
       console.log('FirebaseService error:', e)
     }
@@ -62,6 +65,17 @@ export class FirebaseService implements IFirebaseService {
 
   async getBotsList() {
     const data = (await this._botsCollection.doc('bots').get()).data()
+    const botsList = await this.mapBots(data)
+    this._appStore.setAvailableBots(botsList)
+  }
+
+  async getStartingBotsList() {
+    const data = (await this._botsCollection.doc('Starting').get()).data()
+    const botsList = await this.mapBots(data)
+    this._appStore.setStartingBots(botsList)
+  }
+
+  async mapBots(data: IFirebaseResponseBots) {
     const botsList: BotModel[][] = []
     for (const el of Object.entries(data)) {
       for (const _el of Object.values(el[1])) {
@@ -69,6 +83,7 @@ export class FirebaseService implements IFirebaseService {
       }
       botsList.push(el[1])
     }
-    this._appStore.setAvailableBots(botsList)
+
+    return botsList
   }
 }
