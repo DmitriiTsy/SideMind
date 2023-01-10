@@ -9,9 +9,11 @@ export interface IAppStore {
   selected: number[]
   usedBots: BotModel[]
   availableBots: BotModel[][]
+  startingBots: BotModel[][]
 
   addSelected(id: number): void
   setAvailableBots(bots: BotModel[][]): void
+  setStartingBots(bots: BotModel[][]): void
   setUsedBots(): void
 }
 
@@ -20,6 +22,7 @@ export class AppStore implements IAppStore {
   @observable selected: number[] = []
   @observable availableBots: BotModel[][] = []
   @observable usedBots: BotModel[] = []
+  @observable startingBots: BotModel[][] = []
 
   @action.bound
   addSelected(id: number) {
@@ -39,11 +42,17 @@ export class AppStore implements IAppStore {
   }
 
   @action.bound
+  setStartingBots(bots: BotModel[][]) {
+    this.startingBots = bots
+  }
+
+  @action.bound
   setUsedBots() {
     const _bots: BotModel[] = []
     this.availableBots.map((bots) =>
       bots.map((bot) => this.selected.includes(bot.id) && _bots.push(bot))
     )
+    this.startingBots.map((bots) => bots.map((bot) => _bots.unshift(bot)))
     this.usedBots = _bots
   }
 }

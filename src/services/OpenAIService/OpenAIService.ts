@@ -26,7 +26,7 @@ export class OpenAIService implements IOpenAIService {
   }
 
   async createCompletion(prompt: string, isFirst?: boolean) {
-    this._history = `${this._history} ${isFirst ? '' : '\n###\n'} ${prompt}`
+    this._history = `${this._history}${isFirst ? '' : '\n###\n'}${prompt}`
     try {
       const res = await this._openAIApi.createCompletion({
         model: 'text-davinci-003',
@@ -37,7 +37,7 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: 0.6,
         stop: ['###']
       })
-      this._history = `${this._history} ${isFirst ? '' : '\n###\n'} ${
+      this._history = `${this._history}${isFirst ? '' : '\n###\n'}${
         res.data.choices[0].text
       }`
       return res.data.choices[0].text
