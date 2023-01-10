@@ -42,6 +42,7 @@ export class OpenAIService implements IOpenAIService {
       }`
       return res.data.choices[0].text
     } catch (e) {
+      console.log(e)
       return 'Some error occurred, now chat is unavailable'
     }
   }
