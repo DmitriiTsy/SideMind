@@ -34,7 +34,7 @@ export const ChatInput = () => {
   }
 
   const submit = () => {
-    if (value) {
+    if (!chatVM.pending && value) {
       chatVM.sendMessage(value)
       setValue('')
     }
@@ -56,7 +56,7 @@ export const ChatInput = () => {
         />
       </View>
       <Svg
-        name={value ? 'EnterActive' : 'Enter'}
+        name={value && !chatVM.pending ? 'EnterActive' : 'Enter'}
         style={SS.enter}
         onPress={submit}
       />
