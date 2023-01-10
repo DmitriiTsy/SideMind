@@ -57,12 +57,14 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 0.5,
     borderColor: '#333333',
-    paddingLeft: 24
+    paddingLeft: 24,
+    paddingBottom: 10
   },
   avatar: {
     width: 36,
     height: 36,
-    marginRight: 7
+    marginRight: 7,
+    borderRadius: 250
   },
   title: {
     fontWeight: '500',

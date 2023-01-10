@@ -22,10 +22,7 @@ export const ChatPreview: FC<IChatPreview> = ({ bot, index }) => {
   }
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      <Image
-        source={{ uri: bot.imagePath }}
-        style={{ width: 52, height: 52 }}
-      />
+      <Image source={{ uri: bot.imagePath }} style={SS.avatar} />
       <View style={[SS.containerRight, !isFirst && SS.line]}>
         <Text style={SS.botName}>{bot.name}</Text>
         <Text style={SS.botDesc}>{bot.tagLine}</Text>
@@ -72,5 +69,10 @@ const SS = StyleSheet.create({
     fontSize: 15,
     lineHeight: 19,
     letterSpacing: 0.4
+  },
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 250
   }
 })

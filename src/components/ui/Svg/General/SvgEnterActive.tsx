@@ -7,16 +7,15 @@ import { createSvg } from 'utils/createSvg'
 
 const Component: FC<SvgStyleProps> = (props) => (
   <Svg fill="none" {...props}>
-    <Rect width={28} height={28} rx={14} fill="#222" />
+    <Rect y={0.244} width={28} height={28} rx={14} fill="#549EF7" />
     <Path
-      opacity={0.4}
-      d="M21.941 13.056 8.261 7.319a.5.5 0 0 0-.693.502l.397 4.755a.5.5 0 0 0 .46.457l6.075.467-6.11.94a.5.5 0 0 0-.423.453l-.396 4.76a.5.5 0 0 0 .704.497l13.678-6.177a.5.5 0 0 0-.012-.917Z"
+      d="M21.941 13.3 8.261 7.561a.5.5 0 0 0-.693.503l.397 4.754a.5.5 0 0 0 .46.457l6.075.468-6.11.94a.5.5 0 0 0-.423.452l-.396 4.76a.5.5 0 0 0 .704.498l13.678-6.178a.5.5 0 0 0-.012-.916Z"
       fill="#fff"
     />
   </Svg>
 )
 
-export const SvgEnter = createSvg({
+export const SvgEnterActive = createSvg({
   component: Component,
   originalHeight: 28,
   originalWidth: 28

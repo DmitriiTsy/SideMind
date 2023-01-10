@@ -9,3 +9,5 @@ export * from './PointerRight'
 export * from './PointerLeft'
 
 export * from './Enter'
+
+export * from './SvgEnterActive'

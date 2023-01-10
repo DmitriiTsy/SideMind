@@ -41,7 +41,7 @@ export const ChatInput = () => {
   }
 
   return (
-    <View style={SS.container}>
+    <View style={inputHeight > 28 ? SS.container : SS.containerOnChange}>
       <View style={[SS.inputContainer]}>
         <TextInput
           multiline={true}
@@ -54,7 +54,11 @@ export const ChatInput = () => {
           keyboardAppearance={'dark'}
         />
       </View>
-      <Svg name={'Enter'} style={{ marginVertical: 6 }} onPress={submit} />
+      <Svg
+        name={value ? 'EnterActive' : 'Enter'}
+        style={{ marginVertical: 6 }}
+        onPress={submit}
+      />
     </View>
   )
 }
@@ -75,7 +79,14 @@ const SS = StyleSheet.create({
   },
   input: {
     color: '#FFF',
-    width: deviceWidth * 0.8,
+    width: deviceWidth * 0.85,
     paddingHorizontal: 8
+  },
+  containerOnChange: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    borderTopWidth: 0.5,
+    borderColor: '#333333'
   }
 })
