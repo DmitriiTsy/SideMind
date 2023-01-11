@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {
-  StyleSheet,
   FlatList,
   ListRenderItemInfo,
-  View,
-  Text
+  Pressable,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native'
 
 import { observer } from 'mobx-react'
@@ -20,13 +21,27 @@ import { Svg } from 'components/ui/Svg'
 
 import { deviceWidth } from 'utils/dimentions'
 
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import {
+  ILocalizationService,
+  ILocalizationServiceTid,
+  INavigationService,
+  INavigationServiceTid
+} from 'services'
 
-import { NewBot, ChatPreview } from './components'
+import { CommonScreenName } from 'constants/screen.types'
+
+import { ChatPreview, NewBot } from './components'
 
 export const MainFeed = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
+
+  const onPressGetBack = useCallback(() => {
+    navigation.navigate(CommonScreenName.SelectBots, {
+      isStarting: false
+    })
+  }, [navigation])
 
   const header = useMemo(
     () => (
@@ -35,10 +50,12 @@ export const MainFeed = observer(() => {
           <Svg name={'Logo'} />
           <Text style={SS.title}>{t.get('sideMind')}</Text>
         </View>
-        <Svg name={'AddNote'} />
+        <Pressable onPress={onPressGetBack}>
+          <Svg name={'AddNote'} />
+        </Pressable>
       </View>
     ),
-    [t]
+    [onPressGetBack, t]
   )
 
   const renderItem = ({ item, index }: ListRenderItemInfo<BotModel>) => (

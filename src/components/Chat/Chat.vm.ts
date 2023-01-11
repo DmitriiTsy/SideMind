@@ -54,9 +54,13 @@ export class ChatVM implements IChatVM {
   }
 
   async getFirstMessage() {
+    this.pending = true
+
     this.messages = []
     this._openAIService.clearHistory()
     const res = await this._openAIService.createCompletion(this.bot.prompt)
+
+    this.pending = false
     runInAction(() => (this.messages = [{ sender: ESender.BOT, text: res }]))
   }
 }

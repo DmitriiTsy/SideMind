@@ -4,7 +4,8 @@ import {
   SvgPointerLeft,
   SvgEnter,
   SvgAddNote,
-  SvgEnterActive
+  SvgEnterActive,
+  SvgCross
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
@@ -13,5 +14,6 @@ export const SVG_MAP = {
   AddNote: SvgAddNote,
   PointerLeft: SvgPointerLeft,
   Enter: SvgEnter,
-  EnterActive: SvgEnterActive
+  EnterActive: SvgEnterActive,
+  Cross: SvgCross
 }

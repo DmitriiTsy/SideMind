@@ -11,3 +11,5 @@ export * from './PointerLeft'
 export * from './Enter'
 
 export * from './SvgEnterActive'
+
+export * from './SvgCross'
