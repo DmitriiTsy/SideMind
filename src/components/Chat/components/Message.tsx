@@ -21,7 +21,7 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
           isLast && SS.last
         ]}
       >
-        <Text style={SS.text}>{message.text}</Text>
+        <Text style={SS.text}>{message.text.trim()}</Text>
       </View>
     </View>
   )
