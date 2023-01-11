@@ -7,7 +7,7 @@ export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 export interface IOpenAIService {
   init(): void
 
-  createCompletion(prompt: string, isFirst?: boolean): Promise<string>
+  createCompletion(prompt: string): Promise<string>
 
   clearHistory(): void
 }
@@ -25,7 +25,7 @@ export class OpenAIService implements IOpenAIService {
     this._openAIApi = new OpenAIApi(this._config)
   }
 
-  async createCompletion(prompt: string, isFirst?: boolean) {
+  async createCompletion(prompt: string) {
     this._history = `${this._history} \n\n###: ${prompt}. \n\n`
     try {
       const res = await this._openAIApi.createCompletion({
