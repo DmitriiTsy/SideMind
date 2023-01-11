@@ -2,7 +2,8 @@ export enum CommonScreenName {
   SelectBots = 'SelectBots',
   Boot = 'Boot',
   MainFeed = 'MainFeed',
-  Chat = 'Chat'
+  Chat = 'Chat',
+  Loading = 'Loading'
 }
 
 export interface CommonScreenParamsMap {
@@ -10,6 +11,7 @@ export interface CommonScreenParamsMap {
   Boot: undefined
   MainFeed: undefined
   Chat: undefined
+  Loading: undefined
 }
 
 export type ScreenName = keyof typeof CommonScreenName
