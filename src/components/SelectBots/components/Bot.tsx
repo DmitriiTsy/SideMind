@@ -9,6 +9,8 @@ import { BotModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { deviceWidth } from 'utils/dimentions'
+import { INavigationService, INavigationServiceTid } from 'services'
+import { CommonScreenName } from 'constants/screen.types'
 
 interface IBotProps {
   bot: BotModel
@@ -16,6 +18,9 @@ interface IBotProps {
 
 export const Bot: FC<IBotProps> = observer(({ bot }) => {
   const appStore = useInject<IAppStore>(IAppStoreTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
+
+  const { isStarting } = navigation.customParams
 
   const selected = appStore.selected.find((el) => el === bot.id)
 
@@ -23,8 +28,13 @@ export const Bot: FC<IBotProps> = observer(({ bot }) => {
     appStore.addSelected(bot.id)
   }, [bot.id, appStore])
 
+  const addSingle = useCallback(() => {
+    appStore.addUsed(bot)
+    navigation.navigate(CommonScreenName.MainFeed)
+  }, [appStore, bot, navigation])
+
   return (
-    <Pressable onPress={onPress} style={SS.container}>
+    <Pressable onPress={isStarting ? onPress : addSingle} style={SS.container}>
       <Image source={{ uri: bot.imagePath }} style={SS.image} />
 
       <View style={SS.containerRight}>
@@ -32,7 +42,9 @@ export const Bot: FC<IBotProps> = observer(({ bot }) => {
           <Text style={SS.botName}>{bot.name}</Text>
           <Text style={SS.botDesc}>{bot.tagLine}</Text>
         </View>
-        <View style={SS.empty}>{selected && <Svg name={'Check'} />}</View>
+        {isStarting && (
+          <View style={SS.empty}>{selected && <Svg name={'Check'} />}</View>
+        )}
       </View>
     </Pressable>
   )

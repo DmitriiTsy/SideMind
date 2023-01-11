@@ -1,11 +1,11 @@
-import React, { useMemo, useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {
-  StyleSheet,
   FlatList,
   ListRenderItemInfo,
-  View,
+  Pressable,
+  StyleSheet,
   Text,
-  Pressable
+  View
 } from 'react-native'
 
 import { observer } from 'mobx-react'
@@ -21,12 +21,16 @@ import { Svg } from 'components/ui/Svg'
 
 import { deviceWidth } from 'utils/dimentions'
 
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
-import { INavigationService, INavigationServiceTid } from 'services'
+import {
+  ILocalizationService,
+  ILocalizationServiceTid,
+  INavigationService,
+  INavigationServiceTid
+} from 'services'
 
 import { CommonScreenName } from 'constants/screen.types'
 
-import { NewBot, ChatPreview } from './components'
+import { ChatPreview, NewBot } from './components'
 
 export const MainFeed = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
@@ -34,7 +38,9 @@ export const MainFeed = observer(() => {
   const navigation = useInject<INavigationService>(INavigationServiceTid)
 
   const onPressGetBack = useCallback(() => {
-    navigation.navigate(CommonScreenName.SelectBots)
+    navigation.navigate(CommonScreenName.SelectBots, {
+      isStarting: false
+    })
   }, [navigation])
 
   const header = useMemo(

@@ -15,6 +15,7 @@ export interface IAppStore {
   setAvailableBots(bots: BotModel[][]): void
   setStartingBots(bots: BotModel[][]): void
   setUsedBots(): void
+  addUsed(bot: BotModel): void
 }
 
 @Injectable()
@@ -54,5 +55,13 @@ export class AppStore implements IAppStore {
     )
     this.startingBots.map((bots) => bots.map((bot) => _bots.unshift(bot)))
     this.usedBots = _bots
+  }
+
+  @action.bound
+  addUsed(bot: BotModel) {
+    const exist = this.usedBots.find((el) => el.id === bot.id)
+    if (!exist) {
+      this.usedBots.push(bot)
+    }
   }
 }

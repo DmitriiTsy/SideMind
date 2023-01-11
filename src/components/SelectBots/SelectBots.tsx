@@ -15,6 +15,7 @@ import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 export const SelectBots = observer(() => {
   const appStore = useInject<IAppStore>(IAppStoreTid)
+
   const renderItem = ({ item }: ListRenderItemInfo<BotModel[]>) => (
     <GroupedBots bots={item} />
   )

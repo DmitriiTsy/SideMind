@@ -3,17 +3,22 @@ import { Route } from '@react-navigation/routers'
 import { RefObject } from 'react'
 import { NavigationContainerRef } from '@react-navigation/native'
 
-import { action, observable } from 'mobx'
+import { action, computed, observable } from 'mobx'
 
 import { Injectable } from 'IoC'
 
-import { ScreenName, ScreenParamTypes } from '../../constants/screen.types'
+import {
+  CommonScreenName,
+  ScreenName,
+  ScreenParamTypes
+} from 'constants/screen.types'
 
 export const INavigationServiceTid = Symbol.for('INavigationServiceTid')
 
 export interface INavigationService<RouteName extends ScreenName = any> {
   canGoBack: boolean
   currentRoute?: Route<string>
+  customParams: ScreenParamTypes[RouteName]
   params: ScreenParamTypes[RouteName]
 
   navigate<RouteName extends ScreenName>(
@@ -31,12 +36,15 @@ export interface INavigationService<RouteName extends ScreenName = any> {
 @Injectable()
 export class NavigationService implements INavigationService {
   @observable.ref currentRoute?: Route<string>
+  @observable customParams
   private _navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
 
+  @computed
   get canGoBack() {
     return this._navigationRef?.current?.canGoBack() || false
   }
 
+  @computed
   get params() {
     return this._navigationRef?.current?.getCurrentRoute()?.params || {}
   }
@@ -46,9 +54,13 @@ export class NavigationService implements INavigationService {
     name: RouteName,
     params?: ScreenParamTypes[RouteName]
   ) {
-    this._navigationRef?.current?.navigate(name, params)
+    if (name === CommonScreenName.SelectBots) {
+      this.customParams = params
+    }
+    this._navigationRef?.current?.navigate({ name, params, merge: true })
   }
 
+  @action.bound
   init(navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>) {
     this._navigationRef = navigationRef
     this.emitNavigationStateChange()
