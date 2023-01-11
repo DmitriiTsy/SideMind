@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Text } from 'react-native'
 
 
 import range from 'lodash/range'
@@ -37,6 +37,10 @@ export const Loading = () => {
       style={SS.screenContainer}
     >
       <LoadingHeader />
+      <View style={SS.loadingWrapper}>
+        <Text style={SS.loadingAI}>{t.get('loading ais')}</Text>
+        <Text style={SS.loadingDot}>{t.get('waiting dot')}</Text>
+      </View>
       <View style={SS.pendingContainer}>
         {header()}
         {range(3).map((_, index) => (
@@ -88,5 +92,32 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     paddingLeft: 18
+  },
+  loadingWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    height: 45,
+    paddingVertical: 16.5,
+    paddingHorizontal: 18,
+    borderBottomColor: 'rgba(72, 72, 73, 0.3)',
+    borderBottomWidth: 0.5
+  },
+  loadingAI: {
+    textAlign: 'center',
+    color: '#98989E',
+    fontWeight: '400',
+    lineHeight: 12,
+    fontSize: 12,
+    letterSpacing: 0.2,
+    paddingRight: 2
+  },
+  loadingDot: {
+    textAlign: 'center',
+    color: '#98989E',
+    fontWeight: '400',
+    lineHeight: 12,
+    fontSize: 12,
+    letterSpacing: 0.2
   }
 })

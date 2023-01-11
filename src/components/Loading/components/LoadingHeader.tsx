@@ -12,10 +12,10 @@ export const LoadingHeader = observer(() => {
   return (
     <View style={SS.container}>
       <View style={SS.containerTexts}>
-        <Text style={SS.titleNewChat}>{t.get('load new chat')}</Text>
+        <Text style={SS.titleNewChat}>{t.get('choose bots')}</Text>
         <Text style={SS.titleDone}>{t.get('done')}</Text>
       </View>
-      <Text style={SS.counter}>{t.get('loading ais')}</Text>
+      <Text style={SS.counter}>{t.get('add more later')}</Text>
     </View>
   )
 })
@@ -28,7 +28,8 @@ const SS = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'center',
+    paddingVertical: 10
   },
   containerTexts: {
     alignItems: 'center',
@@ -37,12 +38,15 @@ const SS = StyleSheet.create({
     width: '100%'
   },
   titleNewChat: {
-    textAlign: 'center'
+    textAlign: 'center',
+    color: '#FFFFFF'
   },
   titleDone: {
     textAlign: 'right',
     position: 'absolute',
-    right: 18
+    right: 18,
+    top: 9,
+    color: '#484849'
   },
   title: {
     fontWeight: '700',
