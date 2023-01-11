@@ -14,7 +14,7 @@ import { Svg } from 'components/ui/Svg'
 import { deviceWidth } from 'utils/dimentions'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 
-const MIN_HEIGHT = 36
+const MIN_HEIGHT = 28
 
 export const ChatInput = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
@@ -41,7 +41,7 @@ export const ChatInput = () => {
   }
 
   return (
-    <View style={inputHeight < 36 ? SS.container : SS.containerOnChange}>
+    <View style={inputHeight < 28 ? SS.container : SS.containerOnChange}>
       <View style={[SS.inputContainer]}>
         <TextInput
           multiline={true}
@@ -52,7 +52,6 @@ export const ChatInput = () => {
           onContentSizeChange={onContentSizeChange}
           style={[SS.input, { height: inputHeight }]}
           keyboardAppearance={'dark'}
-          // textAlignVertical={'bottom'}
         />
       </View>
       <Svg
@@ -87,7 +86,8 @@ const SS = StyleSheet.create({
   input: {
     color: '#FFF',
     width: deviceWidth * 0.85,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
+    marginVertical: 4
   },
   containerOnChange: {
     flexDirection: 'row',
