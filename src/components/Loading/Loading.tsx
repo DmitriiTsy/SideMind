@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 
+
 import range from 'lodash/range'
 
 import { useInject } from 'IoC'
@@ -12,6 +13,7 @@ import {
 import { INavigationService, INavigationServiceTid } from 'services'
 import { ScreenContainer } from 'components/ScreenContainer'
 import { CommonScreenName } from 'constants/screen.types'
+import { LoadingHeader } from './components/LoadingHeader'
 
 import { OneBot } from './components/OneBot'
 
@@ -34,6 +36,7 @@ export const Loading = () => {
       bottomInsetColor={'#1C1C1E'}
       style={SS.screenContainer}
     >
+      <LoadingHeader />
       <View style={SS.pendingContainer}>
         {header()}
         {range(3).map((_, index) => (
@@ -73,8 +76,7 @@ const SS = StyleSheet.create({
     fontSize: 20
   },
   screenContainer: {
-    backgroundColor: '#1C1C1E',
-    paddingLeft: 18
+    backgroundColor: '#1C1C1E'
   },
   pendingContainer: {
     backgroundColor: '#1C1C1E',
@@ -84,6 +86,7 @@ const SS = StyleSheet.create({
     borderBottomLeftRadius: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    paddingLeft: 18
   }
 })

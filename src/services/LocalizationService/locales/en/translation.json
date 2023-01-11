@@ -7,5 +7,10 @@
   "add more later": "You can add more later",
   "done": "Done",
   "start message": "Start message",
-  "add another": "Add another SideMind"
+  "add another": "Add another SideMind",
+  "load new chat": "New chat",
+  "loading ais": "Loading curated AIs for you",
+  "waiting dot": ".",
+  "waiting 2 dots": "..",
+  "waiting 3 dots": "..."
 }
