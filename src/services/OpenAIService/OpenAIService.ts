@@ -7,7 +7,7 @@ export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 export interface IOpenAIService {
   init(): void
 
-  createCompletion(prompt: string, isFirst?: boolean): Promise<string>
+  createCompletion(prompt: string): Promise<string>
 
   clearHistory(): void
 }
@@ -25,8 +25,8 @@ export class OpenAIService implements IOpenAIService {
     this._openAIApi = new OpenAIApi(this._config)
   }
 
-  async createCompletion(prompt: string, isFirst?: boolean) {
-    this._history = `${this._history}${isFirst ? '' : '\n###\n'}${prompt}`
+  async createCompletion(prompt: string) {
+    this._history = `${this._history} \n\n###: ${prompt}. \n\n`
     try {
       const res = await this._openAIApi.createCompletion({
         model: 'text-davinci-003',
@@ -37,11 +37,10 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: 0.6,
         stop: ['###']
       })
-      this._history = `${this._history}${isFirst ? '' : '\n###\n'}${
-        res.data.choices[0].text
-      }`
+      this._history = `${this._history} ${res.data.choices[0].text}`
       return res.data.choices[0].text
     } catch (e) {
+      console.log(e)
       return 'Some error occurred, now chat is unavailable'
     }
   }
