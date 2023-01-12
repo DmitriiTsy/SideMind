@@ -2,6 +2,8 @@ import firestore, {
   FirebaseFirestoreTypes
 } from '@react-native-firebase/firestore'
 import storage from '@react-native-firebase/storage'
+import analytics from '@react-native-firebase/analytics'
+import uuid from 'react-native-uuid'
 
 import { Inject, Injectable } from 'IoC'
 
@@ -11,16 +13,25 @@ import {
 } from 'services/SystemInfoService'
 import {
   BotModel,
-  IFirebaseResponseUsers,
-  IFirebaseResponseBots
+  IFirebaseResponseBots,
+  IFirebaseResponseUsers
 } from 'services/FirebaseService/types'
-import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { ESender } from 'components/Chat/Chat.vm'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
 export interface IFirebaseService {
   init(): Promise<void>
+
+  setBots(): void
+
+  setMessage(
+    botId: number,
+    type: ESender,
+    text: string,
+    isError?: boolean
+  ): void
 }
 
 @Injectable()
@@ -31,7 +42,6 @@ export class FirebaseService implements IFirebaseService {
   constructor(
     @Inject(ISystemInfoServiceTid)
     private _systemInfoService: ISystemInfoService,
-    @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
     @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {
     this._usersCollection = firestore().collection('usersList')
@@ -40,7 +50,6 @@ export class FirebaseService implements IFirebaseService {
 
   async init() {
     await this._systemInfoService.init()
-    this._openAIService.init()
 
     try {
       await Promise.all([
@@ -57,10 +66,12 @@ export class FirebaseService implements IFirebaseService {
     const { exists } = await this._usersCollection
       .doc(this._systemInfoService.deviceId)
       .get()
-    !exists &&
-      (await this._usersCollection
-        .doc(this._systemInfoService.deviceId)
-        .set({}))
+    if (!exists) {
+      await Promise.all([
+        this._usersCollection.doc(this._systemInfoService.deviceId).set({}),
+        this.logFirstOpen()
+      ])
+    }
   }
 
   async getBotsList() {
@@ -85,5 +96,56 @@ export class FirebaseService implements IFirebaseService {
     }
 
     return botsList
+  }
+
+  async logFirstOpen() {
+    await analytics().logEvent('FirstOpen', {
+      deviceId: this._systemInfoService.deviceId
+    })
+  }
+
+  async logMessage(
+    messageId: string | number,
+    botId: number,
+    type: ESender,
+    isError: boolean
+  ) {
+    await analytics().logEvent(
+      isError
+        ? 'Error OpenAI'
+        : type === ESender.BOT
+        ? 'MessageReceived'
+        : 'MessageSend',
+      { messageId, deviceId: this._systemInfoService.deviceId, botId }
+    )
+  }
+
+  async setMessage(
+    botId: number,
+    type: ESender,
+    text: string,
+    isError?: boolean
+  ) {
+    const id = uuid.v4(type) + `--${type}`
+    await Promise.all([
+      this._usersCollection.doc(this._systemInfoService.deviceId).update({
+        [botId]: firestore.FieldValue.arrayUnion({
+          type,
+          text,
+          messageId: id
+        })
+      }),
+      this.logMessage(id, botId, type, isError)
+    ])
+  }
+
+  async setBots() {
+    const formatted = {}
+
+    this._appStore.usedBots.map((el) => (formatted[el.id] = []))
+
+    await this._usersCollection
+      .doc(this._systemInfoService.deviceId)
+      .set(formatted)
   }
 }
