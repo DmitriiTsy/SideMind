@@ -1,28 +1,38 @@
-import { MMKVLoader, create, useMMKVStorage } from 'react-native-mmkv-storage'
+import { MMKVLoader, MMKVInstance } from 'react-native-mmkv-storage'
 
-import { LiteralUnion } from 'prettier'
+import { observable } from 'mobx'
 
 import { Injectable } from 'IoC'
 
-
-export const storage = new MMKVLoader().initialize()
-export const useStorage = create(storage)
+export const IStorageServiceTid = Symbol.for('IStorageServiceTid')
+// export const useStorage = create(storage)
 export interface IStorageService {
-  storage: void
+  storage: MMKVInstance
+  setUserLogin: () => void
+  getUserLogin: () => boolean
+}
+
+type User = {
+  id: string
+  avatars: Array<string>
+  messages: Array<string>
 }
 
 @Injectable()
 export class StorageService implements IStorageService {
-  storage: void
+  constructor() {
+    this.storage = new MMKVLoader().initialize()
+  }
+  @observable storage: MMKVInstance
 
   private _storage: string
   private _key: string
 
-  useStorage = (
-    key: LiteralUnion<'user' | 'password'>,
-    defaultValue?: string
-  ) => {
-    const [value, setValue] = useMMKVStorage(key, storage, defaultValue)
-    return [value, setValue]
+  setUserLogin() {
+    this.storage.setBool('userLogin', true)
+  }
+
+  getUserLogin() {
+    return this.storage.getBool('userLogin')
   }
 }

@@ -30,6 +30,12 @@ import {
   OpenAIService
 } from 'services/OpenAIService'
 
+import {
+  IStorageService,
+  IStorageServiceTid,
+  StorageService
+} from './StorageService'
+
 export class ServiceModule implements IoCModule {
   public Configure(ioc: Container) {
     ioc
@@ -55,6 +61,10 @@ export class ServiceModule implements IoCModule {
     ioc
       .bind<IOpenAIService>(IOpenAIServiceTid)
       .to(OpenAIService)
+      .inSingletonScope()
+    ioc
+      .bind<IStorageService>(IStorageServiceTid)
+      .to(StorageService)
       .inSingletonScope()
   }
 }
