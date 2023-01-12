@@ -5,17 +5,26 @@ import { useInject } from 'IoC'
 
 import { Svg } from 'components/ui/Svg'
 
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import {
+  ILocalizationService,
+  ILocalizationServiceTid,
+  INavigationService,
+  INavigationServiceTid
+} from 'services'
+import { CommonScreenName } from 'constants/screen.types'
 
 export const NewBot = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
 
-  const onPress = useCallback(() => {
-    // navigation.navigate(CommonScreenName.SelectBots)
-  }, [])
+  const addNewBot = useCallback(() => {
+    navigation.navigate(CommonScreenName.SelectBots, {
+      isStarting: false
+    })
+  }, [navigation])
 
   return (
-    <Pressable style={SS.container} onPress={onPress}>
+    <Pressable style={SS.container} onPress={addNewBot}>
       <Text style={SS.title}>{t.get('add another')}</Text>
       <Svg
         name={'PointerLeft'}
