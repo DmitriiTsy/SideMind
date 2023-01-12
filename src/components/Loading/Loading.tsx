@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { StyleSheet, View, Text, Animated } from 'react-native'
 
 
 import range from 'lodash/range'
@@ -18,18 +18,76 @@ import { LoadingHeader } from './components/LoadingHeader'
 import { OneBot } from './components/OneBot'
 
 export const Loading = () => {
+  const animation = useRef(new Animated.Value(0)).current
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
 
+  const startAnimation = () => {
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: false
+    }).start(() => {
+      return Animated.timing(animation, {
+        toValue: 2,
+        duration: 400,
+        useNativeDriver: false
+      }).start(() => {
+        return Animated.timing(animation, {
+          toValue: 3,
+          duration: 400,
+          useNativeDriver: false
+        }).start(() => {
+          return Animated.timing(animation, {
+            toValue: 4,
+            duration: 400,
+            useNativeDriver: false
+          }).start(() => {
+            return Animated.timing(animation, {
+              toValue: 5,
+              duration: 400,
+              useNativeDriver: false
+            }).start(() => {
+              return Animated.timing(animation, {
+                toValue: 6,
+                duration: 400,
+                useNativeDriver: false
+              }).start()
+            })
+          })
+        })
+      })
+    })
+  }
+
+  const boxInterpolation = animation.interpolate({
+    inputRange: [0, 1, 2, 3, 4, 5, 6],
+    outputRange: [
+      'rgba(72, 72, 73, 0.3)',
+      '#484849',
+      'rgba(72, 72, 73, 0.3)',
+      '#484849',
+      'rgba(72, 72, 73, 0.3)',
+      '#484849',
+      'rgba(72, 72, 73, 0.3)'
+    ]
+  })
 //   useEffect(() => {
-//     setTimeout(() => navigation.navigate(CommonScreenName.SelectBots), 3000)
+//     setTimeout(() => navigation.navigate(CommonScreenName.SelectBots), 4000)
 //   })
 
+  const animatedStyle = {
+    backgroundColor: boxInterpolation
+  }
   const header = () => (
     <View style={SS.header_container}>
-      <View style={SS.header_text}></View>
+      <Animated.View
+        style={{ ...SS.header_text, ...animatedStyle }}
+      ></Animated.View>
     </View>
   )
+
+  startAnimation()
   return (
     <ScreenContainer
       topInsetColor={'#1C1C1E'}
