@@ -3,6 +3,7 @@ export interface IFirebaseResponseUsers {
 }
 
 export interface BotModel {
+  map(arg0: (bot: any) => number): any
   name: string
   tagLine: string
   imagePath: string
