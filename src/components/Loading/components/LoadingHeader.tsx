@@ -3,11 +3,9 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import { useInject } from 'IoC'
 
-import { observer } from 'mobx-react'
-
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
-export const LoadingHeader = observer(() => {
+export const LoadingHeader = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   return (
     <View style={SS.container}>
@@ -18,7 +16,7 @@ export const LoadingHeader = observer(() => {
       <Text style={SS.counter}>{t.get('add more later')}</Text>
     </View>
   )
-})
+}
 
 const SS = StyleSheet.create({
   container: {

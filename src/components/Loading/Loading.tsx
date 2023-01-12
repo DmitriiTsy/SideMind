@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { StyleSheet, View, Text, Animated } from 'react-native'
-
 
 import range from 'lodash/range'
 
@@ -13,6 +12,7 @@ import {
 import { INavigationService, INavigationServiceTid } from 'services'
 import { ScreenContainer } from 'components/ScreenContainer'
 import { CommonScreenName } from 'constants/screen.types'
+
 import { LoadingHeader } from './components/LoadingHeader'
 
 import { OneBot } from './components/OneBot'
@@ -72,9 +72,10 @@ export const Loading = () => {
       'rgba(72, 72, 73, 0.3)'
     ]
   })
-//   useEffect(() => {
-//     setTimeout(() => navigation.navigate(CommonScreenName.SelectBots), 4000)
-//   })
+
+  useEffect(() => {
+    setTimeout(() => navigation.navigate(CommonScreenName.SelectBots), 3000)
+  })
 
   const animatedStyle = {
     backgroundColor: boxInterpolation
@@ -102,15 +103,15 @@ export const Loading = () => {
       <View style={SS.pendingContainer}>
         {header()}
         {range(3).map((_, index) => (
-          <OneBot key={index} />
+          <OneBot key={index} props={animatedStyle} />
         ))}
         {header()}
         {range(3).map((_, index) => (
-          <OneBot key={index} />
+          <OneBot key={index} props={animatedStyle} />
         ))}
         {header()}
         {range(3).map((_, index) => (
-          <OneBot key={index} />
+          <OneBot key={index} props={animatedStyle} />
         ))}
       </View>
     </ScreenContainer>

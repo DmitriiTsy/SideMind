@@ -1,18 +1,22 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
-import { observer } from 'mobx-react'
+import { StyleSheet, View, Animated } from 'react-native'
 
-export const OneBot = observer(() => {
+export const OneBot = ({ props }) => {
+  const AnimatedColors = props
   return (
     <View style={SS.pendingContainer}>
-      <View style={SS.image}></View>
+      <Animated.View style={{ ...SS.image, ...AnimatedColors }}></Animated.View>
       <View style={SS.textWrapper}>
-        <View style={SS.textHeader}></View>
-        <View style={SS.textRegular}></View>
+        <Animated.View
+          style={{ ...SS.textHeader, ...AnimatedColors }}
+        ></Animated.View>
+        <Animated.View
+          style={{ ...SS.textRegular, ...AnimatedColors }}
+        ></Animated.View>
       </View>
     </View>
   )
-})
+}
 
 const SS = StyleSheet.create({
   pendingContainer: {
