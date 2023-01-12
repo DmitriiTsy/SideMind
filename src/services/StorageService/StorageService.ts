@@ -5,11 +5,12 @@ import { observable } from 'mobx'
 import { Injectable } from 'IoC'
 
 export const IStorageServiceTid = Symbol.for('IStorageServiceTid')
-// export const useStorage = create(storage)
 export interface IStorageService {
   storage: MMKVInstance
   setUserLogin: () => void
   getUserLogin: () => boolean
+  setUserAvatars: () => void
+  getUserAvatars: () => void
 }
 
 type User = {
@@ -34,5 +35,13 @@ export class StorageService implements IStorageService {
 
   getUserLogin() {
     return this.storage.getBool('userLogin')
+  }
+
+  setUserAvatars() {
+    this.storage.setArray('First', undefined)
+  }
+
+  getUserAvatars() {
+    this.storage.getArray('Second', undefined)
   }
 }

@@ -1,7 +1,8 @@
 import { action, observable } from 'mobx'
 
-import { Injectable } from 'IoC'
+import { Injectable, useInject } from 'IoC'
 import { BotModel } from 'services/FirebaseService/types'
+import { IStorageService, IStorageServiceTid } from 'services/StorageService'
 
 export const IAppStoreTid = Symbol.for('IAppStoreTid')
 
@@ -16,6 +17,12 @@ export interface IAppStore {
   setStartingBots(bots: BotModel[][]): void
   setUsedBots(): void
   addUsed(bot: BotModel): void
+  storageSetUsedBots(): void
+}
+
+const StorageHandler = () => {
+  const storage = useInject<IStorageService>(IStorageServiceTid)
+  return storage
 }
 
 @Injectable()
@@ -24,7 +31,7 @@ export class AppStore implements IAppStore {
   @observable availableBots: BotModel[][] = []
   @observable usedBots: BotModel[] = []
   @observable startingBots: BotModel[][] = []
-
+  storage = StorageHandler()
   @action.bound
   addSelected(id: number) {
     if (this.selected.find((el) => el === id)) {
@@ -55,6 +62,16 @@ export class AppStore implements IAppStore {
     )
     this.startingBots.map((bots) => bots.map((bot) => _bots.unshift(bot)))
     this.usedBots = _bots
+  }
+
+  @action.bound
+  storageSetUsedBots() {
+    const _bots: BotModel[] = []
+    this.usedBots.map((bots) =>
+      bots.map((bot) => this.selected.includes(bot.id) && _bots.push(bot))
+    )
+    this.startingBots.map((bots) => bots.map((bot) => _bots.unshift(bot)))
+    this.storage.setUserAvatars()
   }
 
   @action.bound
