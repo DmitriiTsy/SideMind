@@ -2,6 +2,10 @@ import firestore, {
   FirebaseFirestoreTypes
 } from '@react-native-firebase/firestore'
 import storage from '@react-native-firebase/storage'
+import analytics from '@react-native-firebase/analytics'
+import uuid from 'react-native-uuid'
+
+import { action, observable } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 
@@ -11,16 +15,29 @@ import {
 } from 'services/SystemInfoService'
 import {
   BotModel,
-  IFirebaseResponseUsers,
-  IFirebaseResponseBots
+  IFirebaseResponseBots,
+  IFirebaseResponseUsers
 } from 'services/FirebaseService/types'
-import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { ESender } from 'components/Chat/Chat.vm'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
 export interface IFirebaseService {
+  pendingBots: boolean
+
   init(): Promise<void>
+
+  setBots(): void
+
+  addBot(botId: number): void
+
+  setMessage(
+    botId: number,
+    type: ESender,
+    text: string,
+    isError?: boolean
+  ): void
 }
 
 @Injectable()
@@ -28,10 +45,11 @@ export class FirebaseService implements IFirebaseService {
   private _usersCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseUsers>
   private _botsCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
 
+  @observable pendingBots = false
+
   constructor(
     @Inject(ISystemInfoServiceTid)
     private _systemInfoService: ISystemInfoService,
-    @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
     @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {
     this._usersCollection = firestore().collection('usersList')
@@ -40,7 +58,6 @@ export class FirebaseService implements IFirebaseService {
 
   async init() {
     await this._systemInfoService.init()
-    this._openAIService.init()
 
     try {
       await Promise.all([
@@ -57,16 +74,21 @@ export class FirebaseService implements IFirebaseService {
     const { exists } = await this._usersCollection
       .doc(this._systemInfoService.deviceId)
       .get()
-    !exists &&
-      (await this._usersCollection
-        .doc(this._systemInfoService.deviceId)
-        .set({}))
+    if (!exists) {
+      await Promise.all([
+        this._usersCollection.doc(this._systemInfoService.deviceId).set({}),
+        this.logFirstOpen()
+      ])
+    }
   }
 
+  @action.bound
   async getBotsList() {
+    this.pendingBots = true
     const data = (await this._botsCollection.doc('bots').get()).data()
     const botsList = await this.mapBots(data)
     this._appStore.setAvailableBots(botsList)
+    this.pendingBots = false
   }
 
   async getStartingBotsList() {
@@ -85,5 +107,62 @@ export class FirebaseService implements IFirebaseService {
     }
 
     return botsList
+  }
+
+  async logFirstOpen() {
+    await analytics().logEvent('FirstOpen', {
+      deviceId: this._systemInfoService.deviceId
+    })
+  }
+
+  async logMessage(
+    messageId: string | number,
+    botId: number,
+    type: ESender,
+    isError: boolean
+  ) {
+    await analytics().logEvent(
+      isError
+        ? 'Error OpenAI'
+        : type === ESender.BOT
+        ? 'MessageReceived'
+        : 'MessageSend',
+      { messageId, deviceId: this._systemInfoService.deviceId, botId }
+    )
+  }
+
+  async setMessage(
+    botId: number,
+    type: ESender,
+    text: string,
+    isError?: boolean
+  ) {
+    const id = uuid.v4(type) + `--${type}`
+    await Promise.all([
+      this._usersCollection.doc(this._systemInfoService.deviceId).update({
+        [botId]: firestore.FieldValue.arrayUnion({
+          type,
+          text,
+          messageId: id
+        })
+      }),
+      this.logMessage(id, botId, type, isError)
+    ])
+  }
+
+  async setBots() {
+    const formatted = {}
+
+    this._appStore.usedBots.map((el) => (formatted[el.id] = []))
+
+    await this._usersCollection
+      .doc(this._systemInfoService.deviceId)
+      .set(formatted)
+  }
+
+  async addBot(botId: number) {
+    await this._usersCollection
+      .doc(this._systemInfoService.deviceId)
+      .update({ [botId]: [] })
   }
 }

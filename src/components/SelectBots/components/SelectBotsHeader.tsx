@@ -15,12 +15,14 @@ import { CommonScreenName } from 'constants/screen.types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { Svg } from 'components/ui/Svg'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
+import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
 export const SelectBotsHeader = observer(() => {
   const storage = useInject<IStorageService>(IStorageServiceTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
+  const firebase = useInject<IFirebaseService>(IFirebaseServiceTid)
 
   const { isStarting } = navigation.customParams
 
@@ -32,9 +34,10 @@ export const SelectBotsHeader = observer(() => {
     if (enabled) {
       storage.setUserLogin()
       appStore.setUsedBots()
+      firebase.setBots()
       navigation.navigate(CommonScreenName.MainFeed)
     }
-  }, [appStore, enabled, navigation, storage])
+  }, [appStore, enabled, firebase, navigation, storage])
 
   const navigate = useCallback(() => {
     navigation.navigate(CommonScreenName.MainFeed)
@@ -42,7 +45,9 @@ export const SelectBotsHeader = observer(() => {
 
   return (
     <View style={SS.container}>
-      <View style={{ marginRight: 60 }}>
+      <View style={{ width: 30, height: 1 }} />
+
+      <View>
         <Text style={SS.title}>
           {t.get(isStarting ? 'choose bots' : 'pick additional')}
         </Text>
@@ -60,7 +65,7 @@ export const SelectBotsHeader = observer(() => {
             {t.get('done')}
           </Text>
         ) : (
-          <Svg name={'Cross'} style={{ marginRight: 14 }} />
+          <Svg name={'Cross'} />
         )}
       </Pressable>
     </View>
@@ -75,13 +80,13 @@ const SS = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'space-between',
+    paddingHorizontal: 14
   },
   activeText: {
     fontWeight: '500',
     fontSize: 16,
-    color: '#559EF8',
-    marginHorizontal: 18
+    color: '#559EF8'
   },
   inactiveText: {
     color: '#484849'

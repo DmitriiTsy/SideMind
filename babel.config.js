@@ -7,6 +7,7 @@ const plugins = [
   ],
   '@babel/plugin-transform-runtime',
   'babel-plugin-transform-typescript-metadata',
+  'react-native-reanimated/plugin',
   ['@babel/plugin-proposal-decorators', { legacy: true }],
   [
     require.resolve('babel-plugin-module-resolver'),

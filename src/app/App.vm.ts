@@ -10,6 +10,7 @@ import {
 } from 'services'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { ScreenParamTypes } from 'constants/screen.types'
+import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 
 export const IAppVMTid = Symbol.for('IAppVMTid')
 
@@ -27,12 +28,14 @@ export class AppVM implements IAppVM {
     @Inject(INavigationServiceTid)
     private _navigationService: INavigationService,
     @Inject(ILayoutServiceTid) private _layoutService: ILayoutService,
-    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService
+    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
+    @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService
   ) {}
 
   async init() {
     this._layoutService.init()
     await this._firebaseService.init()
+    this._openAIService.init()
   }
 
   initNavigation(
