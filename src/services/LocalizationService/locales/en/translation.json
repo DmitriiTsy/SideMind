@@ -1,18 +1,10 @@
 {
   "sideMind": "SideMind",
-  "cancel": "Cancel",
-  "add": "Add",
-  "add sideMinds": "Add SideMinds",
   "choose bots": "Choose 3 Minds",
   "add more later": "You can add more later",
   "done": "Done",
   "start message": "Start message",
   "add another": "Add another SideMind",
-  "pick a sidemind": "Choose a Mind",
   "pick additional": "Choose a Mind",
-  "load new chat": "New chat",
-  "loading ais": "Loading curated AIs for you",
-  "waiting dot": ".",
-  "waiting 2 dots": "..",
-  "waiting 3 dots": "..."
+  "loading ais": "Loading curated AIs for you"
 }

@@ -42,7 +42,9 @@ export const SelectBotsHeader = observer(() => {
 
   return (
     <View style={SS.container}>
-      <View style={{ marginRight: 60 }}>
+      <View style={{ width: 30, height: 1 }} />
+
+      <View>
         <Text style={SS.title}>
           {t.get(isStarting ? 'choose bots' : 'pick additional')}
         </Text>
@@ -60,7 +62,7 @@ export const SelectBotsHeader = observer(() => {
             {t.get('done')}
           </Text>
         ) : (
-          <Svg name={'Cross'} style={{ marginRight: 14 }} />
+          <Svg name={'Cross'} />
         )}
       </Pressable>
     </View>
@@ -75,13 +77,13 @@ const SS = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'space-between',
+    paddingHorizontal: 14
   },
   activeText: {
     fontWeight: '500',
     fontSize: 16,
-    color: '#559EF8',
-    marginHorizontal: 18
+    color: '#559EF8'
   },
   inactiveText: {
     color: '#484849'
