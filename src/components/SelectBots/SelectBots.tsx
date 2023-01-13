@@ -12,9 +12,12 @@ import { useInject } from 'IoC'
 
 import { BotModel } from 'services/FirebaseService/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { SkeletonBots } from 'components/SelectBots/components/skeleton/Skeleton'
+import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
 export const SelectBots = observer(() => {
   const appStore = useInject<IAppStore>(IAppStoreTid)
+  const firebaseService = useInject<IFirebaseService>(IFirebaseServiceTid)
 
   const renderItem = ({ item }: ListRenderItemInfo<BotModel[]>) => (
     <GroupedBots bots={item} />
@@ -29,13 +32,18 @@ export const SelectBots = observer(() => {
       style={SS.screenContainer}
     >
       <SelectBotsHeader />
-      <FlatList
-        data={appStore.availableBots}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        showsVerticalScrollIndicator={false}
-        style={SS.flatList}
-      />
+
+      {firebaseService.pendingBots ? (
+        <SkeletonBots />
+      ) : (
+        <FlatList
+          data={appStore.availableBots}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          showsVerticalScrollIndicator={false}
+          style={SS.flatList}
+        />
+      )}
     </ScreenContainer>
   )
 })

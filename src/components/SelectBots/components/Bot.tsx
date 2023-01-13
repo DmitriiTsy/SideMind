@@ -11,6 +11,7 @@ import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { deviceWidth } from 'utils/dimentions'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { CommonScreenName } from 'constants/screen.types'
+import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
 interface IBotProps {
   bot: BotModel
@@ -19,6 +20,7 @@ interface IBotProps {
 export const Bot: FC<IBotProps> = observer(({ bot }) => {
   const appStore = useInject<IAppStore>(IAppStoreTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const firebase = useInject<IFirebaseService>(IFirebaseServiceTid)
 
   const { isStarting } = navigation.customParams
 
@@ -30,8 +32,9 @@ export const Bot: FC<IBotProps> = observer(({ bot }) => {
 
   const addSingle = useCallback(() => {
     appStore.addUsed(bot)
+    firebase.addBot(bot.id)
     navigation.navigate(CommonScreenName.MainFeed)
-  }, [appStore, bot, navigation])
+  }, [appStore, bot, firebase, navigation])
 
   return (
     <Pressable onPress={isStarting ? onPress : addSingle} style={SS.container}>

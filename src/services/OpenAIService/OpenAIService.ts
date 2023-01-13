@@ -1,6 +1,8 @@
 import { Configuration, OpenAIApi } from 'openai'
 
-import { Injectable } from 'IoC'
+import { Inject, Injectable } from 'IoC'
+import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+import { ESender } from 'components/Chat/Chat.vm'
 import { BotModel } from 'services/FirebaseService/types'
 
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
@@ -14,10 +16,15 @@ export interface IOpenAIService {
 }
 
 @Injectable()
-export class OpenAIService implements IOpenAIService, IBotProps {
+export class OpenAIService implements IOpenAIService {
   private _config: Configuration
   private _openAIApi: OpenAIApi
   private _history: string
+
+  constructor(
+    @Inject(IFirebaseServiceTid)
+    private readonly _firebaseService: IFirebaseService
+  ) {}
 
   init() {
     this._config = new Configuration({
@@ -39,8 +46,20 @@ export class OpenAIService implements IOpenAIService, IBotProps {
         stop: ['###']
       })
       this._history = `${this._history} ${res.data.choices[0].text}`
+
+      this._firebaseService.setMessage(
+        bot.id,
+        ESender.BOT,
+        res.data.choices[0].text
+      )
       return res.data.choices[0].text
     } catch (e) {
+      this._firebaseService.setMessage(
+        bot.id,
+        ESender.BOT,
+        `Error occurred ${e}`,
+        true
+      )
       console.log(e)
       return 'Some error occurred, now chat is unavailable'
     }
