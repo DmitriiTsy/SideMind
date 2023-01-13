@@ -39,7 +39,6 @@ export class OpenAIService implements IOpenAIService, IBotProps {
         stop: ['###']
       })
       this._history = `${this._history} ${res.data.choices[0].text}`
-      console.log(bot)
       return res.data.choices[0].text
     } catch (e) {
       console.log(e)
