@@ -38,10 +38,10 @@ export class StorageService implements IStorageService {
   }
 
   setUserAvatars() {
-    this.storage.setArray('Second', ['1'])
+    this.storage.setArray('Array', ['1'])
   }
 
   getUserAvatars() {
-    this.storage.getArray('Second', [])
+    this.storage.getArray('Array', [])
   }
 }
