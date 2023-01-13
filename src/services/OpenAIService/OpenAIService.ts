@@ -1,7 +1,8 @@
 import { Configuration, OpenAIApi } from 'openai'
 
-import { Injectable } from 'IoC'
-
+import { Injectable, useInject } from 'IoC'
+import { BotModel } from 'services/FirebaseService/types'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 export interface IOpenAIService {
@@ -12,12 +13,21 @@ export interface IOpenAIService {
   clearHistory(): void
 }
 
+export const AppStoreValue = () => {
+  const appStore = useInject<IAppStore>(IAppStoreTid)
+  return appStore
+}
+interface IBotProps {
+  bot: BotModel
+}
+
 @Injectable()
 export class OpenAIService implements IOpenAIService {
   private _config: Configuration
   private _openAIApi: OpenAIApi
   private _history: string
-
+  appStore = AppStoreValue()
+  
   init() {
     this._config = new Configuration({
       apiKey: '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'
