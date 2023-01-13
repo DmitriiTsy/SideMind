@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
@@ -26,7 +26,9 @@ export const Chat = () => {
 
   const header = () => (
     <View style={SS.container}>
-      <Svg name={'PointerLeft'} style={{ marginRight: 30 }} onPress={goBack} />
+      <Pressable style={SS.containerGoback} onPress={goBack}>
+        <Svg name={'PointerLeft'} style={SS.goBackSource} />
+      </Pressable>
       <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
       <Text style={SS.title}>{chatVM.bot.name}</Text>
     </View>
@@ -72,5 +74,14 @@ const SS = StyleSheet.create({
     lineHeight: 16,
     letterSpacing: -0.3,
     color: '#FFFFFF'
+  },
+  containerGoback: {
+    height: 47,
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  goBackSource: {
+    marginRight: 30
   }
 })
