@@ -2,6 +2,7 @@ import { Configuration, OpenAIApi } from 'openai'
 
 import { Injectable } from 'IoC'
 import { BotModel } from 'services/FirebaseService/types'
+
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 export interface IOpenAIService {
@@ -13,7 +14,7 @@ export interface IOpenAIService {
 }
 
 @Injectable()
-export class OpenAIService implements IOpenAIService {
+export class OpenAIService implements IOpenAIService, IBotProps {
   private _config: Configuration
   private _openAIApi: OpenAIApi
   private _history: string
@@ -38,6 +39,7 @@ export class OpenAIService implements IOpenAIService {
         stop: ['###']
       })
       this._history = `${this._history} ${res.data.choices[0].text}`
+      console.log(bot)
       return res.data.choices[0].text
     } catch (e) {
       console.log(e)
