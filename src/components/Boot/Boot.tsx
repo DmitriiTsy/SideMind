@@ -15,7 +15,13 @@ export const Boot = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   useEffect(() => {
-    setTimeout(() => navigation.navigate(CommonScreenName.Loading), 1000)
+    setTimeout(
+      () =>
+        navigation.navigate(CommonScreenName.SelectBots, {
+          isStarting: true
+        }),
+      1000
+    )
   })
   return (
     <View style={SS.container}>

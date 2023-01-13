@@ -3,6 +3,7 @@ import { action, observable, runInAction } from 'mobx'
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 import { BotModel } from 'services/FirebaseService/types'
+import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
 export const IChatVMTid = Symbol.for('IChatVMTid')
 
@@ -33,23 +34,19 @@ export class ChatVM implements IChatVM {
   @observable pending = false
 
   constructor(
-    @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService
+    @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
+    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService
   ) {}
 
   @action.bound
   async sendMessage(message: string) {
     this.pending = true
 
-    // if (
-    //   !message.endsWith('.') &&
-    //   !message.endsWith('?') &&
-    //   !message.endsWith('!')
-    // ) {
-    //   message = message + '.'
-    // }
-
     this.messages = [{ sender: ESender.HUMAN, text: message }, ...this.messages]
-    const res = await this._openAIService.createCompletion(message)
+    this._firebaseService.setMessage(this.bot.id, ESender.HUMAN, message)
+
+    const res = await this._openAIService.createCompletion(message, this.bot.id)
+
     runInAction(() => {
       this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages]
       this.pending = false
@@ -62,12 +59,16 @@ export class ChatVM implements IChatVM {
   }
 
   async getFirstMessage() {
+    this.pending = true
+
     this.messages = []
     this._openAIService.clearHistory()
     const res = await this._openAIService.createCompletion(
       this.bot.prompt,
-      true
+      this.bot.id
     )
+
+    this.pending = false
     runInAction(() => (this.messages = [{ sender: ESender.BOT, text: res }]))
   }
 }

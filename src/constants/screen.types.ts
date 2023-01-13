@@ -7,7 +7,7 @@ export enum CommonScreenName {
 }
 
 export interface CommonScreenParamsMap {
-  SelectBots: undefined
+  SelectBots: { isStarting: boolean }
   Boot: undefined
   MainFeed: undefined
   Chat: undefined
