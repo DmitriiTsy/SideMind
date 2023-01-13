@@ -26,6 +26,8 @@ export interface IFirebaseService {
 
   setBots(): void
 
+  addBot(botId: number): void
+
   setMessage(
     botId: number,
     type: ESender,
@@ -147,5 +149,11 @@ export class FirebaseService implements IFirebaseService {
     await this._usersCollection
       .doc(this._systemInfoService.deviceId)
       .set(formatted)
+  }
+
+  async addBot(botId: number) {
+    await this._usersCollection
+      .doc(this._systemInfoService.deviceId)
+      .update({ [botId]: [] })
   }
 }
