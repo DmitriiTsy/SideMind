@@ -14,8 +14,7 @@ import {
   BootScreen,
   ChatScreen,
   MainFeedScreen,
-  SelectBotsScreen,
-  LoadingScreen
+  SelectBotsScreen
 } from 'screens'
 import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
 
@@ -40,10 +39,6 @@ export const App = () => {
         initialRouteName={CommonScreenName.Boot}
       >
         <Stack.Screen name={CommonScreenName.Boot} component={BootScreen} />
-        <Stack.Screen
-          name={CommonScreenName.Loading}
-          component={LoadingScreen}
-        />
         <Stack.Screen
           name={CommonScreenName.SelectBots}
           component={SelectBotsScreen}

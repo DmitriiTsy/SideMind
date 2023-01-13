@@ -5,6 +5,8 @@ import storage from '@react-native-firebase/storage'
 import analytics from '@react-native-firebase/analytics'
 import uuid from 'react-native-uuid'
 
+import { action, observable } from 'mobx'
+
 import { Inject, Injectable } from 'IoC'
 
 import {
@@ -22,6 +24,8 @@ import { ESender } from 'components/Chat/Chat.vm'
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
 export interface IFirebaseService {
+  pendingBots: boolean
+
   init(): Promise<void>
 
   setBots(): void
@@ -40,6 +44,8 @@ export interface IFirebaseService {
 export class FirebaseService implements IFirebaseService {
   private _usersCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseUsers>
   private _botsCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
+
+  @observable pendingBots = false
 
   constructor(
     @Inject(ISystemInfoServiceTid)
@@ -76,10 +82,13 @@ export class FirebaseService implements IFirebaseService {
     }
   }
 
+  @action.bound
   async getBotsList() {
+    this.pendingBots = true
     const data = (await this._botsCollection.doc('bots').get()).data()
     const botsList = await this.mapBots(data)
     this._appStore.setAvailableBots(botsList)
+    this.pendingBots = false
   }
 
   async getStartingBotsList() {
