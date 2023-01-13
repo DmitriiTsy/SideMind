@@ -9,6 +9,13 @@ export interface BotModel {
   category: string
   id: number
   prompt: string
+  params: {
+    temperature: number
+    frequency_penalty: number
+    max_tokens: number
+    presence_penalty: number
+    top_p: number
+  }
 }
 
 export interface IFirebaseResponseBots {
