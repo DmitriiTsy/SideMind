@@ -45,7 +45,7 @@ export class ChatVM implements IChatVM {
     this.messages = [{ sender: ESender.HUMAN, text: message }, ...this.messages]
     this._firebaseService.setMessage(this.bot.id, ESender.HUMAN, message)
 
-    const res = await this._openAIService.createCompletion(message, this.bot.id)
+    const res = await this._openAIService.createCompletion(message, this.bot)
 
     runInAction(() => {
       this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages]
@@ -65,7 +65,7 @@ export class ChatVM implements IChatVM {
     this._openAIService.clearHistory()
     const res = await this._openAIService.createCompletion(
       this.bot.prompt,
-      this.bot.id
+      this.bot
     )
 
     this.pending = false
