@@ -61,7 +61,7 @@ export class AppStore implements IAppStore {
   addUsed(bot: BotModel) {
     const exist = this.usedBots.find((el) => el.id === bot.id)
     if (!exist) {
-      this.usedBots.push(bot)
+      this.usedBots.unshift(bot)
     }
   }
 }
