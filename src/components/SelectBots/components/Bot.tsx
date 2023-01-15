@@ -43,7 +43,16 @@ export const Bot: FC<IBotProps> = observer(({ bot }) => {
       <View style={SS.containerRight}>
         <View>
           <Text style={SS.botName}>{bot.name}</Text>
-          <Text style={SS.botDesc}>{bot.tagLine}</Text>
+          <Text
+            style={[
+              SS.botDesc,
+              isStarting && {
+                maxWidth: deviceWidth * 0.7
+              }
+            ]}
+          >
+            {bot.tagLine}
+          </Text>
         </View>
         {isStarting && (
           <View style={SS.empty}>{selected && <Svg name={'Check'} />}</View>
@@ -83,8 +92,7 @@ const SS = StyleSheet.create({
     lineHeight: 12,
     letterSpacing: 0.2,
     marginTop: 2,
-    marginBottom: 7.5,
-    maxWidth: deviceWidth * 0.75
+    marginBottom: 7.5
   },
   empty: {
     width: 20,

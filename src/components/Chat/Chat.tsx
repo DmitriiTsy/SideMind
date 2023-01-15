@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
@@ -15,10 +15,6 @@ import { ChatInput, List } from './components'
 export const Chat = () => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
-
-  useEffect(() => {
-    chatVM.getFirstMessage()
-  })
 
   const goBack = () => {
     navigation.goBack()

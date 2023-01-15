@@ -1,8 +1,9 @@
 import { action, observable } from 'mobx'
 
-import { Injectable, useInject } from 'IoC'
+import { Inject, Injectable } from 'IoC'
 import { BotModel } from 'services/FirebaseService/types'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
+import { IMessage } from 'components/Chat/types'
 
 export const IAppStoreTid = Symbol.for('IAppStoreTid')
 
@@ -17,12 +18,9 @@ export interface IAppStore {
   setStartingBots(bots: BotModel[][]): void
   setUsedBots(): void
   addUsed(bot: BotModel): void
-  storageSetUsedBots(): void
-}
-
-const StorageHandler = () => {
-  const storage = useInject<IStorageService>(IStorageServiceTid)
-  return storage
+  setAvatarsFromStorage(): void
+  setMessageToAvatar(botId: number, message: IMessage): void
+  setHistoryToAvatar(botId: number, history: string): void
 }
 
 @Injectable()
@@ -31,7 +29,12 @@ export class AppStore implements IAppStore {
   @observable availableBots: BotModel[][] = []
   @observable usedBots: BotModel[] = []
   @observable startingBots: BotModel[][] = []
-  storage = StorageHandler()
+
+  constructor(
+    @Inject(IStorageServiceTid)
+    private readonly _storageService: IStorageService
+  ) {}
+
   @action.bound
   addSelected(id: number) {
     if (this.selected.find((el) => el === id)) {
@@ -62,23 +65,42 @@ export class AppStore implements IAppStore {
     )
     this.startingBots.map((bots) => bots.map((bot) => _bots.unshift(bot)))
     this.usedBots = _bots
-  }
-
-  @action.bound
-  storageSetUsedBots() {
-    const _bots: BotModel[] = []
-    this.usedBots.map((bots) =>
-      bots.map((bot) => this.selected.includes(bot.id) && _bots.push(bot))
-    )
-    this.startingBots.map((bots) => bots.map((bot) => _bots.unshift(bot)))
-    this.storage.setUserAvatars()
+    this._storageService.setUserAvatars(this.usedBots)
   }
 
   @action.bound
   addUsed(bot: BotModel) {
     const exist = this.usedBots.find((el) => el.id === bot.id)
     if (!exist) {
-      this.usedBots.push(bot)
+      this.usedBots = [...this.usedBots, bot]
+      this._storageService.setUserAvatars(this.usedBots)
     }
+  }
+
+  @action.bound
+  setAvatarsFromStorage() {
+    this.usedBots = this._storageService.getUserAvatars()
+  }
+
+  //todo объеденить след два метода
+  setMessageToAvatar(botId: number, message: IMessage) {
+    this.usedBots = this.usedBots.map((el) => {
+      if (el.id === botId) {
+        // if (!el.messages) el.messages = { displayed: [], history: '' }
+        el.messages.displayed = [message, ...el.messages.displayed]
+      }
+      return el
+    })
+    this._storageService.setUserAvatars(this.usedBots)
+  }
+
+  setHistoryToAvatar(botId: number, history: string) {
+    this.usedBots = this.usedBots.map((el) => {
+      if (el.id === botId) {
+        if (!el.messages) el.messages = { displayed: [], history: '' }
+        el.messages.history = history
+      }
+      return el
+    })
   }
 }

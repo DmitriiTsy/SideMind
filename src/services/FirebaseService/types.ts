@@ -1,9 +1,10 @@
+import { IMessage } from 'components/Chat/types'
+
 export interface IFirebaseResponseUsers {
   message?: string[]
 }
 
 export interface BotModel {
-  map(arg0: (bot: any) => number): any
   name: string
   tagLine: string
   imagePath: string
@@ -16,6 +17,10 @@ export interface BotModel {
     max_tokens: number
     presence_penalty: number
     top_p: number
+  }
+  messages?: {
+    displayed?: IMessage[]
+    history?: string
   }
 }
 

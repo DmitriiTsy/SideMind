@@ -20,12 +20,17 @@ export const ChatPreview: FC<IChatPreview> = ({ bot, index }) => {
     chatVM.setBot(bot)
     navigation.navigate(CommonScreenName.Chat)
   }
+
   return (
     <Pressable style={SS.container} onPress={onPress}>
       <Image source={{ uri: bot.imagePath }} style={SS.avatar} />
       <View style={[SS.containerRight, !isFirst && SS.line]}>
         <Text style={SS.botName}>{bot.name}</Text>
-        <Text style={SS.botDesc}>{bot.tagLine}</Text>
+        <Text style={SS.botDesc} numberOfLines={2}>
+          {(bot.messages?.displayed?.length !== 0 &&
+            bot.messages?.displayed[0]?.text?.trim()) ||
+            bot.tagLine}
+        </Text>
       </View>
     </Pressable>
   )
