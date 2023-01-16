@@ -14,9 +14,11 @@ import {
 import { CommonScreenName } from 'constants/screen.types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { Svg } from 'components/ui/Svg'
+import { IStorageService, IStorageServiceTid } from 'services/StorageService'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
 export const SelectBotsHeader = observer(() => {
+  const storage = useInject<IStorageService>(IStorageServiceTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
@@ -30,11 +32,12 @@ export const SelectBotsHeader = observer(() => {
   )
   const addStarting = useCallback(() => {
     if (enabled) {
+      storage.setUserLogin()
       appStore.setUsedBots()
       firebase.setBots()
       navigation.navigate(CommonScreenName.MainFeed)
     }
-  }, [appStore, enabled, firebase, navigation])
+  }, [appStore, enabled, firebase, navigation, storage])
 
   const navigate = useCallback(() => {
     navigation.navigate(CommonScreenName.MainFeed)

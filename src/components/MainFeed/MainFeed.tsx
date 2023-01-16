@@ -39,7 +39,7 @@ export const MainFeed = observer(() => {
 
   const onPressGetBack = useCallback(() => {
     navigation.navigate(CommonScreenName.SelectBots, {
-      isStarting: true
+      isStarting: false
     })
   }, [navigation])
 

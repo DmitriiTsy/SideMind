@@ -10,18 +10,27 @@ import { Svg } from 'components/ui/Svg'
 import { INavigationService, INavigationServiceTid } from 'services'
 
 import { CommonScreenName } from 'constants/screen.types'
+import { IStorageService, IStorageServiceTid } from 'services/StorageService'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 export const Boot = () => {
+  const storage = useInject<IStorageService>(IStorageServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const appStore = useInject<IAppStore>(IAppStoreTid)
+
   useEffect(() => {
-    setTimeout(
-      () =>
+    setTimeout(() => {
+      const value = storage.getUserLogin()
+      if (value) {
+        appStore.setAvatarsFromStorage()
+        navigation.navigate(CommonScreenName.MainFeed)
+      } else {
         navigation.navigate(CommonScreenName.SelectBots, {
           isStarting: true
-        }),
-      1000
-    )
+        })
+      }
+    }, 1000)
   })
   return (
     <View style={SS.container}>

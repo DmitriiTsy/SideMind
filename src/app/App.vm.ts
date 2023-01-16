@@ -34,8 +34,8 @@ export class AppVM implements IAppVM {
 
   async init() {
     this._layoutService.init()
-    await this._firebaseService.init()
     this._openAIService.init()
+    await this._firebaseService.init()
   }
 
   initNavigation(

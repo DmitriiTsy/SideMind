@@ -19,7 +19,7 @@ import {
   IFirebaseResponseUsers
 } from 'services/FirebaseService/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { ESender } from 'components/Chat/Chat.vm'
+import { ESender } from 'components/Chat/types'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
@@ -123,7 +123,7 @@ export class FirebaseService implements IFirebaseService {
   ) {
     await analytics().logEvent(
       isError
-        ? 'Error OpenAI'
+        ? 'Error_OpenAI'
         : type === ESender.BOT
         ? 'MessageReceived'
         : 'MessageSend',
