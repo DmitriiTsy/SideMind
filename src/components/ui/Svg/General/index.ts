@@ -13,3 +13,5 @@ export * from './Enter'
 export * from './SvgEnterActive'
 
 export * from './SvgCross'
+
+export * from './Reset'

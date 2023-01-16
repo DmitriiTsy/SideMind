@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
@@ -21,10 +21,19 @@ export const Chat = () => {
   }
 
   const header = () => (
-    <View style={SS.container}>
-      <Svg name={'PointerLeft'} style={{ marginRight: 30 }} onPress={goBack} />
-      <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
-      <Text style={SS.title}>{chatVM.bot.name}</Text>
+    <View style={SS.wrapper}>
+      <View style={SS.container}>
+        <Svg
+          name={'PointerLeft'}
+          style={{ marginRight: 30 }}
+          onPress={goBack}
+        />
+        <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
+        <Text style={SS.title}>{chatVM.bot.name}</Text>
+      </View>
+      <Pressable style={SS.containerReset}>
+        <Svg name={'Reset'} onPress={goBack} />
+      </Pressable>
     </View>
   )
 
@@ -46,13 +55,25 @@ const SS = StyleSheet.create({
     backgroundColor: '#000000',
     justifyContent: 'space-between'
   },
+  containerReset: {
+    height: 47,
+    width: 20,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  wrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderColor: '#333333',
+    paddingRight: 24
+  },
   container: {
     flexDirection: 'row',
     height: 47,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    borderBottomWidth: 0.5,
-    borderColor: '#333333',
     paddingLeft: 24,
     paddingBottom: 10
   },
