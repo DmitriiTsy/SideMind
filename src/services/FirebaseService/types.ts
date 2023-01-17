@@ -1,8 +1,10 @@
+import { IMessage } from 'components/Chat/types'
+
 export interface IFirebaseResponseUsers {
   message?: string[]
 }
 
-export interface BotModel {
+export interface AvatarModel {
   name: string
   tagLine: string
   imagePath: string
@@ -16,8 +18,12 @@ export interface BotModel {
     presence_penalty: number
     top_p: number
   }
+  messages?: {
+    displayed?: IMessage[]
+    history?: string
+  }
 }
 
 export interface IFirebaseResponseBots {
-  [key: string]: BotModel[]
+  [key: string]: AvatarModel[]
 }

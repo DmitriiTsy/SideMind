@@ -5,8 +5,9 @@ import { observer } from 'mobx-react'
 import range from 'lodash/range'
 
 import { useInject } from 'IoC'
-import { IChatVM, IChatVMTid, IMessage } from 'components/Chat/Chat.vm'
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { Message } from 'components/Chat/components/Message'
+import { IMessage } from 'components/Chat/types'
 
 export const List = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { SelectBots } from 'components/SelectBots'
+import { SelectAvatars } from 'components/SelectAvatars'
 
 export const SelectBotsScreen = () => {
-  return <SelectBots />
+  return <SelectAvatars />
 }

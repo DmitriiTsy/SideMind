@@ -19,6 +19,7 @@ import {
 import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
 
 import { IAppVM, IAppVMTid } from 'app/App.vm'
+import { BottomPanel } from 'components/BottomPanel'
 
 const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
@@ -40,7 +41,7 @@ export const App = () => {
       >
         <Stack.Screen name={CommonScreenName.Boot} component={BootScreen} />
         <Stack.Screen
-          name={CommonScreenName.SelectBots}
+          name={CommonScreenName.SelectAvatars}
           component={SelectBotsScreen}
         />
         <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
@@ -49,6 +50,7 @@ export const App = () => {
           component={MainFeedScreen}
         />
       </Stack.Navigator>
+      <BottomPanel />
     </NavigationContainer>
   )
 }

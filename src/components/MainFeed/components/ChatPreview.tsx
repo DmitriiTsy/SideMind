@@ -1,31 +1,36 @@
 import React, { FC, useMemo } from 'react'
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
-import { BotModel } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { CommonScreenName } from 'constants/screen.types'
 
 interface IChatPreview {
-  bot: BotModel
+  avatar: AvatarModel
   index: number
 }
 
-export const ChatPreview: FC<IChatPreview> = ({ bot, index }) => {
+export const ChatPreview: FC<IChatPreview> = ({ avatar, index }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const isFirst = useMemo(() => index === 0, [index])
   const onPress = () => {
-    chatVM.setBot(bot)
+    chatVM.setAvatar(avatar)
     navigation.navigate(CommonScreenName.Chat)
   }
+
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      <Image source={{ uri: bot.imagePath }} style={SS.avatar} />
+      <Image source={{ uri: avatar.imagePath }} style={SS.avatar} />
       <View style={[SS.containerRight, !isFirst && SS.line]}>
-        <Text style={SS.botName}>{bot.name}</Text>
-        <Text style={SS.botDesc}>{bot.tagLine}</Text>
+        <Text style={SS.botName}>{avatar.name}</Text>
+        <Text style={SS.botDesc} numberOfLines={2}>
+          {(avatar.messages?.displayed?.length !== 0 &&
+            avatar.messages?.displayed[0]?.text?.trim()) ||
+            avatar.tagLine}
+        </Text>
       </View>
     </Pressable>
   )

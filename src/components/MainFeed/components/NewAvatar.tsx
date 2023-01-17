@@ -5,26 +5,19 @@ import { useInject } from 'IoC'
 
 import { Svg } from 'components/ui/Svg'
 
-import {
-  ILocalizationService,
-  ILocalizationServiceTid,
-  INavigationService,
-  INavigationServiceTid
-} from 'services'
-import { CommonScreenName } from 'constants/screen.types'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
-export const NewBot = () => {
+export const NewAvatar = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
-  const addNewBot = useCallback(() => {
-    navigation.navigate(CommonScreenName.SelectBots, {
-      isStarting: false
-    })
-  }, [navigation])
+  const addNewAvatar = useCallback(() => {
+    bottomPanelVM.toggle()
+  }, [bottomPanelVM])
 
   return (
-    <Pressable style={SS.container} onPress={addNewBot}>
+    <Pressable style={SS.container} onPress={addNewAvatar}>
       <Text style={SS.title}>{t.get('add another')}</Text>
       <Svg
         name={'PointerLeft'}

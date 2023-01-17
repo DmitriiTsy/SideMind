@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import {
   FlatList,
   ListRenderItemInfo,
@@ -12,7 +12,7 @@ import { observer } from 'mobx-react'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
-import { BotModel } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 
 import { useInject } from 'IoC'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
@@ -21,27 +21,16 @@ import { Svg } from 'components/ui/Svg'
 
 import { deviceWidth } from 'utils/dimentions'
 
-import {
-  ILocalizationService,
-  ILocalizationServiceTid,
-  INavigationService,
-  INavigationServiceTid
-} from 'services'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
-import { CommonScreenName } from 'constants/screen.types'
+import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
-import { ChatPreview, NewBot } from './components'
+import { ChatPreview, NewAvatar } from './components'
 
 export const MainFeed = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
-
-  const onPressGetBack = useCallback(() => {
-    navigation.navigate(CommonScreenName.SelectBots, {
-      isStarting: true
-    })
-  }, [navigation])
 
   const header = useMemo(
     () => (
@@ -50,16 +39,16 @@ export const MainFeed = observer(() => {
           <Svg name={'Logo'} />
           <Text style={SS.title}>{t.get('sideMind')}</Text>
         </View>
-        <Pressable onPress={onPressGetBack}>
+        <Pressable onPress={bottomPanelVM.toggle}>
           <Svg name={'AddNote'} />
         </Pressable>
       </View>
     ),
-    [onPressGetBack, t]
+    [bottomPanelVM.toggle, t]
   )
 
-  const renderItem = ({ item, index }: ListRenderItemInfo<BotModel>) => (
-    <ChatPreview bot={item} index={index} />
+  const renderItem = ({ item, index }: ListRenderItemInfo<AvatarModel>) => (
+    <ChatPreview avatar={item} index={index} />
   )
 
   const keyExtractor = (item, index) => index
@@ -72,10 +61,10 @@ export const MainFeed = observer(() => {
     >
       {header}
       <FlatList
-        data={appStore.usedBots}
+        data={appStore.usersAvatars}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        ListFooterComponent={NewBot}
+        ListFooterComponent={NewAvatar}
       />
     </ScreenContainer>
   )

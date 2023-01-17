@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
@@ -16,10 +16,6 @@ export const Chat = () => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
 
-  useEffect(() => {
-    chatVM.getFirstMessage()
-  })
-
   const goBack = () => {
     navigation.goBack()
   }
@@ -27,10 +23,10 @@ export const Chat = () => {
   const header = () => (
     <View style={SS.container}>
       <Pressable style={SS.containerGoback} onPress={goBack}>
-        <Svg name={'PointerLeft'} style={SS.goBackSource} />
+      <Svg name={'PointerLeft'} style={SS.goBackSource} />
       </Pressable>
-      <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
-      <Text style={SS.title}>{chatVM.bot.name}</Text>
+        <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
+      <Text style={SS.title}>{chatVM.avatar.name}</Text>
     </View>
   )
 
