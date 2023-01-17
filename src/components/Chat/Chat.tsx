@@ -20,6 +20,10 @@ export const Chat = () => {
     navigation.goBack()
   }
 
+  const reset = () => {
+    chatVM.resetMessages()
+  }
+
   const header = () => (
     <View style={SS.wrapper}>
       <View style={SS.container}>
@@ -32,7 +36,11 @@ export const Chat = () => {
         <Text style={SS.title}>{chatVM.bot.name}</Text>
       </View>
       <Pressable style={SS.containerReset}>
-        <Svg name={'Reset'} onPress={goBack} />
+        <Svg
+          name={'Reset'}
+          onPress={reset}
+          color={chatVM.messages.length < 1 ? 'grey' : 'white'}
+        />
       </Pressable>
     </View>
   )
@@ -56,6 +64,12 @@ const SS = StyleSheet.create({
     justifyContent: 'space-between'
   },
   containerReset: {
+    height: 47,
+    width: 20,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  containerResetNoActive: {
     height: 47,
     width: 20,
     alignItems: 'center',
