@@ -23,9 +23,9 @@ export const Chat = () => {
   const header = () => (
     <View style={SS.container}>
       <Pressable style={SS.containerGoback} onPress={goBack}>
-      <Svg name={'PointerLeft'} style={SS.goBackSource} />
+        <Svg name={'PointerLeft'} />
       </Pressable>
-        <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
+      <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
       <Text style={SS.title}>{chatVM.avatar.name}</Text>
     </View>
   )
@@ -55,7 +55,6 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 0.5,
     borderColor: '#333333',
-    paddingLeft: 24,
     paddingBottom: 10
   },
   avatar: {
@@ -73,11 +72,9 @@ const SS = StyleSheet.create({
   },
   containerGoback: {
     height: 47,
-    width: 40,
+    width: 48,
     alignItems: 'center',
-    justifyContent: 'center'
-  },
-  goBackSource: {
+    justifyContent: 'center',
     marginRight: 30
   }
 })
