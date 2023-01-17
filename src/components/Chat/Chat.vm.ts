@@ -10,7 +10,7 @@ import { ESender, IMessage } from 'components/Chat/types'
 export const IChatVMTid = Symbol.for('IChatVMTid')
 
 export interface IChatVM {
-  resetMessages(message: string): void
+  resetMessages(): void
   messages: IMessage[]
   bot: BotModel
   pending: boolean
@@ -70,7 +70,7 @@ export class ChatVM implements IChatVM {
   resetMessages() {
     this.messages = []
     this.getFirstMessage()
-    this._appStore.setResetMessages(this.bot.id, '')
+    this._appStore.setResetMessages(this.bot.id)
   }
 
   @action.bound

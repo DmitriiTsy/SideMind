@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
@@ -15,7 +15,7 @@ import { ChatInput, List } from './components'
 export const Chat = () => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
-
+  const [messagesArray, setMessagesArray] = useState(chatVM.messages)
   const goBack = () => {
     navigation.goBack()
   }
@@ -23,6 +23,9 @@ export const Chat = () => {
   const reset = () => {
     chatVM.resetMessages()
   }
+
+  console.log(chatVM.bot.messages.displayed.length)
+  console.log(messagesArray.length)
 
   const header = () => (
     <View style={SS.wrapper}>
@@ -35,11 +38,18 @@ export const Chat = () => {
         <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
         <Text style={SS.title}>{chatVM.bot.name}</Text>
       </View>
-      <Pressable style={SS.containerReset}>
+      <Pressable
+        style={SS.containerReset}
+        onPress={reset}
+        disabled={messagesArray.length <= 1 ? true : false}
+      >
         <Svg
           name={'Reset'}
-          onPress={reset}
-          color={chatVM.messages.length < 1 ? 'grey' : 'white'}
+          color={
+            messagesArray.length === 0 || messagesArray.length <= 1
+              ? 'grey'
+              : 'white'
+          }
         />
       </Pressable>
     </View>
