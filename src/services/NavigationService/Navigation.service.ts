@@ -7,18 +7,13 @@ import { action, computed, observable } from 'mobx'
 
 import { Injectable } from 'IoC'
 
-import {
-  CommonScreenName,
-  ScreenName,
-  ScreenParamTypes
-} from 'constants/screen.types'
+import { ScreenName, ScreenParamTypes } from 'constants/screen.types'
 
 export const INavigationServiceTid = Symbol.for('INavigationServiceTid')
 
 export interface INavigationService<RouteName extends ScreenName = any> {
   canGoBack: boolean
   currentRoute?: Route<string>
-  customParams: ScreenParamTypes[RouteName]
   params: ScreenParamTypes[RouteName]
 
   navigate<RouteName extends ScreenName>(
@@ -36,7 +31,6 @@ export interface INavigationService<RouteName extends ScreenName = any> {
 @Injectable()
 export class NavigationService implements INavigationService {
   @observable.ref currentRoute?: Route<string>
-  @observable customParams
   private _navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
 
   @computed
@@ -54,10 +48,7 @@ export class NavigationService implements INavigationService {
     name: RouteName,
     params?: ScreenParamTypes[RouteName]
   ) {
-    if (name === CommonScreenName.SelectBots) {
-      this.customParams = params
-    }
-    this._navigationRef?.current?.navigate({ name, params, merge: true })
+    this._navigationRef?.current?.navigate({ name, params })
   }
 
   @action.bound

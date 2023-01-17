@@ -2,73 +2,79 @@ import { action, observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-import { BotModel } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { ESender, IMessage } from 'components/Chat/types'
 
 export const IChatVMTid = Symbol.for('IChatVMTid')
 
-export enum ESender {
-  BOT = 'BOT',
-  HUMAN = 'HUMAN'
-}
-
-export interface IMessage {
-  sender: ESender
-  text: string
-}
-
 export interface IChatVM {
   messages: IMessage[]
-  bot: BotModel
+  avatar: AvatarModel
   pending: boolean
 
   sendMessage(message: string): void
-  setBot(bot: BotModel): void
+  setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
 }
 
 @Injectable()
 export class ChatVM implements IChatVM {
   @observable messages: IMessage[] = []
-  @observable bot: BotModel
+  @observable avatar: AvatarModel
   @observable pending = false
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
-    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService
+    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
+    @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {}
 
   @action.bound
   async sendMessage(message: string) {
     this.pending = true
 
-    this.messages = [{ sender: ESender.HUMAN, text: message }, ...this.messages]
-    this._firebaseService.setMessage(this.bot.id, ESender.HUMAN, message)
+    const humanMessage = { sender: ESender.HUMAN, text: message }
 
-    const res = await this._openAIService.createCompletion(message, this.bot)
+    this.messages = [humanMessage, ...this.messages]
+    this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
+
+    const res = await this._openAIService.createCompletion(message)
 
     runInAction(() => {
-      this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages]
+      const botMessage = { sender: ESender.BOT, text: res }
+
+      this.messages = [botMessage, ...this.messages]
+      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+
       this.pending = false
     })
   }
 
   @action.bound
-  setBot(bot: BotModel) {
-    this.bot = bot
+  setAvatar(avatar: AvatarModel) {
+    this.avatar = avatar
+    this._openAIService.setAvatar(avatar)
+    this.messages = avatar.messages?.displayed || []
+
+    if (this.messages.length === 0) {
+      this.getFirstMessage()
+    }
   }
 
+  @action.bound
   async getFirstMessage() {
     this.pending = true
 
-    this.messages = []
-    this._openAIService.clearHistory()
-    const res = await this._openAIService.createCompletion(
-      this.bot.prompt,
-      this.bot
-    )
+    const res = await this._openAIService?.createCompletion(this.avatar.prompt)
 
     this.pending = false
-    runInAction(() => (this.messages = [{ sender: ESender.BOT, text: res }]))
+    runInAction(() => {
+      const botMessage = { sender: ESender.BOT, text: res }
+
+      this.messages = [botMessage]
+      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+    })
   }
 }

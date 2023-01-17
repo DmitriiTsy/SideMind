@@ -1,67 +1,109 @@
-import { action, observable } from 'mobx'
+import { action, observable, runInAction } from 'mobx'
 
-import { Injectable } from 'IoC'
-import { BotModel } from 'services/FirebaseService/types'
+import { Inject, Injectable } from 'IoC'
+import { AvatarModel } from 'services/FirebaseService/types'
+import { IStorageService, IStorageServiceTid } from 'services/StorageService'
+import { IMessage } from 'components/Chat/types'
+import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
 export const IAppStoreTid = Symbol.for('IAppStoreTid')
 
 export interface IAppStore {
-  selected: number[]
-  usedBots: BotModel[]
-  availableBots: BotModel[][]
-  startingBots: BotModel[][]
+  usersAvatars: AvatarModel[]
 
-  addSelected(id: number): void
-  setAvailableBots(bots: BotModel[][]): void
-  setStartingBots(bots: BotModel[][]): void
-  setUsedBots(): void
-  addUsed(bot: BotModel): void
+  startingAvatars: AvatarModel[][]
+  commonAvatars: AvatarModel[][]
+
+  init(): void
+
+  getCommonAvatars(): void
+  getStartingAvatars(): void
+
+  setUsersAvatars(id: number[]): void
+  updateUsersAvatars(avatar: AvatarModel): void
+
+  setAvatarsFromStorage(): void
+
+  setMessageToAvatar(avatarId: number, message: IMessage): void
+  setHistoryToAvatar(avatarId: number, history: string): void
 }
 
 @Injectable()
 export class AppStore implements IAppStore {
-  @observable selected: number[] = []
-  @observable availableBots: BotModel[][] = []
-  @observable usedBots: BotModel[] = []
-  @observable startingBots: BotModel[][] = []
+  @observable usersAvatars: AvatarModel[] = []
 
-  @action.bound
-  addSelected(id: number) {
-    if (this.selected.find((el) => el === id)) {
-      this.selected = this.selected.filter((el) => el !== id)
-    } else if (this.selected.length === 3) {
-      this.selected.shift()
-      this.selected.push(id)
-    } else {
-      this.selected.push(id)
-    }
+  @observable startingAvatars: AvatarModel[][] = []
+  @observable commonAvatars: AvatarModel[][] = []
+
+  constructor(
+    @Inject(IStorageServiceTid)
+    private readonly _storageService: IStorageService,
+    @Inject(IFirebaseServiceTid)
+    private readonly _firebaseService: IFirebaseService
+  ) {}
+
+  init() {
+    this.getCommonAvatars()
+    this.getStartingAvatars()
+  }
+
+  async getCommonAvatars() {
+    const avatars = await this._firebaseService.getCommonAvatars()
+    runInAction(() => (this.commonAvatars = avatars))
+  }
+
+  async getStartingAvatars() {
+    const avatars = await this._firebaseService.getStartingAvatars()
+    runInAction(() => (this.startingAvatars = avatars))
   }
 
   @action.bound
-  setAvailableBots(bots: BotModel[][]) {
-    this.availableBots = bots
-  }
-
-  @action.bound
-  setStartingBots(bots: BotModel[][]) {
-    this.startingBots = bots
-  }
-
-  @action.bound
-  setUsedBots() {
-    const _bots: BotModel[] = []
-    this.availableBots.map((bots) =>
-      bots.map((bot) => this.selected.includes(bot.id) && _bots.push(bot))
+  setUsersAvatars(id: number[]) {
+    this._storageService.setUserLogin()
+    const _avatars: AvatarModel[] = []
+    this.commonAvatars.map((avatars) =>
+      avatars.map((avatar) => id.includes(avatar.id) && _avatars.push(avatar))
     )
-    this.startingBots.map((bots) => bots.map((bot) => _bots.unshift(bot)))
-    this.usedBots = _bots
+    this.startingAvatars.map((bots) => bots.map((bot) => _avatars.unshift(bot)))
+    this.usersAvatars = _avatars
+    this._storageService.setUserAvatars(this.usersAvatars)
+    this._firebaseService.setAvatars(this.usersAvatars)
   }
 
   @action.bound
-  addUsed(bot: BotModel) {
-    const exist = this.usedBots.find((el) => el.id === bot.id)
+  updateUsersAvatars(avatar: AvatarModel) {
+    const exist = this.usersAvatars.find((el) => el.id === avatar.id)
     if (!exist) {
-      this.usedBots.unshift(bot)
+      this.usersAvatars = [avatar, ...this.usersAvatars]
+      this._storageService.setUserAvatars(this.usersAvatars)
+      this._firebaseService.updateAvatars(avatar.id)
     }
+  }
+
+  @action.bound
+  setAvatarsFromStorage() {
+    this.usersAvatars = this._storageService.getUserAvatars()
+  }
+
+  setMessageToAvatar(avatarId: number, message: IMessage) {
+    this.usersAvatars = this.usersAvatars.map((el) => {
+      if (el.id === avatarId) {
+        if (!el.messages) el.messages = { displayed: [], history: '' }
+        el.messages.displayed = [message, ...el.messages.displayed]
+      }
+      return el
+    })
+    this._firebaseService.setMessage(avatarId, message)
+    this._storageService.setUserAvatars(this.usersAvatars)
+  }
+
+  setHistoryToAvatar(avatarId: number, history: string) {
+    this.usersAvatars = this.usersAvatars.map((el) => {
+      if (el.id === avatarId) {
+        if (!el.messages) el.messages = { displayed: [], history: '' }
+        el.messages.history = history
+      }
+      return el
+    })
   }
 }

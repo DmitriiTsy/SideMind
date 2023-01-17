@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import { ESender, IMessage } from 'components/Chat/Chat.vm'
 import { deviceWidth } from 'utils/dimentions'
+import { ESender, IMessage } from 'components/Chat/types'
 
 interface IMessageProps {
   message: IMessage

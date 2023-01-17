@@ -1,2 +1,2 @@
 export * from './ChatPreview'
-export * from './NewBot'
+export * from './NewAvatar'
