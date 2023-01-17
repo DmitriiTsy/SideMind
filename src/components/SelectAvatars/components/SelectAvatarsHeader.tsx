@@ -12,61 +12,35 @@ import {
 } from 'services'
 
 import { CommonScreenName } from 'constants/screen.types'
-import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { Svg } from 'components/ui/Svg'
-import { IStorageService, IStorageServiceTid } from 'services/StorageService'
-import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+import { ISelectAvatarsVM, ISelectAvatarsVMTid } from 'components/SelectAvatars'
 
-export const SelectBotsHeader = observer(() => {
-  const storage = useInject<IStorageService>(IStorageServiceTid)
+export const SelectAvatarsHeader = observer(() => {
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const appStore = useInject<IAppStore>(IAppStoreTid)
-  const firebase = useInject<IFirebaseService>(IFirebaseServiceTid)
+  const vm = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
 
-  const { isStarting } = navigation.customParams
+  const enabled = useMemo(() => vm.selected.length === 3, [vm.selected.length])
 
-  const enabled = useMemo(
-    () => appStore.selected.length === 3,
-    [appStore.selected.length]
-  )
   const addStarting = useCallback(() => {
     if (enabled) {
-      storage.setUserLogin()
-      appStore.setUsedBots()
-      firebase.setBots()
+      vm.setAvatars()
       navigation.navigate(CommonScreenName.MainFeed)
     }
-  }, [appStore, enabled, firebase, navigation, storage])
-
-  const navigate = useCallback(() => {
-    navigation.navigate(CommonScreenName.MainFeed)
-  }, [navigation])
+  }, [enabled, navigation, vm])
 
   return (
     <View style={SS.container}>
       <View style={{ width: 30, height: 1 }} />
 
       <View>
-        <Text style={SS.title}>
-          {t.get(isStarting ? 'choose bots' : 'pick additional')}
-        </Text>
-        {isStarting && (
-          <Text style={SS.counter}>{t.get('add more later')}</Text>
-        )}
+        <Text style={SS.title}>{t.get('choose bots')}</Text>
+        <Text style={SS.counter}>{t.get('add more later')}</Text>
       </View>
 
-      <Pressable
-        style={SS.doneContainer}
-        onPress={isStarting ? addStarting : navigate}
-      >
-        {isStarting ? (
-          <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
-            {t.get('done')}
-          </Text>
-        ) : (
-          <Svg name={'Cross'} />
-        )}
+      <Pressable style={SS.doneContainer} onPress={addStarting}>
+        <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
+          {t.get('done')}
+        </Text>
       </Pressable>
     </View>
   )
