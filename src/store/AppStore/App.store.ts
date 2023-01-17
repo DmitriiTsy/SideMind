@@ -21,6 +21,7 @@ export interface IAppStore {
   setAvatarsFromStorage(): void
   setMessageToAvatar(botId: number, message: IMessage): void
   setHistoryToAvatar(botId: number, history: string): void
+  setResetMessages(botId: number, message: IMessage): void
 }
 
 @Injectable()
@@ -80,6 +81,15 @@ export class AppStore implements IAppStore {
   @action.bound
   setAvatarsFromStorage() {
     this.usedBots = this._storageService.getUserAvatars()
+  }
+
+  setResetMessages(botId: number, history: string) {
+    this.usedBots = this.usedBots.map((el) => {
+      if (el.id === botId) {
+        el.messages = { displayed: [], history: '' }
+      }
+      return el
+    })
   }
 
   //todo объеденить след два метода

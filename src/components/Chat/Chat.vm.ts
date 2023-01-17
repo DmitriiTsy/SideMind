@@ -67,9 +67,10 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
-  resetMessages(message: string) {
+  resetMessages() {
     this.messages = []
     this.getFirstMessage()
+    this._appStore.setResetMessages(this.bot.id, '')
   }
 
   @action.bound
