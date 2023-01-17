@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
@@ -22,7 +22,9 @@ export const Chat = () => {
 
   const header = () => (
     <View style={SS.container}>
-      <Svg name={'PointerLeft'} style={{ marginRight: 30 }} onPress={goBack} />
+      <Pressable style={SS.containerGoback} onPress={goBack}>
+        <Svg name={'PointerLeft'} />
+      </Pressable>
       <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
       <Text style={SS.title}>{chatVM.avatar.name}</Text>
     </View>
@@ -53,7 +55,6 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 0.5,
     borderColor: '#333333',
-    paddingLeft: 24,
     paddingBottom: 10
   },
   avatar: {
@@ -68,5 +69,12 @@ const SS = StyleSheet.create({
     lineHeight: 16,
     letterSpacing: -0.3,
     color: '#FFFFFF'
+  },
+  containerGoback: {
+    height: 47,
+    width: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 30
   }
 })
