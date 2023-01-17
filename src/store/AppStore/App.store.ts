@@ -74,7 +74,7 @@ export class AppStore implements IAppStore {
   updateUsersAvatars(avatar: AvatarModel) {
     const exist = this.usersAvatars.find((el) => el.id === avatar.id)
     if (!exist) {
-      this.usersAvatars = [...this.usersAvatars, avatar]
+      this.usersAvatars = [avatar, ...this.usersAvatars]
       this._storageService.setUserAvatars(this.usersAvatars)
       this._firebaseService.updateAvatars(avatar.id)
     }
