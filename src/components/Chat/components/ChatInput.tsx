@@ -7,9 +7,10 @@ import {
   TextInputContentSizeChangeEventData
 } from 'react-native'
 
+import Device from 'react-native-device-info'
+
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-
 import { Svg } from 'components/ui/Svg'
 import { deviceWidth } from 'utils/dimentions'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
@@ -20,6 +21,7 @@ export const ChatInput = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [value, setValue] = useState('')
+  const isTablet = Device.isTablet()
   const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
 
   const onChangeText = (text: string) => {
@@ -52,7 +54,7 @@ export const ChatInput = () => {
           onContentSizeChange={onContentSizeChange}
           style={[SS.input, { height: inputHeight }]}
           keyboardAppearance={'dark'}
-          onSubmitEditing={submit}
+          onSubmitEditing={isTablet && submit}
         />
       </View>
       <Svg
