@@ -23,8 +23,8 @@ export const Chat = () => {
   const header = () => (
     <View style={SS.container}>
       <Svg name={'PointerLeft'} style={{ marginRight: 30 }} onPress={goBack} />
-      <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
-      <Text style={SS.title}>{chatVM.bot.name}</Text>
+      <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
+      <Text style={SS.title}>{chatVM.avatar.name}</Text>
     </View>
   )
 

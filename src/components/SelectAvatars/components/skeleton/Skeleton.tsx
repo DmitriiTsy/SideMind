@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import range from 'lodash/range'
 
-import { SkeletonHeader } from 'components/SelectBots/components/skeleton/SkeletonHeader'
+import { SkeletonHeader } from 'components/SelectAvatars/components/skeleton/SkeletonHeader'
 
 interface ISkeletonComponentProps {
   animatedStyle: {
@@ -17,7 +17,7 @@ interface ISkeletonComponentProps {
   }
 }
 
-export const SkeletonBots = () => {
+export const SkeletonAvatars = () => {
   const state = useSharedValue(0)
 
   useEffect(() => {
@@ -38,13 +38,13 @@ export const SkeletonBots = () => {
     <View style={{ backgroundColor: '#1C1C1E', flex: 1 }}>
       <SkeletonHeader />
       {range(3).map((_, index) => (
-        <GroupedSkeletonBots animatedStyle={animatedStyle} key={index} />
+        <GroupedSkeletonAvatars animatedStyle={animatedStyle} key={index} />
       ))}
     </View>
   )
 }
 
-const GroupedSkeletonBots: FC<ISkeletonComponentProps> = ({
+const GroupedSkeletonAvatars: FC<ISkeletonComponentProps> = ({
   animatedStyle
 }) => {
   return (
@@ -53,13 +53,13 @@ const GroupedSkeletonBots: FC<ISkeletonComponentProps> = ({
         <Animated.View style={[SS.header_text, animatedStyle]}></Animated.View>
       </View>
       {range(3).map((_, index) => (
-        <SkeletonBot animatedStyle={animatedStyle} key={index} />
+        <SkeletonAvatar animatedStyle={animatedStyle} key={index} />
       ))}
     </View>
   )
 }
 
-const SkeletonBot: FC<ISkeletonComponentProps> = ({ animatedStyle }) => {
+const SkeletonAvatar: FC<ISkeletonComponentProps> = ({ animatedStyle }) => {
   return (
     <View style={SS.pendingContainer}>
       <Animated.View style={[SS.image, animatedStyle]}></Animated.View>

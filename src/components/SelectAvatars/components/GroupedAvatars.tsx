@@ -1,20 +1,21 @@
 import React, { FC } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import { Bot } from 'components/SelectBots/components/Bot'
-import { BotModel } from 'services/FirebaseService/types'
+import { Avatar } from 'components/SelectAvatars/components/Avatar'
+import { AvatarModel } from 'services/FirebaseService/types'
 
 interface IGroupedBotsProps {
-  bots: BotModel[]
+  avatar: AvatarModel[]
+  single?: boolean
 }
 
-export const GroupedBots: FC<IGroupedBotsProps> = ({ bots }) => {
+export const GroupedAvatars: FC<IGroupedBotsProps> = ({ avatar, single }) => {
   return (
     <View style={SS.container}>
-      <Text style={SS.title}>{bots[0].category}</Text>
+      <Text style={SS.title}>{avatar[0].category}</Text>
       <View style={SS.separator} />
-      {bots.map((el, index) => (
-        <Bot key={index} bot={el} />
+      {avatar.map((el, index) => (
+        <Avatar key={index} avatar={el} single={single} />
       ))}
     </View>
   )
