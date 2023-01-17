@@ -1,5 +1,7 @@
-import React, { FC, useMemo } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { FC, useMemo, useState } from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+
+import Clipboard from '@react-native-clipboard/clipboard'
 
 import { deviceWidth } from 'utils/dimentions'
 import { ESender, IMessage } from 'components/Chat/types'
@@ -12,6 +14,12 @@ interface IMessageProps {
 export const Message: FC<IMessageProps> = ({ message, index }) => {
   const isBot = useMemo(() => message.sender === ESender.BOT, [message.sender])
   const isLast = useMemo(() => index === 0, [index])
+  const [copiedText, setCopiedText] = useState()
+
+  const copyToClipboard = (text) => {
+    Clipboard.setString(text)
+  }
+
   return (
     <View style={isBot ? SS.mainContainerBot : SS.mainContainerHuman}>
       <View
@@ -21,7 +29,9 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
           isLast && SS.last
         ]}
       >
-        <Text style={SS.text}>{message.text.trim()}</Text>
+        <Pressable onPress={copyToClipboard(message.text.trim())}>
+          <Text style={SS.text}>{message.text.trim()}</Text>
+        </Pressable>
       </View>
     </View>
   )
