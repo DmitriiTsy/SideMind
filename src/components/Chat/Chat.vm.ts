@@ -13,10 +13,13 @@ export interface IChatVM {
   messages: IMessage[]
   avatar: AvatarModel
   pending: boolean
+  resetting: boolean
 
+  changeResetState(value: boolean): void
   sendMessage(message: string): void
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
+  resetMessages(): void
 }
 
 @Injectable()
@@ -24,6 +27,7 @@ export class ChatVM implements IChatVM {
   @observable messages: IMessage[] = []
   @observable avatar: AvatarModel
   @observable pending = false
+  @observable resetting = false
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
@@ -64,6 +68,13 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
+  resetMessages() {
+    this.messages = []
+    this._appStore.resetMessages(this.avatar.id)
+    this.setAvatar(this.avatar)
+  }
+
+  @action.bound
   async getFirstMessage() {
     this.pending = true
 
@@ -76,5 +87,10 @@ export class ChatVM implements IChatVM {
       this.messages = [botMessage]
       this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
     })
+  }
+
+  @action.bound
+  changeResetState(value: boolean) {
+    this.resetting = value
   }
 }

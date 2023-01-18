@@ -14,7 +14,8 @@ import {
 import {
   AvatarModel,
   IFirebaseResponseBots,
-  IFirebaseResponseUsers
+  IFirebaseResponseUsers,
+  LOG_TYPE
 } from 'services/FirebaseService/types'
 import { ESender, IMessage } from 'components/Chat/types'
 
@@ -29,9 +30,9 @@ export interface IFirebaseService {
 
   setAvatars(avatars: AvatarModel[]): void
 
-  updateAvatars(botId: number): void
+  updateAvatars(avatarId: number): void
 
-  setMessage(botId: number, message: IMessage, isError?: boolean): void
+  setMessage(avatarId: number, message: IMessage, isError?: boolean): void
 }
 
 @Injectable()
@@ -103,11 +104,7 @@ export class FirebaseService implements IFirebaseService {
     type: ESender,
     isError: boolean
   ) {
-    const _typeLog = isError
-      ? 'Error_OpenAI'
-      : type === ESender.BOT
-      ? 'MessageReceived'
-      : 'MessageSend'
+    const _typeLog = isError ? 'Error_OpenAI' : LOG_TYPE[type]
     await analytics().logEvent(_typeLog, {
       messageId,
       deviceId: this._systemInfoService.deviceId,
@@ -115,17 +112,17 @@ export class FirebaseService implements IFirebaseService {
     })
   }
 
-  async setMessage(botId: number, message: IMessage, isError?: boolean) {
+  async setMessage(avatarId: number, message: IMessage, isError?: boolean) {
     const id = uuid.v4() + `--${message.sender}`
     await Promise.all([
       this._usersCollection.doc(this._systemInfoService.deviceId).update({
-        [botId]: firestore.FieldValue.arrayUnion({
+        [avatarId]: firestore.FieldValue.arrayUnion({
           type: message.sender,
           text: message.text,
           messageId: id
         })
       }),
-      this.logMessage(id, botId, message.sender, isError)
+      this.logMessage(id, avatarId, message.sender, isError)
     ])
   }
 
@@ -139,9 +136,9 @@ export class FirebaseService implements IFirebaseService {
       .set(formatted)
   }
 
-  async updateAvatars(botId: number) {
+  async updateAvatars(avatarId: number) {
     await this._usersCollection
       .doc(this._systemInfoService.deviceId)
-      .update({ [botId]: [] })
+      .update({ [avatarId]: [] })
   }
 }

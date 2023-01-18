@@ -1,6 +1,7 @@
 export enum ESender {
   BOT = 'BOT',
-  HUMAN = 'HUMAN'
+  HUMAN = 'HUMAN',
+  RESET = 'RESET'
 }
 
 export interface IMessage {

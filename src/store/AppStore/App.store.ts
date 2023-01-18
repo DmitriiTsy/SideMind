@@ -3,7 +3,7 @@ import { action, observable, runInAction } from 'mobx'
 import { Inject, Injectable } from 'IoC'
 import { AvatarModel } from 'services/FirebaseService/types'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
-import { IMessage } from 'components/Chat/types'
+import { ESender, IMessage } from 'components/Chat/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
 export const IAppStoreTid = Symbol.for('IAppStoreTid')
@@ -26,6 +26,8 @@ export interface IAppStore {
 
   setMessageToAvatar(avatarId: number, message: IMessage): void
   setHistoryToAvatar(avatarId: number, history: string): void
+
+  resetMessages(avatarId: number): void
 }
 
 @Injectable()
@@ -83,6 +85,21 @@ export class AppStore implements IAppStore {
   @action.bound
   setAvatarsFromStorage() {
     this.usersAvatars = this._storageService.getUserAvatars()
+  }
+
+  @action.bound
+  resetMessages(avatarId: number) {
+    this.usersAvatars = this.usersAvatars.map((el) => {
+      if (el.id === avatarId) {
+        el.messages = { displayed: [], history: '' }
+      }
+      return el
+    })
+    this._firebaseService.setMessage(avatarId, {
+      sender: ESender.RESET,
+      text: ''
+    })
+    this._storageService.setUserAvatars(this.usersAvatars)
   }
 
   setMessageToAvatar(avatarId: number, message: IMessage) {
