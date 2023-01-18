@@ -1803,12 +1803,12 @@
   integrity sha512-jE58snEKBd9DXfyR4+ssZmYJ/W2mOSnNrvljR0aLyQJL9JKX6vlWELHkRjb3HBbcM9Uy0hZGijXbqEAjOERW2A==
 
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.7":
-  version "7.1.20"
-  resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.20.tgz#e168cdd612c92a2d335029ed62ac94c95b362359"
-  integrity sha512-PVb6Bg2QuscZ30FvOU7z4guG6c926D9YRvOxEaelzndpMsvP+YM74Q/dAFASpg2l6+XLalxSGxcq/lrgYWZtyQ==
+  version "7.20.0"
+  resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.20.0.tgz#61bc5a4cae505ce98e1e36c5445e4bee060d8891"
+  integrity sha512-+n8dL/9GWblDO0iU6eZAwEIJVr5DWigtle+Q6HLOrh/pdbXOhOtqzq8VPPE2zvNJzSKY4vH/z3iT3tn0A3ypiQ==
   dependencies:
-    "@babel/parser" "^7.1.0"
-    "@babel/types" "^7.0.0"
+    "@babel/parser" "^7.20.7"
+    "@babel/types" "^7.20.7"
     "@types/babel__generator" "*"
     "@types/babel__template" "*"
     "@types/babel__traverse" "*"
@@ -2764,13 +2764,6 @@ cache-base@^1.0.1:
     union-value "^1.0.0"
     unset-value "^1.0.0"
 
-cache@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/cache/-/cache-3.0.0.tgz#1c5857e874f7064be641114a605c7e2ae8a80880"
-  integrity sha512-sNoM5jithfalxIceo/uFFm5bOlGjux2y8jEvjNb0F/cACWQaMmWuEPTLl6GzLHdFcNsbWBBdqkBd9NyefZ5UQQ==
-  dependencies:
-    ds "^1.4.2"
-
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"
@@ -2871,16 +2864,6 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
-
-clean@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/clean/-/clean-4.0.2.tgz#c9f016f70a27cc1f1a39fca95b504047e4b6f153"
-  integrity sha512-2LGVh4dNtI16L4UzqDHO6Hbl74YjG1vWvEUU78dgLO4kuyqJZFMNMPBx+EGtYKTFb14e24p+gWXgkabqxc1EUw==
-  dependencies:
-    async "^0.9.0"
-    minimist "^1.1.0"
-    mix2 "^1.0.0"
-    skema "^1.0.0"
 
 cli-cursor@^3.1.0:
   version "3.1.0"
@@ -3371,11 +3354,6 @@ domutils@^3.0.1:
     dom-serializer "^2.0.0"
     domelementtype "^2.3.0"
     domhandler "^5.0.1"
-
-ds@^1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/ds/-/ds-1.4.2.tgz#0857aa213790a4fb3abb365b9cec0e9ba8569393"
-  integrity sha512-d5nMCjfod+srvE/1Bnt/u+L++6N8KJx3ZAi95AGp0g6RtfuGDNlGciWL/iiwKHsFVBVnA3/HEFUq5SW1NgTQ3Q==
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -5922,11 +5900,6 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-make-array@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/make-array/-/make-array-0.1.2.tgz#335e36ebb0c5a43154d21213a1ecaeae2a1bb3ef"
-  integrity sha512-bcFmxgZ+OTaMYJp/w6eifElKTcfum7Gi5H7vQ8KzAf9X6swdxkVuilCaG3ZjXr/qJsQT4JJ2Rq9SDYScWEdu9Q==
-
 make-dir@^2.0.0, make-dir@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-2.1.0.tgz#5f0310e18b8be898cc07009295a30ae41e91e6f5"
@@ -6319,15 +6292,10 @@ minimatch@^3.0.2, minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimist@^1.1.0, minimist@^1.1.1, minimist@^1.2.0, minimist@^1.2.6:
+minimist@^1.1.1, minimist@^1.2.0, minimist@^1.2.6:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.7.tgz#daa1c4d91f507390437c6a8bc01078e7000c4d18"
   integrity sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g==
-
-mix2@^1.0.0:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/mix2/-/mix2-1.0.5.tgz#60111096cd7e9a059257ab142de2f8837547ff65"
-  integrity sha512-ybWz7nY+WHBBIyliND5eYaJKzkoa+qXRYNTmVqAxSLlFtL/umT2iv+pmyTu1oU7WNkrirwheqR8d9EaKVz0e5g==
 
 mixin-deep@^1.2.0:
   version "1.3.2"
@@ -7733,15 +7701,6 @@ sisteransi@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-1.0.5.tgz#134d681297756437cc05ca01370d3a7a571075ed"
   integrity sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
-
-skema@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/skema/-/skema-1.0.2.tgz#37121cfea1caec31072d956585748c9b119fc453"
-  integrity sha512-5LWfF2RSW2B3xfOaY6j49X8aNwsnj9cRVrM5QMF7it+cZvpv5ufiOUT13ps2U52sIbAzs11bdRP6mi5qyg75VQ==
-  dependencies:
-    async "^0.9.0"
-    make-array "^0.1.2"
-    mix2 "^1.0.0"
 
 slash@^3.0.0:
   version "3.0.0"
