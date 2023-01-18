@@ -1,6 +1,10 @@
 import React, { FC, useMemo } from 'react'
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
+import dayjs from 'dayjs'
+
+import { observer } from 'mobx-react'
+
 import { AvatarModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
@@ -12,29 +16,44 @@ interface IChatPreview {
   index: number
 }
 
-export const ChatPreview: FC<IChatPreview> = ({ avatar, index }) => {
+export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const isFirst = useMemo(() => index === 0, [index])
+  const existMessage = useMemo(
+    () => avatar.messages?.displayed?.length > 0,
+    [avatar.messages?.displayed?.length]
+  )
+
   const onPress = () => {
     chatVM.setAvatar(avatar)
     navigation.navigate(CommonScreenName.Chat)
   }
 
+  const timestamp = useMemo(
+    () =>
+      existMessage
+        ? dayjs(avatar.messages.displayed[0].date).format('hh:mm A')
+        : '',
+    [avatar.messages?.displayed, existMessage]
+  )
+
   return (
     <Pressable style={SS.container} onPress={onPress}>
       <Image source={{ uri: avatar.imagePath }} style={SS.avatar} />
       <View style={[SS.containerRight, !isFirst && SS.line]}>
-        <Text style={SS.botName}>{avatar.name}</Text>
+        <View style={SS.firstLine}>
+          <Text style={SS.botName}>{avatar.name}</Text>
+          {existMessage && <Text style={SS.timestamp}>{timestamp}</Text>}
+        </View>
         <Text style={SS.botDesc} numberOfLines={2}>
-          {(avatar.messages?.displayed?.length !== 0 &&
-            avatar.messages?.displayed[0]?.text?.trim()) ||
+          {(existMessage && avatar.messages.displayed[0].text.trim()) ||
             avatar.tagLine}
         </Text>
       </View>
     </Pressable>
   )
-}
+})
 
 const SS = StyleSheet.create({
   container: {
@@ -79,5 +98,16 @@ const SS = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 250
+  },
+  firstLine: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between'
+  },
+  timestamp: {
+    color: '#7D7D82',
+    marginRight: 18,
+    fontSize: 15,
+    fontWeight: '400'
   }
 })

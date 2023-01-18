@@ -6,10 +6,16 @@ import { SvgStyleProps } from 'components/ui/Svg/Svg.types'
 import { createSvg } from 'utils/createSvg'
 
 const Component: FC<SvgStyleProps> = (props) => (
-  <Svg viewBox="0 0 10 17" fill="none" {...props}>
+  <Svg fill="none" {...props}>
     <Path
-      d="m1 1 8 7.5L1 16"
-      stroke="#549EF7"
+      d="M15.4 11.8a7.2 7.2 0 1 1-7.2-7.2"
+      stroke={props.color || '#FFFFFF'}
+      strokeWidth={2}
+      strokeLinecap="round"
+    />
+    <Path
+      d="M6.4 1 10 4.6 6.4 8.2"
+      stroke={props.color || '#FFFFFF'}
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -17,8 +23,8 @@ const Component: FC<SvgStyleProps> = (props) => (
   </Svg>
 )
 
-export const SvgPointerRight = createSvg({
+export const SvgReset = createSvg({
   component: Component,
-  originalHeight: 24,
-  originalWidth: 24
+  originalHeight: 20,
+  originalWidth: 16
 })

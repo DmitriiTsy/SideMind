@@ -1,7 +1,13 @@
-import { IMessage } from 'components/Chat/types'
+import { ESender, IMessage } from 'components/Chat/types'
 
 export interface IFirebaseResponseUsers {
   message?: string[]
+}
+
+export const LOG_TYPE = {
+  [ESender.BOT]: 'MessageReceived',
+  [ESender.HUMAN]: 'MessageSent',
+  [ESender.RESET]: 'Reset'
 }
 
 export interface AvatarModel {
