@@ -27,9 +27,7 @@ export const Boot = () => {
         appStore.setAvatarsFromStorage()
         navigation.navigate(CommonScreenName.MainFeed)
       } else {
-        navigation.navigate(CommonScreenName.SelectBots, {
-          isStarting: true
-        })
+        navigation.navigate(CommonScreenName.SelectAvatars)
       }
     }, 1000)
   })

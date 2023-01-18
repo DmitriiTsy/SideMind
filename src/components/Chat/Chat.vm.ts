@@ -2,7 +2,7 @@ import { action, observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-import { BotModel } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { ESender, IMessage } from 'components/Chat/types'
@@ -12,18 +12,18 @@ export const IChatVMTid = Symbol.for('IChatVMTid')
 export interface IChatVM {
   resetMessages(): void
   messages: IMessage[]
-  bot: BotModel
+  avatar: AvatarModel
   pending: boolean
 
   sendMessage(message: string): void
-  setBot(bot: BotModel): void
+  setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
 }
 
 @Injectable()
 export class ChatVM implements IChatVM {
   @observable messages: IMessage[] = []
-  @observable bot: BotModel
+  @observable avatar: AvatarModel
   @observable pending = false
 
   constructor(
@@ -36,30 +36,28 @@ export class ChatVM implements IChatVM {
   async sendMessage(message: string) {
     this.pending = true
 
-    this.messages = [{ sender: ESender.HUMAN, text: message }, ...this.messages]
-    this._firebaseService.setMessage(this.bot.id, ESender.HUMAN, message)
-    this._appStore.setMessageToAvatar(this.bot.id, {
-      sender: ESender.HUMAN,
-      text: message
-    })
+    const humanMessage = { sender: ESender.HUMAN, text: message }
+
+    this.messages = [humanMessage, ...this.messages]
+    this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
 
     const res = await this._openAIService.createCompletion(message)
 
     runInAction(() => {
-      this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages]
-      this._appStore.setMessageToAvatar(this.bot.id, {
-        sender: ESender.BOT,
-        text: res
-      })
+      const botMessage = { sender: ESender.BOT, text: res }
+
+      this.messages = [botMessage, ...this.messages]
+      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+
       this.pending = false
     })
   }
 
   @action.bound
-  setBot(bot: BotModel) {
-    this.bot = bot
-    this._openAIService.clearHistory(bot)
-    this.messages = bot.messages?.displayed || []
+  setAvatar(avatar: AvatarModel) {
+    this.avatar = avatar
+    this._openAIService.setAvatar(avatar)
+    this.messages = avatar.messages?.displayed || []
 
     if (this.messages.length === 0) {
       this.getFirstMessage()
@@ -77,17 +75,14 @@ export class ChatVM implements IChatVM {
   async getFirstMessage() {
     this.pending = true
 
-    // this.messages = []
-    // this._openAIService.clearHistory()
-    const res = await this._openAIService?.createCompletion(this.bot.prompt)
+    const res = await this._openAIService?.createCompletion(this.avatar.prompt)
 
     this.pending = false
     runInAction(() => {
-      this.messages = [{ sender: ESender.BOT, text: res }]
-      this._appStore.setMessageToAvatar(this.bot.id, {
-        sender: ESender.BOT,
-        text: res
-      })
+      const botMessage = { sender: ESender.BOT, text: res }
+
+      this.messages = [botMessage]
+      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
     })
   }
 }

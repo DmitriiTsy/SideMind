@@ -5,56 +5,53 @@ import { observer } from 'mobx-react'
 
 import { Svg } from 'components/ui/Svg'
 
-import { BotModel } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
-import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { deviceWidth } from 'utils/dimentions'
-import { INavigationService, INavigationServiceTid } from 'services'
-import { CommonScreenName } from 'constants/screen.types'
-import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+import { ISelectAvatarsVM, ISelectAvatarsVMTid } from 'components/SelectAvatars'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
 interface IBotProps {
-  bot: BotModel
+  avatar: AvatarModel
+  single?: boolean
 }
 
-export const Bot: FC<IBotProps> = observer(({ bot }) => {
+export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
+  const vm = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
-  const firebase = useInject<IFirebaseService>(IFirebaseServiceTid)
+  const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
-  const { isStarting } = navigation.customParams
+  const selected = vm.selected.find((el) => el === avatar.id)
 
-  const selected = appStore.selected.find((el) => el === bot.id)
+  const set = useCallback(() => {
+    vm.select(avatar.id)
+  }, [vm, avatar.id])
 
-  const onPress = useCallback(() => {
-    appStore.addSelected(bot.id)
-  }, [bot.id, appStore])
-
-  const addSingle = useCallback(() => {
-    appStore.addUsed(bot)
-    firebase.addBot(bot.id)
-    navigation.navigate(CommonScreenName.MainFeed)
-  }, [appStore, bot, firebase, navigation])
+  const update = useCallback(() => {
+    appStore.updateUsersAvatars(avatar)
+    bottomPanelVM.toggle()
+  }, [appStore, avatar, bottomPanelVM])
 
   return (
-    <Pressable onPress={isStarting ? onPress : addSingle} style={SS.container}>
-      <Image source={{ uri: bot.imagePath }} style={SS.image} />
+    <Pressable onPress={single ? update : set} style={SS.container}>
+      <Image source={{ uri: avatar.imagePath }} style={SS.image} />
 
       <View style={SS.containerRight}>
         <View>
-          <Text style={SS.botName}>{bot.name}</Text>
+          <Text style={SS.botName}>{avatar.name}</Text>
           <Text
             style={[
               SS.botDesc,
-              isStarting && {
+              !single && {
                 maxWidth: deviceWidth * 0.7
               }
             ]}
           >
-            {bot.tagLine}
+            {avatar.tagLine}
           </Text>
         </View>
-        {isStarting && (
+        {!single && (
           <View style={SS.empty}>{selected && <Svg name={'Check'} />}</View>
         )}
       </View>

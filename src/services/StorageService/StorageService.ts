@@ -3,7 +3,7 @@ import { MMKVLoader, MMKVInstance } from 'react-native-mmkv-storage'
 import { observable } from 'mobx'
 
 import { Injectable } from 'IoC'
-import { BotModel } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 
 export const IStorageServiceTid = Symbol.for('IStorageServiceTid')
 
@@ -11,8 +11,8 @@ export interface IStorageService {
   storage: MMKVInstance
   setUserLogin(): void
   getUserLogin(): boolean
-  setUserAvatars(avatars: BotModel[]): void
-  getUserAvatars(): BotModel[] | null
+  setUserAvatars(avatars: AvatarModel[]): void
+  getUserAvatars(): AvatarModel[] | null
 }
 
 @Injectable()
@@ -36,7 +36,7 @@ export class StorageService implements IStorageService {
   }
 
   getUserAvatars() {
-    return this.storage.getArray<BotModel>('Avatars', (error, value) => {
+    return this.storage.getArray<AvatarModel>('Avatars', (error, value) => {
       if (!error) return value
       return null
     })

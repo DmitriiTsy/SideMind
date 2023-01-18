@@ -28,30 +28,12 @@ export const Chat = () => {
   console.log(messagesArray.length)
 
   const header = () => (
-    <View style={SS.wrapper}>
-      <View style={SS.container}>
-        <Svg
-          name={'PointerLeft'}
-          style={{ marginRight: 30 }}
-          onPress={goBack}
-        />
-        <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
-        <Text style={SS.title}>{chatVM.bot.name}</Text>
-      </View>
-      <Pressable
-        style={SS.containerReset}
-        onPress={reset}
-        disabled={messagesArray.length <= 1 ? true : false}
-      >
-        <Svg
-          name={'Reset'}
-          color={
-            messagesArray.length === 0 || messagesArray.length <= 1
-              ? 'grey'
-              : 'white'
-          }
-        />
+    <View style={SS.container}>
+      <Pressable style={SS.containerGoback} onPress={goBack}>
+        <Svg name={'PointerLeft'} />
       </Pressable>
+      <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
+      <Text style={SS.title}>{chatVM.avatar.name}</Text>
     </View>
   )
 
@@ -98,7 +80,8 @@ const SS = StyleSheet.create({
     height: 47,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingLeft: 24,
+    borderBottomWidth: 0.5,
+    borderColor: '#333333',
     paddingBottom: 10
   },
   avatar: {
@@ -113,5 +96,12 @@ const SS = StyleSheet.create({
     lineHeight: 16,
     letterSpacing: -0.3,
     color: '#FFFFFF'
+  },
+  containerGoback: {
+    height: 47,
+    width: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 30
   }
 })
