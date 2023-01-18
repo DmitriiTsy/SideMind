@@ -9,13 +9,13 @@ const Component: FC<SvgStyleProps> = (props) => (
   <Svg fill="none" {...props}>
     <Path
       d="M15.4 11.8a7.2 7.2 0 1 1-7.2-7.2"
-      stroke={props.color}
+      stroke={props.color || '#FFFFFF'}
       strokeWidth={2}
       strokeLinecap="round"
     />
     <Path
       d="M6.4 1 10 4.6 6.4 8.2"
-      stroke={props.color}
+      stroke={props.color || '#FFFFFF'}
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"

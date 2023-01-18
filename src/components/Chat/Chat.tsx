@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useMemo } from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+
+import { observer } from 'mobx-react'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
@@ -10,30 +12,43 @@ import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 
 import { INavigationService, INavigationServiceTid } from 'services'
 
+import { Resetting } from 'components/Chat/components/Resetting'
+
 import { ChatInput, List } from './components'
 
-export const Chat = () => {
+export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
-  const [messagesArray, setMessagesArray] = useState(chatVM.messages)
+
   const goBack = () => {
     navigation.goBack()
   }
 
-  const reset = () => {
-    chatVM.resetMessages()
-  }
+  const resetAvailable = useMemo(
+    () => chatVM.messages.length > 1,
+    [chatVM.messages.length]
+  )
 
-  console.log(chatVM.bot.messages.displayed.length)
-  console.log(messagesArray.length)
+  const reset = () => {
+    chatVM.changeResetState(true)
+  }
 
   const header = () => (
     <View style={SS.container}>
-      <Pressable style={SS.containerGoback} onPress={goBack}>
-        <Svg name={'PointerLeft'} />
+      <View style={SS.leftSide}>
+        <Pressable style={SS.containerGoBack} onPress={goBack}>
+          <Svg name={'PointerLeft'} />
+        </Pressable>
+        <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
+        <Text style={SS.title}>{chatVM.avatar.name}</Text>
+      </View>
+      <Pressable
+        style={SS.resetContainer}
+        disabled={!resetAvailable}
+        onPress={reset}
+      >
+        <Svg name={'Reset'} color={!resetAvailable && '#666666'} />
       </Pressable>
-      <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
-      <Text style={SS.title}>{chatVM.avatar.name}</Text>
     </View>
   )
 
@@ -45,40 +60,25 @@ export const Chat = () => {
     >
       {header()}
       <List />
+      <Resetting />
       <ChatInput />
     </ScreenContainer>
   )
-}
+})
 
 const SS = StyleSheet.create({
   screenContainer: {
     backgroundColor: '#000000',
     justifyContent: 'space-between'
   },
-  containerReset: {
-    height: 47,
-    width: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  containerResetNoActive: {
-    height: 47,
-    width: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  wrapper: {
+  leftSide: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 0.5,
-    borderColor: '#333333',
-    paddingRight: 24
+    alignItems: 'center'
   },
   container: {
     flexDirection: 'row',
     height: 47,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 0.5,
     borderColor: '#333333',
@@ -97,11 +97,12 @@ const SS = StyleSheet.create({
     letterSpacing: -0.3,
     color: '#FFFFFF'
   },
-  containerGoback: {
+  containerGoBack: {
     height: 47,
     width: 48,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 30
-  }
+  },
+  resetContainer: { marginRight: 19 }
 })
