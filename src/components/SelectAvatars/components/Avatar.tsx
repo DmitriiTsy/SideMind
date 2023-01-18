@@ -11,6 +11,9 @@ import { deviceWidth } from 'utils/dimentions'
 import { ISelectAvatarsVM, ISelectAvatarsVMTid } from 'components/SelectAvatars'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
+import { INavigationService, INavigationServiceTid } from 'services'
+import { CommonScreenName } from 'constants/screen.types'
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 
 interface IBotProps {
   avatar: AvatarModel
@@ -20,6 +23,8 @@ interface IBotProps {
 export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
   const vm = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const chatVM = useInject<IChatVM>(IChatVMTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
   const selected = vm.selected.find((el) => el === avatar.id)
@@ -30,8 +35,10 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
 
   const update = useCallback(() => {
     appStore.updateUsersAvatars(avatar)
+    chatVM.setAvatar(avatar)
     bottomPanelVM.toggle()
-  }, [appStore, avatar, bottomPanelVM])
+    navigation.navigate(CommonScreenName.Chat)
+  }, [appStore, avatar, bottomPanelVM, chatVM, navigation])
 
   return (
     <Pressable onPress={single ? update : set} style={SS.container}>
