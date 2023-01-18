@@ -1,5 +1,7 @@
-import React from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import React, { useMemo } from 'react'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+
+import { observer } from 'mobx-react'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
@@ -10,9 +12,11 @@ import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 
 import { INavigationService, INavigationServiceTid } from 'services'
 
+import { Resetting } from 'components/Chat/components/Resetting'
+
 import { ChatInput, List } from './components'
 
-export const Chat = () => {
+export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
 
@@ -20,11 +24,31 @@ export const Chat = () => {
     navigation.goBack()
   }
 
+  const resetAvailable = useMemo(
+    () => chatVM.messages.length > 1,
+    [chatVM.messages.length]
+  )
+
+  const reset = () => {
+    chatVM.changeResetState(true)
+  }
+
   const header = () => (
     <View style={SS.container}>
-      <Svg name={'PointerLeft'} style={{ marginRight: 30 }} onPress={goBack} />
-      <Image source={{ uri: chatVM.bot.imagePath }} style={SS.avatar} />
-      <Text style={SS.title}>{chatVM.bot.name}</Text>
+      <View style={SS.leftSide}>
+        <Pressable style={SS.containerGoBack} onPress={goBack}>
+          <Svg name={'PointerLeft'} />
+        </Pressable>
+        <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
+        <Text style={SS.title}>{chatVM.avatar.name}</Text>
+      </View>
+      <Pressable
+        style={SS.resetContainer}
+        disabled={!resetAvailable}
+        onPress={reset}
+      >
+        <Svg name={'Reset'} color={!resetAvailable && '#666666'} />
+      </Pressable>
     </View>
   )
 
@@ -36,24 +60,28 @@ export const Chat = () => {
     >
       {header()}
       <List />
+      <Resetting />
       <ChatInput />
     </ScreenContainer>
   )
-}
+})
 
 const SS = StyleSheet.create({
   screenContainer: {
     backgroundColor: '#000000',
     justifyContent: 'space-between'
   },
+  leftSide: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   container: {
     flexDirection: 'row',
     height: 47,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 0.5,
     borderColor: '#333333',
-    paddingLeft: 24,
     paddingBottom: 10
   },
   avatar: {
@@ -68,5 +96,13 @@ const SS = StyleSheet.create({
     lineHeight: 16,
     letterSpacing: -0.3,
     color: '#FFFFFF'
-  }
+  },
+  containerGoBack: {
+    height: 47,
+    width: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 30
+  },
+  resetContainer: { marginRight: 19 }
 })

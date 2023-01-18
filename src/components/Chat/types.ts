@@ -1,9 +1,11 @@
 export enum ESender {
   BOT = 'BOT',
-  HUMAN = 'HUMAN'
+  HUMAN = 'HUMAN',
+  RESET = 'RESET'
 }
 
 export interface IMessage {
   sender: ESender
   text: string
+  date: Date
 }

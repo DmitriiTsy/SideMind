@@ -8,6 +8,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import { StatusBar } from 'react-native'
 
+import { StackAnimationTypes } from 'react-native-screens'
+
 import { useInject } from 'IoC'
 
 import {
@@ -19,8 +21,11 @@ import {
 import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
 
 import { IAppVM, IAppVMTid } from 'app/App.vm'
+import { BottomPanel } from 'components/BottomPanel'
 
 const Stack = createNativeStackNavigator<ScreenParamTypes>()
+
+const OPTS: { animation: StackAnimationTypes } = { animation: 'none' }
 
 export const App = () => {
   const appVM = useInject<IAppVM>(IAppVMTid)
@@ -38,17 +43,24 @@ export const App = () => {
         screenOptions={{ headerShown: false }}
         initialRouteName={CommonScreenName.Boot}
       >
-        <Stack.Screen name={CommonScreenName.Boot} component={BootScreen} />
         <Stack.Screen
-          name={CommonScreenName.SelectBots}
+          name={CommonScreenName.Boot}
+          component={BootScreen}
+          options={OPTS}
+        />
+        <Stack.Screen
+          name={CommonScreenName.SelectAvatars}
           component={SelectBotsScreen}
+          options={OPTS}
         />
         <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
         <Stack.Screen
           name={CommonScreenName.MainFeed}
           component={MainFeedScreen}
+          options={OPTS}
         />
       </Stack.Navigator>
+      <BottomPanel />
     </NavigationContainer>
   )
 }

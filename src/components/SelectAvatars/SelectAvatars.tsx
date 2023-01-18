@@ -4,23 +4,24 @@ import { StyleSheet, FlatList, ListRenderItemInfo } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { ScreenContainer } from 'components/ScreenContainer'
-import { SelectBotsHeader } from 'components/SelectBots/components'
+import { SelectAvatarsHeader } from 'components/SelectAvatars/components'
 
-import { GroupedBots } from 'components/SelectBots/components/GroupedBots'
+import { GroupedAvatars } from 'components/SelectAvatars/components/GroupedAvatars'
 
 import { useInject } from 'IoC'
 
-import { BotModel } from 'services/FirebaseService/types'
-import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { SkeletonBots } from 'components/SelectBots/components/skeleton/Skeleton'
-import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+import { AvatarModel } from 'services/FirebaseService/types'
+import { SkeletonAvatars } from 'components/SelectAvatars/components/skeleton/Skeleton'
+import {
+  ISelectAvatarsVM,
+  ISelectAvatarsVMTid
+} from 'components/SelectAvatars/SelectAvatars.vm'
 
-export const SelectBots = observer(() => {
-  const appStore = useInject<IAppStore>(IAppStoreTid)
-  const firebaseService = useInject<IFirebaseService>(IFirebaseServiceTid)
+export const SelectAvatars = observer(() => {
+  const vm = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
 
-  const renderItem = ({ item }: ListRenderItemInfo<BotModel[]>) => (
-    <GroupedBots bots={item} />
+  const renderItem = ({ item }: ListRenderItemInfo<AvatarModel[]>) => (
+    <GroupedAvatars avatar={item} />
   )
 
   const keyExtractor = (item, index) => index
@@ -31,13 +32,13 @@ export const SelectBots = observer(() => {
       bottomInsetColor={'#1C1C1E'}
       style={SS.screenContainer}
     >
-      <SelectBotsHeader />
+      <SelectAvatarsHeader />
 
-      {firebaseService.pendingBots ? (
-        <SkeletonBots />
+      {vm.commonAvatars.length === 0 ? (
+        <SkeletonAvatars />
       ) : (
         <FlatList
-          data={appStore.availableBots}
+          data={vm.commonAvatars}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           showsVerticalScrollIndicator={false}
