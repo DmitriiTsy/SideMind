@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import Clipboard from '@react-native-clipboard/clipboard'
@@ -14,11 +14,10 @@ interface IMessageProps {
 export const Message: FC<IMessageProps> = ({ message, index }) => {
   const isBot = useMemo(() => message.sender === ESender.BOT, [message.sender])
   const isLast = useMemo(() => index === 0, [index])
-  const [copiedText, setCopiedText] = useState()
 
-  const copyToClipboard = (text) => {
-    Clipboard.setString(text)
-  }
+  const copyToClipboard = useCallback(() => {
+    Clipboard.setString(message.text.trim())
+  }, [message.text])
 
   return (
     <View style={isBot ? SS.mainContainerBot : SS.mainContainerHuman}>
@@ -29,7 +28,7 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
           isLast && SS.last
         ]}
       >
-        <Pressable onPress={copyToClipboard(message.text.trim())}>
+        <Pressable onPress={copyToClipboard}>
           <Text style={SS.text}>{message.text.trim()}</Text>
         </Pressable>
       </View>
