@@ -82,7 +82,10 @@ export class ChatVM implements IChatVM {
   async getFirstMessage() {
     this.pending = true
 
-    const res = await this._openAIService?.createCompletion(this.avatar.prompt)
+    const res = await this._openAIService?.createCompletion(
+      this.avatar.prompt,
+      true
+    )
 
     this.pending = false
     runInAction(() => {

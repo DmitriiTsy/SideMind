@@ -11,7 +11,7 @@ export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 export interface IOpenAIService {
   init(): void
 
-  createCompletion(prompt: string): Promise<string>
+  createCompletion(prompt: string, isFirst?: boolean): Promise<string>
 
   setAvatar(avatar: AvatarModel): void
 }
@@ -36,7 +36,7 @@ export class OpenAIService implements IOpenAIService {
     this._openAIApi = new OpenAIApi(this._config)
   }
 
-  async createCompletion(prompt: string) {
+  async createCompletion(prompt: string, isFirst?: boolean) {
     this._history = `${this._history} \n\n###: ${prompt}. \n\n`
 
     this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
@@ -55,7 +55,11 @@ export class OpenAIService implements IOpenAIService {
 
       this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
-      return res.data.choices[0].text
+      if (isFirst) {
+        return this.checkQuotes(res.data.choices[0].text.trim())
+      }
+
+      return res.data.choices[0].text.trim()
     } catch (e) {
       this._firebaseService.setMessage(
         this._avatar.id,
@@ -65,6 +69,13 @@ export class OpenAIService implements IOpenAIService {
       console.log(e)
       return 'Some error occurred, now chat is unavailable'
     }
+  }
+
+  checkQuotes(text: string) {
+    if (text.startsWith('"') && text.endsWith('"')) {
+      return text.replace(/^"|"$/g, '')
+    }
+    return text
   }
 
   setAvatar(avatar: AvatarModel) {
