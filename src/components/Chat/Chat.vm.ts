@@ -39,7 +39,11 @@ export class ChatVM implements IChatVM {
   async sendMessage(message: string) {
     this.pending = true
 
-    const humanMessage = { sender: ESender.HUMAN, text: message }
+    const humanMessage = {
+      sender: ESender.HUMAN,
+      text: message,
+      date: new Date()
+    }
 
     this.messages = [humanMessage, ...this.messages]
     this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
@@ -47,7 +51,7 @@ export class ChatVM implements IChatVM {
     const res = await this._openAIService.createCompletion(message)
 
     runInAction(() => {
-      const botMessage = { sender: ESender.BOT, text: res }
+      const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
 
       this.messages = [botMessage, ...this.messages]
       this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
@@ -82,7 +86,7 @@ export class ChatVM implements IChatVM {
 
     this.pending = false
     runInAction(() => {
-      const botMessage = { sender: ESender.BOT, text: res }
+      const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
 
       this.messages = [botMessage]
       this._appStore.setMessageToAvatar(this.avatar.id, botMessage)

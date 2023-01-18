@@ -7,4 +7,5 @@ export enum ESender {
 export interface IMessage {
   sender: ESender
   text: string
+  date: Date
 }
