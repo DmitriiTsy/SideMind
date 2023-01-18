@@ -119,7 +119,8 @@ export class FirebaseService implements IFirebaseService {
         [avatarId]: firestore.FieldValue.arrayUnion({
           type: message.sender,
           text: message.text,
-          messageId: id
+          messageId: id,
+          date: new Date()
         })
       }),
       this.logMessage(id, avatarId, message.sender, isError)

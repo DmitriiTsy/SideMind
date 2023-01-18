@@ -97,7 +97,8 @@ export class AppStore implements IAppStore {
     })
     this._firebaseService.setMessage(avatarId, {
       sender: ESender.RESET,
-      text: ''
+      text: '',
+      date: new Date()
     })
     this._storageService.setUserAvatars(this.usersAvatars)
   }

@@ -59,7 +59,7 @@ export class OpenAIService implements IOpenAIService {
     } catch (e) {
       this._firebaseService.setMessage(
         this._avatar.id,
-        { sender: ESender.BOT, text: `Error occurred ${e}` },
+        { sender: ESender.BOT, text: `Error occurred ${e}`, date: new Date() },
         true
       )
       console.log(e)
