@@ -22,7 +22,6 @@ export const Boot = () => {
   useEffect(() => {
     setTimeout(() => {
       const value = storage.getUserLogin()
-      console.log(value)
       if (value) {
         appStore.setAvatarsFromStorage()
         navigation.navigate(CommonScreenName.MainFeed)
