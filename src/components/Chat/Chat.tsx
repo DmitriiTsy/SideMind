@@ -58,8 +58,16 @@ export const Chat = observer(() => {
       blurAmount={6}
       reducedTransparencyFallbackColor="white"
     >
-      <View style={SS.blurContainer}>
-        <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
+      <View style={SS.blurWrapper}>
+        <View style={SS.blurContainerText}>
+          <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
+        </View>
+        <View>
+          <Text>
+            
+          </Text>
+          <Svg name={'Copy'} />
+        </View>
       </View>
     </BlurView>
   )
@@ -84,16 +92,19 @@ const SS = StyleSheet.create({
     backgroundColor: '#000000',
     justifyContent: 'space-between'
   },
-  blurContainer: {
+  blurWrapper: {
     position: 'absolute',
     top: '50%',
+    flexDirection: 'column',
+    marginLeft: 12
+  },
+  blurContainerText: {
     padding: 9,
     marginTop: 3,
     borderRadius: 12,
     backgroundColor: '#363637',
     borderBottomLeftRadius: 2,
     alignItems: 'flex-start',
-    marginLeft: 12,
     maxWidth: deviceWidth * 0.85
   },
   blurText: {

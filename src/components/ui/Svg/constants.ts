@@ -6,7 +6,8 @@ import {
   SvgAddNote,
   SvgEnterActive,
   SvgCross,
-  SvgReset
+  SvgReset,
+  SvgCopy
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
@@ -17,5 +18,6 @@ export const SVG_MAP = {
   Enter: SvgEnter,
   EnterActive: SvgEnterActive,
   Cross: SvgCross,
-  Reset: SvgReset
+  Reset: SvgReset,
+  Copy: SvgCopy
 }
