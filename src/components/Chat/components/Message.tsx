@@ -3,6 +3,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import Clipboard from '@react-native-clipboard/clipboard'
 
+import { useInject } from 'IoC'
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { deviceWidth } from 'utils/dimentions'
 import { ESender, IMessage } from 'components/Chat/types'
 
@@ -14,6 +16,7 @@ interface IMessageProps {
 export const Message: FC<IMessageProps> = ({ message, index }) => {
   const isBot = useMemo(() => message.sender === ESender.BOT, [message.sender])
   const isLast = useMemo(() => index === 0, [index])
+  const chatVM = useInject<IChatVM>(IChatVMTid)
 
   const copyToClipboard = useCallback(() => {
     Clipboard.setString(message.text.trim())
@@ -28,7 +31,7 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
           isLast && SS.last
         ]}
       >
-        <Pressable onPress={copyToClipboard}>
+        <Pressable onLongPress={copyToClipboard}>
           <Text style={SS.text}>{message.text.trim()}</Text>
         </Pressable>
       </View>

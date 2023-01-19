@@ -51,13 +51,16 @@ export const Chat = observer(() => {
       >
         <Svg name={'Reset'} color={!resetAvailable && '#666666'} />
       </Pressable>
-      <BlurView
-        style={SS.absolute}
-        blurType="dark"
-        blurAmount={10}
-        reducedTransparencyFallbackColor="white"
-      />
     </View>
+  )
+
+  const blurToggle = () => (
+    <BlurView
+      style={SS.absolute}
+      blurType="dark"
+      blurAmount={6}
+      reducedTransparencyFallbackColor="white"
+    />
   )
 
   return (
