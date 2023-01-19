@@ -17,7 +17,7 @@ import {
   IFirebaseResponseUsers,
   LOG_TYPE
 } from 'services/FirebaseService/types'
-import { ESender, IMessage } from 'components/Chat/types'
+import { IMessage } from 'components/Chat/types'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
@@ -71,7 +71,7 @@ export class FirebaseService implements IFirebaseService {
   }
 
   async getCommonAvatars() {
-    const data = (await this._avatarsCollection.doc('bots').get()).data()
+    const data = (await this._avatarsCollection.doc('Common').get()).data()
     return this.mapAvatars(data)
   }
 
@@ -101,14 +101,15 @@ export class FirebaseService implements IFirebaseService {
   async logMessage(
     messageId: string,
     botId: number,
-    type: ESender,
+    message: IMessage,
     isError: boolean
   ) {
-    const _typeLog = isError ? 'Error_OpenAI' : LOG_TYPE[type]
+    const _typeLog = isError ? 'Error_OpenAI' : LOG_TYPE[message.sender]
     await analytics().logEvent(_typeLog, {
       messageId,
       deviceId: this._systemInfoService.deviceId,
-      botId
+      botId,
+      date: `${message.date}`
     })
   }
 
@@ -123,7 +124,7 @@ export class FirebaseService implements IFirebaseService {
           date: new Date()
         })
       }),
-      this.logMessage(id, avatarId, message.sender, isError)
+      this.logMessage(id, avatarId, message, isError)
     ])
   }
 

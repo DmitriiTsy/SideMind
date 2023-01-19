@@ -4,7 +4,6 @@ import { Pressable, StyleSheet, Text } from 'react-native'
 import { observer } from 'mobx-react'
 
 import Animated, {
-  interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
@@ -25,7 +24,7 @@ export const Resetting = observer(() => {
     chatVM.changeResetState(false)
   }, [chatVM])
 
-  const state = useSharedValue(0)
+  const backgroundColor = useSharedValue('#363637')
 
   useEffect(() => {
     if (chatVM.resetting) setSecond(3)
@@ -44,16 +43,16 @@ export const Resetting = observer(() => {
   }, [cancel, chatVM, chatVM.resetting, second])
 
   useEffect(() => {
-    state.value = withRepeat(withTiming(1, { duration: 500 }), -1, true)
+    backgroundColor.value = withRepeat(
+      withTiming('#36363780', { duration: 500 }),
+      -1,
+      true
+    )
   }, [])
 
   const animatedStyle = useAnimatedStyle(
     () => ({
-      backgroundColor: interpolateColor(
-        state.value,
-        [0, 1],
-        ['#363637', '#36363780']
-      )
+      backgroundColor: backgroundColor.value
     }),
     []
   )
