@@ -5,6 +5,7 @@ import { observer } from 'mobx-react'
 
 import { BlurView } from '@react-native-community/blur'
 
+import { deviceWidth } from 'utils/dimentions'
 import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
@@ -56,7 +57,11 @@ export const Chat = observer(() => {
       blurType="dark"
       blurAmount={6}
       reducedTransparencyFallbackColor="white"
-    />
+    >
+      <View style={SS.blurContainer}>
+        <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
+      </View>
+    </BlurView>
   )
 
   return (
@@ -70,9 +75,6 @@ export const Chat = observer(() => {
       <Resetting />
       <ChatInput />
       {chatVM.blur && <BlurToggle />}
-      <View>
-        <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
-      </View>
     </ScreenContainer>
   )
 })
@@ -82,14 +84,17 @@ const SS = StyleSheet.create({
     backgroundColor: '#000000',
     justifyContent: 'space-between'
   },
-  blurConteiner: {
+  blurContainer: {
+    position: 'absolute',
+    top: '50%',
     padding: 9,
     marginTop: 3,
     borderRadius: 12,
     backgroundColor: '#363637',
     borderBottomLeftRadius: 2,
     alignItems: 'flex-start',
-    marginLeft: 12
+    marginLeft: 12,
+    maxWidth: deviceWidth * 0.85
   },
   blurText: {
     color: 'white'
