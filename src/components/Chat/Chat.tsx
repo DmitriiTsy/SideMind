@@ -5,6 +5,8 @@ import { observer } from 'mobx-react'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
+import { BlurView } from '@react-native-community/blur'
+
 import { Svg } from 'components/ui/Svg'
 
 import { useInject } from 'IoC'
@@ -49,6 +51,12 @@ export const Chat = observer(() => {
       >
         <Svg name={'Reset'} color={!resetAvailable && '#666666'} />
       </Pressable>
+      <BlurView
+        style={SS.absolute}
+        blurType="dark"
+        blurAmount={10}
+        reducedTransparencyFallbackColor="white"
+      />
     </View>
   )
 
@@ -70,6 +78,13 @@ const SS = StyleSheet.create({
   screenContainer: {
     backgroundColor: '#000000',
     justifyContent: 'space-between'
+  },
+  absolute: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
   },
   leftSide: {
     flexDirection: 'row',
