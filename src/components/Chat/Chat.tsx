@@ -3,17 +3,13 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
-import { ScreenContainer } from 'components/ScreenContainer'
-
 import { BlurView } from '@react-native-community/blur'
 
+import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
-
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
-
 import { INavigationService, INavigationServiceTid } from 'services'
-
 import { Resetting } from 'components/Chat/components/Resetting'
 
 import { ChatInput, List } from './components'
@@ -54,13 +50,16 @@ export const Chat = observer(() => {
     </View>
   )
 
-  const blurToggle = () => (
-    <BlurView
-      style={SS.absolute}
-      blurType="dark"
-      blurAmount={6}
-      reducedTransparencyFallbackColor="white"
-    />
+  const BlurToggle = () => (
+    <View>
+      <BlurView
+        style={SS.absolute}
+        blurType="dark"
+        blurAmount={6}
+        reducedTransparencyFallbackColor="white"
+      />
+      <Text>{chatVM.blurmessage}</Text>
+    </View>
   )
 
   return (
@@ -73,6 +72,7 @@ export const Chat = observer(() => {
       <List />
       <Resetting />
       <ChatInput />
+      {chatVM.blur && <BlurToggle />}
     </ScreenContainer>
   )
 })

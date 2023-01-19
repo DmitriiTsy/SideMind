@@ -19,8 +19,9 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
 
   const copyToClipboard = useCallback(() => {
+    chatVM.blurToggle(message.text)
     Clipboard.setString(message.text.trim())
-  }, [message.text])
+  }, [chatVM, message.text])
 
   return (
     <View style={isBot ? SS.mainContainerBot : SS.mainContainerHuman}>

@@ -14,12 +14,15 @@ export interface IChatVM {
   avatar: AvatarModel
   pending: boolean
   resetting: boolean
+  blur: boolean
+  blurmessage: string
 
   changeResetState(value: boolean): void
   sendMessage(message: string): void
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
+  blurToggle(message: string): void
 }
 
 @Injectable()
@@ -28,12 +31,14 @@ export class ChatVM implements IChatVM {
   @observable avatar: AvatarModel
   @observable pending = false
   @observable resetting = false
+  @observable blur = false
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
     @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
     @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {}
+  blurmessage: string
 
   @action.bound
   async sendMessage(message: string) {
@@ -76,6 +81,12 @@ export class ChatVM implements IChatVM {
     this.messages = []
     this._appStore.resetMessages(this.avatar.id)
     this.setAvatar(this.avatar)
+  }
+
+  @action.bound
+  blurToggle(message: string) {
+    this.blur = !this.blur
+    this.blurmessage = message
   }
 
   @action.bound
