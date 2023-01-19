@@ -1,7 +1,6 @@
 import { StyleSheet, View } from 'react-native'
 import React, { FC, useEffect } from 'react'
 import Animated, {
-  interpolateColor,
   useSharedValue,
   useAnimatedStyle,
   withRepeat,
@@ -18,19 +17,19 @@ interface ISkeletonComponentProps {
 }
 
 export const SkeletonAvatars = () => {
-  const state = useSharedValue(0)
+  const state = useSharedValue('#484849')
 
   useEffect(() => {
-    state.value = withRepeat(withTiming(1, { duration: 500 }), -1, true)
+    state.value = withRepeat(
+      withTiming('#4848494D', { duration: 500 }),
+      -1,
+      true
+    )
   }, [])
 
   const animatedStyle = useAnimatedStyle(
     () => ({
-      backgroundColor: interpolateColor(
-        state.value,
-        [0, 1],
-        ['#484849', '#4848494D']
-      )
+      backgroundColor: state.value
     }),
     []
   )
@@ -123,7 +122,6 @@ const SS = StyleSheet.create({
     paddingBottom: 8
   },
   header_text: {
-    backgroundColor: '#1C1C1E',
     width: 130,
     height: 12,
     borderRadius: 25
