@@ -1,8 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
-import dayjs from 'dayjs'
-
 import { observer } from 'mobx-react'
 
 import { AvatarModel } from 'services/FirebaseService/types'
@@ -10,6 +8,7 @@ import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { CommonScreenName } from 'constants/screen.types'
+import { useTimestamp } from 'utils/timestamp/useTimestamp'
 
 interface IChatPreview {
   avatar: AvatarModel
@@ -31,10 +30,7 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
   }
 
   const timestamp = useMemo(
-    () =>
-      existMessage
-        ? dayjs(avatar.messages.displayed[0].date).format('hh:mm A')
-        : '',
+    () => (existMessage ? useTimestamp(avatar.messages.displayed[0].date) : ''),
     [avatar.messages?.displayed, existMessage]
   )
 
