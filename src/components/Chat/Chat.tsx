@@ -12,13 +12,14 @@ import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { Resetting } from 'components/Chat/components/Resetting'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
-
+  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const goBack = () => {
     navigation.goBack()
   }
@@ -62,10 +63,8 @@ export const Chat = observer(() => {
         <View style={SS.blurContainerText}>
           <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
         </View>
-        <View>
-          <Text>
-            
-          </Text>
+        <View style={SS.containerCopy}>
+          <Text style={SS.copyText}>{t.get('copy')}</Text>
           <Svg name={'Copy'} />
         </View>
       </View>
@@ -91,6 +90,21 @@ const SS = StyleSheet.create({
   screenContainer: {
     backgroundColor: '#000000',
     justifyContent: 'space-between'
+  },
+  containerCopy: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    width: 83,
+    height: 38,
+    borderRadius: 25,
+    padding: 9,
+    backgroundColor: '#363637',
+    marginTop: 6
+  },
+  copyText: {
+    color: 'white',
+    marginRight: 12
   },
   blurWrapper: {
     position: 'absolute',
