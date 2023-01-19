@@ -51,15 +51,12 @@ export const Chat = observer(() => {
   )
 
   const BlurToggle = () => (
-    <View>
-      <BlurView
-        style={SS.absolute}
-        blurType="dark"
-        blurAmount={6}
-        reducedTransparencyFallbackColor="white"
-      />
-      <Text>{chatVM.blurmessage}</Text>
-    </View>
+    <BlurView
+      style={SS.absolute}
+      blurType="dark"
+      blurAmount={6}
+      reducedTransparencyFallbackColor="white"
+    />
   )
 
   return (
@@ -73,6 +70,9 @@ export const Chat = observer(() => {
       <Resetting />
       <ChatInput />
       {chatVM.blur && <BlurToggle />}
+      <View>
+        <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
+      </View>
     </ScreenContainer>
   )
 })
@@ -81,6 +81,18 @@ const SS = StyleSheet.create({
   screenContainer: {
     backgroundColor: '#000000',
     justifyContent: 'space-between'
+  },
+  blurConteiner: {
+    padding: 9,
+    marginTop: 3,
+    borderRadius: 12,
+    backgroundColor: '#363637',
+    borderBottomLeftRadius: 2,
+    alignItems: 'flex-start',
+    marginLeft: 12
+  },
+  blurText: {
+    color: 'white'
   },
   absolute: {
     position: 'absolute',
