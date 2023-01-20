@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { StyleSheet, View, Pressable, Text } from 'react-native'
 
 import Clipboard from '@react-native-clipboard/clipboard'
@@ -13,10 +13,16 @@ import { deviceWidth } from 'utils/dimentions'
 export const Blur = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
-
+  const [copyOnPressColorToggle, setCopyOnPressColorToggle] = useState(false)
   const blurToggleOff = useCallback(() => {
     chatVM.blurToggle()
   }, [chatVM])
+
+  const copyButtonColorHandler = () => {
+    copyOnPressColorToggle === false
+      ? setCopyOnPressColorToggle(true)
+      : setCopyOnPressColorToggle(false)
+  }
 
   const clipboardToggle = useCallback(() => {
     Clipboard.setString(chatVM.blurmessage)
@@ -48,8 +54,18 @@ export const Blur = () => {
             >
               <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
             </View>
-            <Pressable onPress={clipboardToggle}>
-              <View style={SS.containerCopy}>
+            <Pressable
+              onPress={clipboardToggle}
+              onPressIn={copyButtonColorHandler}
+            >
+              <View
+                style={[
+                  SS.containerCopy,
+                  copyOnPressColorToggle
+                    ? { backgroundColor: '#707070' }
+                    : { backgroundColor: '#363637' }
+                ]}
+              >
                 <Text style={SS.copyText}>{t.get('copy')}</Text>
                 <Svg name={'Copy'} />
               </View>
