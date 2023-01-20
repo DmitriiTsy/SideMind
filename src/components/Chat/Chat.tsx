@@ -1,27 +1,21 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
-import { BlurView } from '@react-native-community/blur'
-
-import Clipboard from '@react-native-clipboard/clipboard'
-
-import { deviceWidth } from 'utils/dimentions'
 import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { Resetting } from 'components/Chat/components/Resetting'
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
+import { Blur } from './components/Blur'
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
-  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const goBack = () => {
     navigation.goBack()
   }
@@ -30,14 +24,6 @@ export const Chat = observer(() => {
     () => chatVM.messages.length > 1,
     [chatVM.messages.length]
   )
-  const BlurToggleOff = useCallback(() => {
-    chatVM.blur = false
-  }, [chatVM])
-
-  const BlurToggleOn = useCallback(() => {
-    Clipboard.setString(chatVM.blurmessage)
-    chatVM.blur = false
-  }, [chatVM])
 
   const reset = () => {
     chatVM.changeResetState(true)
@@ -62,43 +48,6 @@ export const Chat = observer(() => {
     </View>
   )
 
-  const BlurToggle = () => (
-    <Pressable onPress={BlurToggleOff} style={SS.blurViewBot}>
-      <View style={SS.blurViewBot}>
-        <BlurView
-          style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
-          blurType="dark"
-          blurAmount={6}
-          reducedTransparencyFallbackColor="white"
-          blurRadius={25}
-        >
-          <View
-            style={[
-              SS.blurWrapper,
-              chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
-            ]}
-          >
-            <View
-              style={[
-                chatVM.isBot
-                  ? SS.blurContainerTextBot
-                  : SS.blurContainerTextHuman
-              ]}
-            >
-              <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
-            </View>
-            <Pressable onPress={BlurToggleOn}>
-              <View style={SS.containerCopy}>
-                <Text style={SS.copyText}>{t.get('copy')}</Text>
-                <Svg name={'Copy'} />
-              </View>
-            </Pressable>
-          </View>
-        </BlurView>
-      </View>
-    </Pressable>
-  )
-
   return (
     <ScreenContainer
       topInsetColor={'#000000'}
@@ -109,7 +58,7 @@ export const Chat = observer(() => {
       <List />
       <Resetting />
       <ChatInput />
-      {chatVM.blur && <BlurToggle />}
+      {chatVM.blur && <Blur />}
     </ScreenContainer>
   )
 })
@@ -118,69 +67,6 @@ const SS = StyleSheet.create({
   screenContainer: {
     backgroundColor: '#000000',
     justifyContent: 'space-between'
-  },
-  containerCopy: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    width: 83,
-    height: 38,
-    borderRadius: 25,
-    padding: 9,
-    backgroundColor: '#363637',
-    marginTop: 6,
-    fontSize: 16,
-    marginRight: 12
-  },
-  copyText: {
-    marginRight: 12,
-    fontWeight: '500',
-    fontSize: 16,
-    color: '#FFF'
-  },
-  blurViewHuman: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    alignItems: 'flex-end'
-  },
-  blurWrapper: {
-    position: 'absolute',
-    top: '50%',
-    flexDirection: 'column',
-    marginLeft: 12
-  },
-  blurContainerTextBot: {
-    padding: 9,
-    marginTop: 3,
-    borderRadius: 12,
-    backgroundColor: '#363637',
-    borderBottomLeftRadius: 2,
-    maxWidth: deviceWidth * 0.85
-  },
-  blurContainerTextHuman: {
-    padding: 9,
-    marginTop: 3,
-    borderRadius: 12,
-    backgroundColor: '#363637',
-    borderBottomRightRadius: 2,
-    alignItems: 'flex-end',
-    maxWidth: deviceWidth * 0.65,
-    marginRight: 12
-  },
-  blurText: {
-    fontWeight: '500',
-    fontSize: 16,
-    color: '#FFF'
-  },
-  blurViewBot: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0
   },
   leftSide: {
     flexDirection: 'row',
@@ -214,12 +100,6 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 30
-  },
-  blurWrapperBot: {
-    alignItems: 'flex-start'
-  },
-  blurWrapperHuman: {
-    alignItems: 'flex-end'
   },
   resetContainer: { marginRight: 19 }
 })
