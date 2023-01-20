@@ -16,13 +16,14 @@ export interface IChatVM {
   resetting: boolean
   blur: boolean
   blurmessage: string
+  isBot: boolean
 
   changeResetState(value: boolean): void
   sendMessage(message: string): void
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
-  blurToggle(message: string): void
+  blurToggle(message: string, botstatus: boolean): void
 }
 
 @Injectable()
@@ -32,6 +33,7 @@ export class ChatVM implements IChatVM {
   @observable pending = false
   @observable resetting = false
   @observable blur = false
+  @observable isBot = true
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
@@ -84,9 +86,10 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
-  blurToggle(message: string) {
+  blurToggle(message: string, botstatus: boolean) {
     this.blur = !this.blur
     this.blurmessage = message
+    this.isBot = botstatus
   }
 
   @action.bound

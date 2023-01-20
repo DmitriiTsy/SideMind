@@ -66,7 +66,11 @@ export const Chat = observer(() => {
           blurRadius={25}
         >
           <View style={SS.blurWrapper}>
-            <View style={SS.blurContainerText}>
+            <View
+              style={[
+                chatVM.isBot ? SS.blurContainerText : SS.blurContainerHuman
+              ]}
+            >
               <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
             </View>
             <View style={SS.containerCopy}>
@@ -78,7 +82,11 @@ export const Chat = observer(() => {
       </View>
     </Pressable>
   )
-
+  // style={[
+  //   SS.container,
+  //   isBot ? SS.fromBot : SS.fromHuman,
+  //   isLast && SS.last
+  // ]}
   return (
     <ScreenContainer
       topInsetColor={'#000000'}
@@ -129,8 +137,18 @@ const SS = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: '#363637',
     borderBottomLeftRadius: 2,
-    alignItems: 'flex-start',
     maxWidth: deviceWidth * 0.85
+  },
+  blurContainerHuman: {
+    padding: 9,
+    marginTop: 3,
+    borderRadius: 12,
+    backgroundColor: '#549EF7',
+    borderBottomRightRadius: 2,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    maxWidth: deviceWidth * 0.65,
+    marginRight: 12
   },
   blurText: {
     fontWeight: '500',

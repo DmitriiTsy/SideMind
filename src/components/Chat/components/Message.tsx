@@ -19,9 +19,9 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
 
   const copyToClipboard = useCallback(() => {
-    chatVM.blurToggle(message.text.trim())
+    chatVM.blurToggle(message.text.trim(), isBot)
     Clipboard.setString(message.text.trim())
-  }, [chatVM, message.text])
+  }, [chatVM, isBot, message.text])
 
   return (
     <View style={isBot ? SS.mainContainerBot : SS.mainContainerHuman}>
@@ -55,13 +55,6 @@ const SS = StyleSheet.create({
     maxWidth: deviceWidth * 0.85,
     marginLeft: 12
   },
-  // messageWithBlur: {
-  //   backgroundColor: 'blue',
-  //   borderBottomLeftRadius: 2,
-  //   alignItems: 'flex-start',
-  //   maxWidth: deviceWidth * 2,
-  //   marginLeft: 12
-  // },
   fromHuman: {
     backgroundColor: '#549EF7',
     borderBottomRightRadius: 2,
