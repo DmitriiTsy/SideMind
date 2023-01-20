@@ -5,6 +5,8 @@ import { observer } from 'mobx-react'
 
 import { BlurView } from '@react-native-community/blur'
 
+import Clipboard from '@react-native-clipboard/clipboard'
+
 import { deviceWidth } from 'utils/dimentions'
 import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
@@ -28,7 +30,12 @@ export const Chat = observer(() => {
     () => chatVM.messages.length > 1,
     [chatVM.messages.length]
   )
-  const clearFromClipboard = useCallback(() => {
+  const BlurToggleOff = useCallback(() => {
+    chatVM.blur = false
+  }, [chatVM])
+
+  const BlurToggleOn = useCallback(() => {
+    Clipboard.setString(chatVM.blurmessage)
     chatVM.blur = false
   }, [chatVM])
 
@@ -56,7 +63,7 @@ export const Chat = observer(() => {
   )
 
   const BlurToggle = () => (
-    <Pressable onPress={clearFromClipboard} style={SS.blurViewBot}>
+    <Pressable onPress={BlurToggleOff} style={SS.blurViewBot}>
       <View style={SS.blurViewBot}>
         <BlurView
           style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
@@ -80,10 +87,12 @@ export const Chat = observer(() => {
             >
               <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
             </View>
-            <View style={SS.containerCopy}>
-              <Text style={SS.copyText}>{t.get('copy')}</Text>
-              <Svg name={'Copy'} />
-            </View>
+            <Pressable onPress={BlurToggleOn}>
+              <View style={SS.containerCopy}>
+                <Text style={SS.copyText}>{t.get('copy')}</Text>
+                <Svg name={'Copy'} />
+              </View>
+            </Pressable>
           </View>
         </BlurView>
       </View>

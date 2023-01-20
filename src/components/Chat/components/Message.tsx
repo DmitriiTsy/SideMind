@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-
 import Clipboard from '@react-native-clipboard/clipboard'
 
 import { useInject } from 'IoC'
@@ -19,8 +18,8 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
 
   const copyToClipboard = useCallback(() => {
+    Clipboard.setString('')
     chatVM.blurToggle(message.text.trim(), isBot)
-    Clipboard.setString(message.text.trim())
   }, [chatVM, isBot, message.text])
 
   return (
