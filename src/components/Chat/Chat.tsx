@@ -58,6 +58,7 @@ export const Chat = observer(() => {
       blurType="dark"
       blurAmount={6}
       reducedTransparencyFallbackColor="white"
+      blurRadius={25}
     >
       <View style={SS.blurWrapper}>
         <View style={SS.blurContainerText}>
