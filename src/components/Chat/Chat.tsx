@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
@@ -28,6 +28,9 @@ export const Chat = observer(() => {
     () => chatVM.messages.length > 1,
     [chatVM.messages.length]
   )
+  const clearFromClipboard = useCallback(() => {
+    chatVM.blur = false
+  }, [chatVM])
 
   const reset = () => {
     chatVM.changeResetState(true)
@@ -53,23 +56,27 @@ export const Chat = observer(() => {
   )
 
   const BlurToggle = () => (
-    <BlurView
-      style={SS.absolute}
-      blurType="dark"
-      blurAmount={6}
-      reducedTransparencyFallbackColor="white"
-      blurRadius={25}
-    >
-      <View style={SS.blurWrapper}>
-        <View style={SS.blurContainerText}>
-          <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
-        </View>
-        <View style={SS.containerCopy}>
-          <Text style={SS.copyText}>{t.get('copy')}</Text>
-          <Svg name={'Copy'} />
-        </View>
+    <Pressable onPress={clearFromClipboard} style={SS.absolute}>
+      <View style={SS.absolute}>
+        <BlurView
+          style={SS.absolute}
+          blurType="dark"
+          blurAmount={6}
+          reducedTransparencyFallbackColor="white"
+          blurRadius={25}
+        >
+          <View style={SS.blurWrapper}>
+            <View style={SS.blurContainerText}>
+              <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
+            </View>
+            <View style={SS.containerCopy}>
+              <Text style={SS.copyText}>{t.get('copy')}</Text>
+              <Svg name={'Copy'} />
+            </View>
+          </View>
+        </BlurView>
       </View>
-    </BlurView>
+    </Pressable>
   )
 
   return (
@@ -101,11 +108,14 @@ const SS = StyleSheet.create({
     borderRadius: 25,
     padding: 9,
     backgroundColor: '#363637',
-    marginTop: 6
+    marginTop: 6,
+    fontSize: 16
   },
   copyText: {
-    color: 'white',
-    marginRight: 12
+    marginRight: 12,
+    fontWeight: '500',
+    fontSize: 16,
+    color: '#FFF'
   },
   blurWrapper: {
     position: 'absolute',
@@ -123,7 +133,9 @@ const SS = StyleSheet.create({
     maxWidth: deviceWidth * 0.85
   },
   blurText: {
-    color: 'white'
+    fontWeight: '500',
+    fontSize: 16,
+    color: '#FFF'
   },
   absolute: {
     position: 'absolute',

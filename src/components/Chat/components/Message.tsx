@@ -23,10 +23,6 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
     Clipboard.setString(message.text.trim())
   }, [chatVM, message.text])
 
-  const clearFromClipboard = useCallback(() => {
-    chatVM.blur = false
-  }, [chatVM])
-
   return (
     <View style={isBot ? SS.mainContainerBot : SS.mainContainerHuman}>
       <View
@@ -36,10 +32,7 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
           isLast && SS.last
         ]}
       >
-        <Pressable
-          onLongPress={copyToClipboard}
-          onPressOut={clearFromClipboard}
-        >
+        <Pressable onLongPress={copyToClipboard}>
           <Text style={SS.text}>{message.text.trim()}</Text>
         </Pressable>
       </View>
