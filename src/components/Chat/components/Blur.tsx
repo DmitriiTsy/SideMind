@@ -15,12 +15,12 @@ export const Blur = () => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
 
   const blurToggleOff = useCallback(() => {
-    chatVM.blur = false
+    chatVM.blurToggle()
   }, [chatVM])
 
   const clipboardToggle = useCallback(() => {
     Clipboard.setString(chatVM.blurmessage)
-    chatVM.blur = false
+    chatVM.blurToggle()
   }, [chatVM])
 
   return (

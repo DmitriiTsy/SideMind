@@ -17,7 +17,7 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
   const isLast = useMemo(() => index === 0, [index])
   const chatVM = useInject<IChatVM>(IChatVMTid)
 
-  const BlutToggleOn = useCallback(() => {
+  const BlurToggleOn = useCallback(() => {
     Clipboard.setString('')
     chatVM.blurToggle(message.text.trim(), isBot)
   }, [chatVM, isBot, message.text])
@@ -31,7 +31,7 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
           isLast && SS.last
         ]}
       >
-        <Pressable onLongPress={BlutToggleOn}>
+        <Pressable onLongPress={BlurToggleOn}>
           <Text style={SS.text}>{message.text.trim()}</Text>
         </Pressable>
       </View>

@@ -23,7 +23,7 @@ export interface IChatVM {
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
-  blurToggle(message: string, botstatus: boolean): void
+  blurToggle(message?: string, botstatus?: boolean): void
 }
 
 @Injectable()
@@ -86,7 +86,7 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
-  blurToggle(message: string, botstatus: boolean) {
+  blurToggle(message?: string, botstatus?: boolean) {
     this.blur = !this.blur
     this.blurmessage = message
     this.isBot = botstatus
