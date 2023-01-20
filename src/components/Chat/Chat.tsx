@@ -59,13 +59,20 @@ export const Chat = observer(() => {
     <Pressable onPress={clearFromClipboard} style={SS.absolute}>
       <View style={SS.absolute}>
         <BlurView
-          style={SS.absolute}
+          style={[chatVM.isBot ? SS.absolute : SS.container_absolute]}
           blurType="dark"
           blurAmount={6}
           reducedTransparencyFallbackColor="white"
           blurRadius={25}
         >
-          <View style={SS.blurWrapper}>
+          <View
+            style={[
+              SS.blurWrapper,
+              chatVM.isBot
+                ? SS.blurWrapperStart
+                : SS.blurWrapperEnd
+            ]}
+          >
             <View
               style={[
                 chatVM.isBot ? SS.blurContainerText : SS.blurContainerHuman
@@ -125,6 +132,14 @@ const SS = StyleSheet.create({
     fontSize: 16,
     color: '#FFF'
   },
+  container_absolute: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    alignItems: 'flex-end'
+  },
   blurWrapper: {
     position: 'absolute',
     top: '50%',
@@ -143,10 +158,9 @@ const SS = StyleSheet.create({
     padding: 9,
     marginTop: 3,
     borderRadius: 12,
-    backgroundColor: '#549EF7',
+    backgroundColor: '#363637',
     borderBottomRightRadius: 2,
     alignItems: 'flex-end',
-    justifyContent: 'flex-end',
     maxWidth: deviceWidth * 0.65,
     marginRight: 12
   },
@@ -194,6 +208,12 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 30
+  },
+  blurWrapperStart: {
+    alignItems: 'flex-start'
+  },
+  blurWrapperEnd: {
+    alignItems: 'flex-end'
   },
   resetContainer: { marginRight: 19 }
 })
