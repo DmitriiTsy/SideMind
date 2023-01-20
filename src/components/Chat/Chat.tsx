@@ -56,10 +56,10 @@ export const Chat = observer(() => {
   )
 
   const BlurToggle = () => (
-    <Pressable onPress={clearFromClipboard} style={SS.absolute}>
-      <View style={SS.absolute}>
+    <Pressable onPress={clearFromClipboard} style={SS.blurViewBot}>
+      <View style={SS.blurViewBot}>
         <BlurView
-          style={[chatVM.isBot ? SS.absolute : SS.container_absolute]}
+          style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
           blurType="dark"
           blurAmount={6}
           reducedTransparencyFallbackColor="white"
@@ -68,14 +68,14 @@ export const Chat = observer(() => {
           <View
             style={[
               SS.blurWrapper,
-              chatVM.isBot
-                ? SS.blurWrapperStart
-                : SS.blurWrapperEnd
+              chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
             ]}
           >
             <View
               style={[
-                chatVM.isBot ? SS.blurContainerText : SS.blurContainerHuman
+                chatVM.isBot
+                  ? SS.blurContainerTextBot
+                  : SS.blurContainerTextHuman
               ]}
             >
               <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
@@ -89,11 +89,7 @@ export const Chat = observer(() => {
       </View>
     </Pressable>
   )
-  // style={[
-  //   SS.container,
-  //   isBot ? SS.fromBot : SS.fromHuman,
-  //   isLast && SS.last
-  // ]}
+
   return (
     <ScreenContainer
       topInsetColor={'#000000'}
@@ -124,7 +120,8 @@ const SS = StyleSheet.create({
     padding: 9,
     backgroundColor: '#363637',
     marginTop: 6,
-    fontSize: 16
+    fontSize: 16,
+    marginRight: 12
   },
   copyText: {
     marginRight: 12,
@@ -132,7 +129,7 @@ const SS = StyleSheet.create({
     fontSize: 16,
     color: '#FFF'
   },
-  container_absolute: {
+  blurViewHuman: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -146,7 +143,7 @@ const SS = StyleSheet.create({
     flexDirection: 'column',
     marginLeft: 12
   },
-  blurContainerText: {
+  blurContainerTextBot: {
     padding: 9,
     marginTop: 3,
     borderRadius: 12,
@@ -154,7 +151,7 @@ const SS = StyleSheet.create({
     borderBottomLeftRadius: 2,
     maxWidth: deviceWidth * 0.85
   },
-  blurContainerHuman: {
+  blurContainerTextHuman: {
     padding: 9,
     marginTop: 3,
     borderRadius: 12,
@@ -169,7 +166,7 @@ const SS = StyleSheet.create({
     fontSize: 16,
     color: '#FFF'
   },
-  absolute: {
+  blurViewBot: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -209,10 +206,10 @@ const SS = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 30
   },
-  blurWrapperStart: {
+  blurWrapperBot: {
     alignItems: 'flex-start'
   },
-  blurWrapperEnd: {
+  blurWrapperHuman: {
     alignItems: 'flex-end'
   },
   resetContainer: { marginRight: 19 }
