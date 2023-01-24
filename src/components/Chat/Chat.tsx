@@ -4,14 +4,10 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { ScreenContainer } from 'components/ScreenContainer'
-
 import { Svg } from 'components/ui/Svg'
-
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
-
 import { INavigationService, INavigationServiceTid } from 'services'
-
 import { Resetting } from 'components/Chat/components/Resetting'
 
 import { ChatInput, List } from './components'
@@ -19,7 +15,6 @@ import { ChatInput, List } from './components'
 export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
-
   const goBack = () => {
     navigation.goBack()
   }
