@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import {
   StyleSheet,
   View,
@@ -44,8 +44,10 @@ export const ChatInput = () => {
     }
   }, [chatVM, value])
 
+  const isMultiline = useMemo(() => inputHeight > 28, [inputHeight])
+
   return (
-    <View style={[SS.container, inputHeight < 28 && SS.containerOnChange]}>
+    <View style={[SS.container, isMultiline && SS.containerOnChange]}>
       <View style={[SS.inputContainer]}>
         <TextInput
           multiline={true}
@@ -63,6 +65,7 @@ export const ChatInput = () => {
       <Svg
         name={value && !chatVM.pending ? 'EnterActive' : 'Enter'}
         onPress={submit}
+        style={isMultiline && SS.enter}
         size={32}
       />
     </View>
@@ -78,8 +81,7 @@ const SS = StyleSheet.create({
     borderColor: '#333333'
   },
   enter: {
-    width: 36,
-    height: 36
+    marginBottom: 6
   },
   inputContainer: {
     backgroundColor: '#222222',
