@@ -42,7 +42,10 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
 
   return (
     <Pressable onPress={single ? update : set} style={SS.container}>
-      <Image source={{ uri: avatar.imagePath }} style={SS.image} />
+      <Image
+        source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
+        style={SS.image}
+      />
 
       <View style={SS.containerRight}>
         <View>
