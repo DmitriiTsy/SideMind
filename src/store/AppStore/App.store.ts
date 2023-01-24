@@ -135,7 +135,7 @@ export class AppStore implements IAppStore {
   sortToFirst(avatarId: number) {
     const index = this.usersAvatars.findIndex((el) => el.id === avatarId)
     const _avatar = this.usersAvatars[index]
-    this.usersAvatars.slice(index, 1)
+    this.usersAvatars.splice(index, 1)
     this.usersAvatars.unshift(_avatar)
   }
 }
