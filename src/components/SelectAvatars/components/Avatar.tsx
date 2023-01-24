@@ -34,15 +34,18 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
   }, [vm, avatar.id])
 
   const update = useCallback(() => {
-    appStore.updateUsersAvatars(avatar)
-    chatVM.setAvatar(avatar)
+    const _avatar = appStore.updateUsersAvatars(avatar)
+    chatVM.setAvatar(_avatar || avatar)
     bottomPanelVM.toggle()
     navigation.navigate(CommonScreenName.Chat)
   }, [appStore, avatar, bottomPanelVM, chatVM, navigation])
 
   return (
     <Pressable onPress={single ? update : set} style={SS.container}>
-      <Image source={{ uri: avatar.imagePath }} style={SS.image} />
+      <Image
+        source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
+        style={SS.image}
+      />
 
       <View style={SS.containerRight}>
         <View>

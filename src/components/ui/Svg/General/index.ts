@@ -13,3 +13,5 @@ export * from './SvgEnterActive'
 export * from './SvgCross'
 
 export * from './Reset'
+
+export * from './Copy'
