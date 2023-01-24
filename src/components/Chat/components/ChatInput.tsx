@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   StyleSheet,
   View,
@@ -9,15 +9,19 @@ import {
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-
 import { Svg } from 'components/ui/Svg'
 import { deviceWidth } from 'utils/dimentions'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
+import {
+  ISystemInfoService,
+  ISystemInfoServiceTid
+} from 'services/SystemInfoService'
 
 const MIN_HEIGHT = 28
 
 export const ChatInput = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const systemInfo = useInject<ISystemInfoService>(ISystemInfoServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [value, setValue] = useState('')
   const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
@@ -33,12 +37,12 @@ export const ChatInput = () => {
     setInputHeight(height > MIN_HEIGHT ? height + 15 : MIN_HEIGHT)
   }
 
-  const submit = () => {
+  const submit = useCallback(() => {
     if (!chatVM.pending && value) {
       chatVM.sendMessage(value)
       setValue('')
     }
-  }
+  }, [chatVM, value])
 
   return (
     <View style={inputHeight < 28 ? SS.container : SS.containerOnChange}>
@@ -52,6 +56,8 @@ export const ChatInput = () => {
           onContentSizeChange={onContentSizeChange}
           style={[SS.input, { height: inputHeight }]}
           keyboardAppearance={'dark'}
+          onSubmitEditing={systemInfo.isTablet && submit}
+          blurOnSubmit={true}
         />
       </View>
       <Svg
