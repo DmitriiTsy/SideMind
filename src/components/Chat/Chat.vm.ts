@@ -15,7 +15,7 @@ export interface IChatVM {
   pending: boolean
   resetting: boolean
   blur: boolean
-  blurmessage: string
+  blurMessage: string
   isBot: boolean
 
   changeResetState(value: boolean): void
@@ -23,7 +23,7 @@ export interface IChatVM {
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
-  blurToggle(message?: string, botstatus?: boolean): void
+  blurToggle(message?: string, botStatus?: boolean): void
 }
 
 @Injectable()
@@ -35,12 +35,13 @@ export class ChatVM implements IChatVM {
   @observable blur = false
   @observable isBot = true
 
+  blurMessage: string
+
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
     @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
     @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {}
-  blurmessage: string
 
   @action.bound
   async sendMessage(message: string) {
@@ -86,10 +87,10 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
-  blurToggle(message?: string, botstatus?: boolean) {
+  blurToggle(message?: string, botStatus?: boolean) {
     this.blur = !this.blur
-    this.blurmessage = message
-    this.isBot = botstatus
+    this.blurMessage = message
+    this.isBot = botStatus
   }
 
   @action.bound

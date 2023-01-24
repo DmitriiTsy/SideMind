@@ -10,7 +10,6 @@ import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { Resetting } from 'components/Chat/components/Resetting'
 
-// import { Blur } from './components/Blur'
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
@@ -58,7 +57,6 @@ export const Chat = observer(() => {
       <List />
       <Resetting />
       <ChatInput />
-      {/* {chatVM.blur && <Blur />} */}
     </ScreenContainer>
   )
 })

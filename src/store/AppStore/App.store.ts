@@ -20,7 +20,7 @@ export interface IAppStore {
   getStartingAvatars(): void
 
   setUsersAvatars(id: number[]): void
-  updateUsersAvatars(avatar: AvatarModel): void
+  updateUsersAvatars(avatar: AvatarModel): AvatarModel | null
 
   setAvatarsFromStorage(): void
 
@@ -74,12 +74,14 @@ export class AppStore implements IAppStore {
 
   @action.bound
   updateUsersAvatars(avatar: AvatarModel) {
-    const exist = this.usersAvatars.find((el) => el.id === avatar.id)
-    if (!exist) {
+    const _avatar = this.usersAvatars.find((el) => el.id === avatar.id)
+    if (!_avatar) {
       this.usersAvatars = [avatar, ...this.usersAvatars]
       this._storageService.setUserAvatars(this.usersAvatars)
       this._firebaseService.updateAvatars(avatar.id)
+      return null
     }
+    return _avatar
   }
 
   @action.bound
@@ -111,6 +113,7 @@ export class AppStore implements IAppStore {
       }
       return el
     })
+
     this._firebaseService.setMessage(avatarId, message)
     this._storageService.setUserAvatars(this.usersAvatars)
   }

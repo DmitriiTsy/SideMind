@@ -25,7 +25,7 @@ export const Blur = () => {
   }
 
   const clipboardToggle = useCallback(() => {
-    Clipboard.setString(chatVM.blurmessage)
+    Clipboard.setString(chatVM.blurMessage)
     chatVM.blurToggle()
   }, [chatVM])
 
@@ -52,7 +52,7 @@ export const Blur = () => {
                   : SS.blurContainerTextHuman
               ]}
             >
-              <Text style={SS.blurText}>{chatVM.blurmessage}</Text>
+              <Text style={SS.blurText}>{chatVM.blurMessage}</Text>
             </View>
             <Pressable
               onPress={clipboardToggle}
