@@ -114,6 +114,8 @@ export class AppStore implements IAppStore {
       return el
     })
 
+    this.sortToFirst(avatarId)
+
     this._firebaseService.setMessage(avatarId, message)
     this._storageService.setUserAvatars(this.usersAvatars)
   }
@@ -126,5 +128,12 @@ export class AppStore implements IAppStore {
       }
       return el
     })
+  }
+
+  sortToFirst(avatarId: number) {
+    const index = this.usersAvatars.findIndex((el) => el.id === avatarId)
+    const _avatar = this.usersAvatars[index]
+    this.usersAvatars.splice(index, 1)
+    this.usersAvatars.unshift(_avatar)
   }
 }
