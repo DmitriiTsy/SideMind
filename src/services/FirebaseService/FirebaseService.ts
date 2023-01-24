@@ -5,6 +5,8 @@ import storage from '@react-native-firebase/storage'
 import analytics from '@react-native-firebase/analytics'
 import uuid from 'react-native-uuid'
 
+import { Image } from 'react-native'
+
 import { Inject, Injectable } from 'IoC'
 
 import {
@@ -82,12 +84,16 @@ export class FirebaseService implements IFirebaseService {
 
   async mapAvatars(data: IFirebaseResponseBots) {
     const botsList: AvatarModel[][] = []
+    const prefetchImages = []
     for (const el of Object.entries(data)) {
       for (const _el of Object.values(el[1])) {
         _el.imagePath = await storage().ref(_el.imagePath).getDownloadURL()
+        prefetchImages.push(Image.prefetch(_el.imagePath))
       }
       botsList.push(el[1])
     }
+
+    await Promise.all(prefetchImages)
 
     return botsList
   }
