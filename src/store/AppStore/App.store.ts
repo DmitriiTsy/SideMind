@@ -24,7 +24,11 @@ export interface IAppStore {
 
   setAvatarsFromStorage(): void
 
-  setMessageToAvatar(avatarId: number, message: IMessage): void
+  setMessageToAvatar(
+    avatarId: number,
+    message: IMessage,
+    avatar?: AvatarModel
+  ): void
   setHistoryToAvatar(avatarId: number, history: string): void
 
   resetMessages(avatarId: number): void
@@ -103,7 +107,7 @@ export class AppStore implements IAppStore {
     this._storageService.setUserAvatars(this.usersAvatars)
   }
 
-  setMessageToAvatar(avatarId: number, message: IMessage) {
+  setMessageToAvatar(avatarId: number, message: IMessage, avatar: AvatarModel) {
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
         if (!el.messages) el.messages = { displayed: [], history: '' }
@@ -111,6 +115,10 @@ export class AppStore implements IAppStore {
       }
       return el
     })
+    const avatarIds = this.usersAvatars.findIndex((el) => el.id === avatarId)
+    this.usersAvatars.slice(avatarIds, 1)
+    console.log(this.usersAvatars)
+    this.usersAvatars = [avatar, ...this.usersAvatars]
     this._firebaseService.setMessage(avatarId, message)
     this._storageService.setUserAvatars(this.usersAvatars)
   }
