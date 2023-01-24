@@ -107,7 +107,7 @@ export class AppStore implements IAppStore {
     this._storageService.setUserAvatars(this.usersAvatars)
   }
 
-  setMessageToAvatar(avatarId: number, message: IMessage, avatar: AvatarModel) {
+  setMessageToAvatar(avatarId: number, message: IMessage) {
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
         if (!el.messages) el.messages = { displayed: [], history: '' }
@@ -115,10 +115,9 @@ export class AppStore implements IAppStore {
       }
       return el
     })
-    const avatarIds = this.usersAvatars.findIndex((el) => el.id === avatarId)
-    this.usersAvatars.slice(avatarIds, 1)
-    console.log(this.usersAvatars)
-    this.usersAvatars = [avatar, ...this.usersAvatars]
+
+    this.sortToFirst(avatarId)
+
     this._firebaseService.setMessage(avatarId, message)
     this._storageService.setUserAvatars(this.usersAvatars)
   }
@@ -131,5 +130,12 @@ export class AppStore implements IAppStore {
       }
       return el
     })
+  }
+
+  sortToFirst(avatarId: number) {
+    const index = this.usersAvatars.findIndex((el) => el.id === avatarId)
+    const _avatar = this.usersAvatars[index]
+    this.usersAvatars.slice(index, 1)
+    this.usersAvatars.unshift(_avatar)
   }
 }
