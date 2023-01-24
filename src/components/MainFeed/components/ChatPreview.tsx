@@ -1,40 +1,55 @@
 import React, { FC, useMemo } from 'react'
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
-import { BotModel } from 'services/FirebaseService/types'
+import { observer } from 'mobx-react'
+
+import { AvatarModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { CommonScreenName } from 'constants/screen.types'
+import { useTimestamp } from 'utils/timestamp/useTimestamp'
 
 interface IChatPreview {
-  bot: BotModel
+  avatar: AvatarModel
   index: number
 }
 
-export const ChatPreview: FC<IChatPreview> = ({ bot, index }) => {
+export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const isFirst = useMemo(() => index === 0, [index])
+  const existMessage = useMemo(
+    () => avatar.messages?.displayed?.length > 0,
+    [avatar.messages?.displayed?.length]
+  )
+
   const onPress = () => {
-    chatVM.setBot(bot)
+    chatVM.setAvatar(avatar)
     navigation.navigate(CommonScreenName.Chat)
   }
 
+  const timestamp = useMemo(
+    () => (existMessage ? useTimestamp(avatar.messages.displayed[0].date) : ''),
+    [avatar.messages?.displayed, existMessage]
+  )
+
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      <Image source={{ uri: bot.imagePath }} style={SS.avatar} />
+      <Image source={{ uri: avatar.imagePath }} style={SS.avatar} />
       <View style={[SS.containerRight, !isFirst && SS.line]}>
-        <Text style={SS.botName}>{bot.name}</Text>
+        <View style={SS.firstLine}>
+          <Text style={SS.botName}>{avatar.name}</Text>
+          {existMessage && <Text style={SS.timestamp}>{timestamp}</Text>}
+        </View>
         <Text style={SS.botDesc} numberOfLines={2}>
-          {(bot.messages?.displayed?.length !== 0 &&
-            bot.messages?.displayed[0]?.text?.trim()) ||
-            bot.tagLine}
+          {(existMessage && avatar.messages.displayed[0].text.trim()) ||
+            avatar.tagLine}
         </Text>
       </View>
     </Pressable>
   )
-}
+})
 
 const SS = StyleSheet.create({
   container: {
@@ -79,5 +94,16 @@ const SS = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 250
+  },
+  firstLine: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between'
+  },
+  timestamp: {
+    color: '#7D7D82',
+    marginRight: 18,
+    fontSize: 15,
+    fontWeight: '400'
   }
 })

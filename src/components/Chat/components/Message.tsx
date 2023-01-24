@@ -1,6 +1,9 @@
-import React, { FC, useMemo } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { FC, useCallback, useMemo } from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 
+import { useInject } from 'IoC'
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { deviceWidth } from 'utils/dimentions'
 import { ESender, IMessage } from 'components/Chat/types'
 
@@ -12,6 +15,13 @@ interface IMessageProps {
 export const Message: FC<IMessageProps> = ({ message, index }) => {
   const isBot = useMemo(() => message.sender === ESender.BOT, [message.sender])
   const isLast = useMemo(() => index === 0, [index])
+  const chatVM = useInject<IChatVM>(IChatVMTid)
+
+  const BlurToggleOn = useCallback(() => {
+    Clipboard.setString('')
+    chatVM.blurToggle(message.text.trim(), isBot)
+  }, [chatVM, isBot, message.text])
+
   return (
     <View style={isBot ? SS.mainContainerBot : SS.mainContainerHuman}>
       <View
@@ -21,7 +31,9 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
           isLast && SS.last
         ]}
       >
-        <Text style={SS.text}>{message.text.trim()}</Text>
+        <Pressable onLongPress={BlurToggleOn}>
+          <Text style={SS.text}>{message.text.trim()}</Text>
+        </Pressable>
       </View>
     </View>
   )

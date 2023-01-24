@@ -2,7 +2,7 @@ import { action, observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-import { BotModel } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { ESender, IMessage } from 'components/Chat/types'
@@ -11,19 +11,31 @@ export const IChatVMTid = Symbol.for('IChatVMTid')
 
 export interface IChatVM {
   messages: IMessage[]
-  bot: BotModel
+  avatar: AvatarModel
   pending: boolean
+  resetting: boolean
+  blur: boolean
+  blurMessage: string
+  isBot: boolean
 
+  changeResetState(value: boolean): void
   sendMessage(message: string): void
-  setBot(bot: BotModel): void
+  setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
+  resetMessages(): void
+  blurToggle(message?: string, botStatus?: boolean): void
 }
 
 @Injectable()
 export class ChatVM implements IChatVM {
   @observable messages: IMessage[] = []
-  @observable bot: BotModel
+  @observable avatar: AvatarModel
   @observable pending = false
+  @observable resetting = false
+  @observable blur = false
+  @observable isBot = true
+
+  blurMessage: string
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
@@ -35,30 +47,32 @@ export class ChatVM implements IChatVM {
   async sendMessage(message: string) {
     this.pending = true
 
-    this.messages = [{ sender: ESender.HUMAN, text: message }, ...this.messages]
-    this._firebaseService.setMessage(this.bot.id, ESender.HUMAN, message)
-    this._appStore.setMessageToAvatar(this.bot.id, {
+    const humanMessage = {
       sender: ESender.HUMAN,
-      text: message
-    })
+      text: message,
+      date: new Date()
+    }
+
+    this.messages = [humanMessage, ...this.messages]
+    this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
 
     const res = await this._openAIService.createCompletion(message)
 
     runInAction(() => {
-      this.messages = [{ sender: ESender.BOT, text: res }, ...this.messages]
-      this._appStore.setMessageToAvatar(this.bot.id, {
-        sender: ESender.BOT,
-        text: res
-      })
+      const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
+
+      this.messages = [botMessage, ...this.messages]
+      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+
       this.pending = false
     })
   }
 
   @action.bound
-  setBot(bot: BotModel) {
-    this.bot = bot
-    this._openAIService.clearHistory(bot)
-    this.messages = bot.messages?.displayed || []
+  setAvatar(avatar: AvatarModel) {
+    this.avatar = avatar
+    this._openAIService.setAvatar(avatar)
+    this.messages = avatar.messages?.displayed || []
 
     if (this.messages.length === 0) {
       this.getFirstMessage()
@@ -66,20 +80,39 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
+  resetMessages() {
+    this.messages = []
+    this._appStore.resetMessages(this.avatar.id)
+    this.setAvatar(this.avatar)
+  }
+
+  @action.bound
+  blurToggle(message?: string, botStatus?: boolean) {
+    this.blur = !this.blur
+    this.blurMessage = message
+    this.isBot = botStatus
+  }
+
+  @action.bound
   async getFirstMessage() {
     this.pending = true
 
-    // this.messages = []
-    // this._openAIService.clearHistory()
-    const res = await this._openAIService?.createCompletion(this.bot.prompt)
+    const res = await this._openAIService?.createCompletion(
+      this.avatar.prompt,
+      true
+    )
 
     this.pending = false
     runInAction(() => {
-      this.messages = [{ sender: ESender.BOT, text: res }]
-      this._appStore.setMessageToAvatar(this.bot.id, {
-        sender: ESender.BOT,
-        text: res
-      })
+      const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
+
+      this.messages = [botMessage]
+      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
     })
+  }
+
+  @action.bound
+  changeResetState(value: boolean) {
+    this.resetting = value
   }
 }

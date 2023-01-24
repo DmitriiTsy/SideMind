@@ -5,8 +5,6 @@ import storage from '@react-native-firebase/storage'
 import analytics from '@react-native-firebase/analytics'
 import uuid from 'react-native-uuid'
 
-import { action, observable } from 'mobx'
-
 import { Inject, Injectable } from 'IoC'
 
 import {
@@ -14,57 +12,47 @@ import {
   ISystemInfoServiceTid
 } from 'services/SystemInfoService'
 import {
-  BotModel,
+  AvatarModel,
   IFirebaseResponseBots,
-  IFirebaseResponseUsers
+  IFirebaseResponseUsers,
+  LOG_TYPE
 } from 'services/FirebaseService/types'
-import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { ESender } from 'components/Chat/types'
+import { IMessage } from 'components/Chat/types'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
 export interface IFirebaseService {
-  pendingBots: boolean
-
   init(): Promise<void>
 
-  setBots(): void
+  getCommonAvatars(): Promise<AvatarModel[][]>
 
-  addBot(botId: number): void
+  getStartingAvatars(): Promise<AvatarModel[][]>
 
-  setMessage(
-    botId: number,
-    type: ESender,
-    text: string,
-    isError?: boolean
-  ): void
+  setAvatars(avatars: AvatarModel[]): void
+
+  updateAvatars(avatarId: number): void
+
+  setMessage(avatarId: number, message: IMessage, isError?: boolean): void
 }
 
 @Injectable()
 export class FirebaseService implements IFirebaseService {
   private _usersCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseUsers>
-  private _botsCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
-
-  @observable pendingBots = false
+  private _avatarsCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
 
   constructor(
     @Inject(ISystemInfoServiceTid)
-    private _systemInfoService: ISystemInfoService,
-    @Inject(IAppStoreTid) private _appStore: IAppStore
+    private _systemInfoService: ISystemInfoService
   ) {
     this._usersCollection = firestore().collection('usersList')
-    this._botsCollection = firestore().collection('botsList')
+    this._avatarsCollection = firestore().collection('botsList')
   }
 
   async init() {
     await this._systemInfoService.init()
 
     try {
-      await Promise.all([
-        this.getBotsList(),
-        this.checkExistUser(),
-        this.getStartingBotsList()
-      ])
+      await this.checkExistUser()
     } catch (e) {
       console.log('FirebaseService error:', e)
     }
@@ -82,23 +70,18 @@ export class FirebaseService implements IFirebaseService {
     }
   }
 
-  @action.bound
-  async getBotsList() {
-    this.pendingBots = true
-    const data = (await this._botsCollection.doc('bots').get()).data()
-    const botsList = await this.mapBots(data)
-    this._appStore.setAvailableBots(botsList)
-    this.pendingBots = false
+  async getCommonAvatars() {
+    const data = (await this._avatarsCollection.doc('Common').get()).data()
+    return this.mapAvatars(data)
   }
 
-  async getStartingBotsList() {
-    const data = (await this._botsCollection.doc('Starting').get()).data()
-    const botsList = await this.mapBots(data)
-    this._appStore.setStartingBots(botsList)
+  async getStartingAvatars() {
+    const data = (await this._avatarsCollection.doc('Starting').get()).data()
+    return this.mapAvatars(data)
   }
 
-  async mapBots(data: IFirebaseResponseBots) {
-    const botsList: BotModel[][] = []
+  async mapAvatars(data: IFirebaseResponseBots) {
+    const botsList: AvatarModel[][] = []
     for (const el of Object.entries(data)) {
       for (const _el of Object.values(el[1])) {
         _el.imagePath = await storage().ref(_el.imagePath).getDownloadURL()
@@ -116,53 +99,48 @@ export class FirebaseService implements IFirebaseService {
   }
 
   async logMessage(
-    messageId: string | number,
+    messageId: string,
     botId: number,
-    type: ESender,
+    message: IMessage,
     isError: boolean
   ) {
-    await analytics().logEvent(
-      isError
-        ? 'Error_OpenAI'
-        : type === ESender.BOT
-        ? 'MessageReceived'
-        : 'MessageSend',
-      { messageId, deviceId: this._systemInfoService.deviceId, botId }
-    )
+    const _typeLog = isError ? 'Error_OpenAI' : LOG_TYPE[message.sender]
+    await analytics().logEvent(_typeLog, {
+      messageId,
+      deviceId: this._systemInfoService.deviceId,
+      botId,
+      date: `${message.date}`
+    })
   }
 
-  async setMessage(
-    botId: number,
-    type: ESender,
-    text: string,
-    isError?: boolean
-  ) {
-    const id = uuid.v4(type) + `--${type}`
+  async setMessage(avatarId: number, message: IMessage, isError?: boolean) {
+    const id = uuid.v4() + `--${message.sender}`
     await Promise.all([
       this._usersCollection.doc(this._systemInfoService.deviceId).update({
-        [botId]: firestore.FieldValue.arrayUnion({
-          type,
-          text,
-          messageId: id
+        [avatarId]: firestore.FieldValue.arrayUnion({
+          type: message.sender,
+          text: message.text,
+          messageId: id,
+          date: new Date()
         })
       }),
-      this.logMessage(id, botId, type, isError)
+      this.logMessage(id, avatarId, message, isError)
     ])
   }
 
-  async setBots() {
+  async setAvatars(avatars: AvatarModel[]) {
     const formatted = {}
 
-    this._appStore.usedBots.map((el) => (formatted[el.id] = []))
+    avatars.map((el) => (formatted[el.id] = []))
 
     await this._usersCollection
       .doc(this._systemInfoService.deviceId)
       .set(formatted)
   }
 
-  async addBot(botId: number) {
+  async updateAvatars(avatarId: number) {
     await this._usersCollection
       .doc(this._systemInfoService.deviceId)
-      .update({ [botId]: [] })
+      .update({ [avatarId]: [] })
   }
 }

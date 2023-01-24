@@ -2,7 +2,7 @@ import { Configuration, OpenAIApi } from 'openai'
 
 import { Inject, Injectable } from 'IoC'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
-import { BotModel } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
@@ -11,9 +11,9 @@ export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 export interface IOpenAIService {
   init(): void
 
-  createCompletion(prompt: string): Promise<string>
+  createCompletion(prompt: string, isFirst?: boolean): Promise<string>
 
-  clearHistory(bot: BotModel): void
+  setAvatar(avatar: AvatarModel): void
 }
 
 @Injectable()
@@ -21,7 +21,7 @@ export class OpenAIService implements IOpenAIService {
   private _config: Configuration
   private _openAIApi: OpenAIApi
   private _history: string
-  private _bot: BotModel
+  private _avatar: AvatarModel
 
   constructor(
     @Inject(IFirebaseServiceTid)
@@ -36,34 +36,34 @@ export class OpenAIService implements IOpenAIService {
     this._openAIApi = new OpenAIApi(this._config)
   }
 
-  async createCompletion(prompt: string) {
+  async createCompletion(prompt: string, isFirst?: boolean) {
     this._history = `${this._history} \n\n###: ${prompt}. \n\n`
-    this._appStore.setHistoryToAvatar(this._bot.id, this._history)
+
+    this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
+
     try {
       const res = await this._openAIApi.createCompletion({
         model: 'text-davinci-003',
         prompt: this._history,
-        temperature: this._bot.params.temperature,
-        max_tokens: this._bot.params.max_tokens,
-        frequency_penalty: this._bot.params.frequency_penalty,
-        presence_penalty: this._bot.params.presence_penalty,
+        temperature: this._avatar.params.temperature,
+        max_tokens: this._avatar.params.max_tokens,
+        frequency_penalty: this._avatar.params.frequency_penalty,
+        presence_penalty: this._avatar.params.presence_penalty,
         stop: ['###']
       })
       this._history = `${this._history} ${res.data.choices[0].text}`
 
-      this._appStore.setHistoryToAvatar(this._bot.id, this._history)
+      this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
-      this._firebaseService.setMessage(
-        this._bot.id,
-        ESender.BOT,
-        res.data.choices[0].text
-      )
-      return res.data.choices[0].text
+      if (isFirst) {
+        return this.checkQuotes(res.data.choices[0].text.trim())
+      }
+
+      return res.data.choices[0].text.trim()
     } catch (e) {
       this._firebaseService.setMessage(
-        this._bot.id,
-        ESender.BOT,
-        `Error occurred ${e}`,
+        this._avatar.id,
+        { sender: ESender.BOT, text: `Error occurred ${e}`, date: new Date() },
         true
       )
       console.log(e)
@@ -71,9 +71,15 @@ export class OpenAIService implements IOpenAIService {
     }
   }
 
-  //todo rename
-  clearHistory(bot: BotModel) {
-    this._bot = bot
-    this._history = bot.messages?.history || ''
+  checkQuotes(text: string) {
+    if (text.startsWith('"') && text.endsWith('"')) {
+      return text.replace(/^"|"$/g, '')
+    }
+    return text
+  }
+
+  setAvatar(avatar: AvatarModel) {
+    this._avatar = avatar
+    this._history = avatar.messages?.history || ''
   }
 }

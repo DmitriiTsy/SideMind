@@ -1,7 +1,6 @@
 import { StyleSheet, View } from 'react-native'
 import React, { FC, useEffect } from 'react'
 import Animated, {
-  interpolateColor,
   useSharedValue,
   useAnimatedStyle,
   withRepeat,
@@ -9,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import range from 'lodash/range'
 
-import { SkeletonHeader } from 'components/SelectBots/components/skeleton/SkeletonHeader'
+import { SkeletonHeader } from 'components/SelectAvatars/components/skeleton/SkeletonHeader'
 
 interface ISkeletonComponentProps {
   animatedStyle: {
@@ -17,20 +16,20 @@ interface ISkeletonComponentProps {
   }
 }
 
-export const SkeletonBots = () => {
-  const state = useSharedValue(0)
+export const SkeletonAvatars = () => {
+  const state = useSharedValue('#484849')
 
   useEffect(() => {
-    state.value = withRepeat(withTiming(1, { duration: 500 }), -1, true)
+    state.value = withRepeat(
+      withTiming('#4848494D', { duration: 500 }),
+      -1,
+      true
+    )
   }, [])
 
   const animatedStyle = useAnimatedStyle(
     () => ({
-      backgroundColor: interpolateColor(
-        state.value,
-        [0, 1],
-        ['#484849', '#4848494D']
-      )
+      backgroundColor: state.value
     }),
     []
   )
@@ -38,13 +37,13 @@ export const SkeletonBots = () => {
     <View style={{ backgroundColor: '#1C1C1E', flex: 1 }}>
       <SkeletonHeader />
       {range(3).map((_, index) => (
-        <GroupedSkeletonBots animatedStyle={animatedStyle} key={index} />
+        <GroupedSkeletonAvatars animatedStyle={animatedStyle} key={index} />
       ))}
     </View>
   )
 }
 
-const GroupedSkeletonBots: FC<ISkeletonComponentProps> = ({
+const GroupedSkeletonAvatars: FC<ISkeletonComponentProps> = ({
   animatedStyle
 }) => {
   return (
@@ -53,13 +52,13 @@ const GroupedSkeletonBots: FC<ISkeletonComponentProps> = ({
         <Animated.View style={[SS.header_text, animatedStyle]}></Animated.View>
       </View>
       {range(3).map((_, index) => (
-        <SkeletonBot animatedStyle={animatedStyle} key={index} />
+        <SkeletonAvatar animatedStyle={animatedStyle} key={index} />
       ))}
     </View>
   )
 }
 
-const SkeletonBot: FC<ISkeletonComponentProps> = ({ animatedStyle }) => {
+const SkeletonAvatar: FC<ISkeletonComponentProps> = ({ animatedStyle }) => {
   return (
     <View style={SS.pendingContainer}>
       <Animated.View style={[SS.image, animatedStyle]}></Animated.View>
@@ -123,7 +122,6 @@ const SS = StyleSheet.create({
     paddingBottom: 8
   },
   header_text: {
-    backgroundColor: '#1C1C1E',
     width: 130,
     height: 12,
     borderRadius: 25

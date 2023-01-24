@@ -6,5 +6,8 @@
   "start message": "Start message",
   "add another": "Add another SideMind",
   "pick additional": "Choose a Mind",
-  "loading ais": "Loading curated AIs for you"
+  "loading ais": "Loading curated AIs for you",
+  "resetting": "Clearing chat in",
+  "cancel": "Cancel",
+  "copy": "Copy"
 }
