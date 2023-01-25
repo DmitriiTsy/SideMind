@@ -28,9 +28,9 @@ export const Blur = () => {
   const height = useMemo(() => position.value * 0.9, [position.value])
   useEffect(() => {
     if (chatVM.blur) {
-      position.value = withTiming(height)
+      position.value = withTiming(0)
     } else {
-      position.value = withTiming(position.value)
+      position.value = withTiming(height)
     }
   }, [chatVM.blur, height, position])
 
