@@ -38,8 +38,12 @@ export const Blur = () => {
   }, [chatVM.blur, height, position])
 
   const blurToggleOff = useCallback(() => {
+    position.value = withTiming(150, {
+      duration: 500,
+      easing: Easing.out(Easing.exp)
+    })
     chatVM.blurToggle()
-  }, [chatVM])
+  }, [chatVM, position])
 
   const copyButtonColorHandler = () => {
     copyOnPressColorToggle === false

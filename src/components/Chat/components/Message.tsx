@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View, Vibration } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 
 import { useInject } from 'IoC'
@@ -20,6 +20,7 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
   const BlurToggleOn = useCallback(
     (element: { nativeEvent: { pageY: number } }) => {
       Clipboard.setString('')
+      Vibration.vibrate(50)
       const { pageY } = element.nativeEvent
       chatVM.blurToggle(message.text.trim(), isBot, pageY)
     },
