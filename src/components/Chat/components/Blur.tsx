@@ -28,9 +28,9 @@ export const Blur = () => {
 
   useEffect(() => {
     if (chatVM.blur) {
-      position.value = withTiming(0)
+      position.value = withTiming(-50)
     } else {
-      position.value = withTiming(height)
+      position.value = withTiming(height * 0.9)
     }
   }, [chatVM.blur, height, position])
 
@@ -55,60 +55,54 @@ export const Blur = () => {
   //   chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
   // ]}
   return (
-    <ScreenContainer
-      topInsetColor={'#000000'}
-      bottomInsetColor={'#000000'}
-      style={SS.screenContainer}
-    >
-      <Pressable onPress={blurToggleOff} style={SS.blurViewBot}>
-        <View style={SS.blurViewBot}>
-          <BlurView
-            style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
-            blurType="dark"
-            blurAmount={6}
-            reducedTransparencyFallbackColor="white"
-            blurRadius={25}
+    <Pressable onPress={blurToggleOff} style={SS.blurViewBot}>
+      <View style={SS.blurViewBot}>
+        <BlurView
+          style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
+          blurType="dark"
+          blurAmount={6}
+          reducedTransparencyFallbackColor="white"
+          blurRadius={25}
+        >
+          <Animated.View
+            style={[
+              SS.blurWrapper,
+              {
+                top: height
+              },
+              chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman,
+              animatedStyle
+            ]}
           >
-            <Animated.View
+            <View
               style={[
-                SS.blurWrapper,
-                {
-                  top: height
-                },
-                chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman,
-                animatedStyle
+                chatVM.isBot
+                  ? SS.blurContainerTextBot
+                  : SS.blurContainerTextHuman
               ]}
+            >
+              <Text style={SS.blurText}>{chatVM.blurMessage}</Text>
+            </View>
+            <Pressable
+              onPress={clipboardToggle}
+              onPressIn={copyButtonColorHandler}
             >
               <View
                 style={[
-                  chatVM.isBot
-                    ? SS.blurContainerTextBot
-                    : SS.blurContainerTextHuman
+                  SS.containerCopy,
+                  copyOnPressColorToggle
+                    ? { backgroundColor: '#707070' }
+                    : { backgroundColor: '#363637' }
                 ]}
               >
-                <Text style={SS.blurText}>{chatVM.blurMessage}</Text>
+                <Text style={SS.copyText}>{t.get('copy')}</Text>
+                <Svg name={'Copy'} />
               </View>
-              <Pressable
-                onPress={clipboardToggle}
-                onPressIn={copyButtonColorHandler}
-              >
-                <View
-                  style={[
-                    SS.containerCopy,
-                    copyOnPressColorToggle
-                      ? { backgroundColor: '#707070' }
-                      : { backgroundColor: '#363637' }
-                  ]}
-                >
-                  <Text style={SS.copyText}>{t.get('copy')}</Text>
-                  <Svg name={'Copy'} />
-                </View>
-              </Pressable>
-            </Animated.View>
-          </BlurView>
-        </View>
-      </Pressable>
-    </ScreenContainer>
+            </Pressable>
+          </Animated.View>
+        </BlurView>
+      </View>
+    </Pressable>
   )
 }
 
