@@ -129,7 +129,7 @@ const SS = StyleSheet.create({
     padding: 9,
     marginTop: 3,
     borderRadius: 12,
-    backgroundColor: '#363637',
+    backgroundColor: '#549EF7',
     borderBottomRightRadius: 2,
     alignItems: 'flex-end',
     maxWidth: deviceWidth * 0.65,
