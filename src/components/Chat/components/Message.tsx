@@ -20,8 +20,8 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
   const BlurToggleOn = useCallback(
     (element: any) => {
       Clipboard.setString('')
-      const { locationY } = element.nativeEvent
-      chatVM.blurToggle(message.text.trim(), isBot, locationY)
+      const { pageY } = element.nativeEvent
+      chatVM.blurToggle(message.text.trim(), isBot, pageY)
     },
     [chatVM, isBot, message.text]
   )

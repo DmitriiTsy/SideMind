@@ -44,7 +44,7 @@ export const Blur = () => {
           <View
             style={[
               SS.blurWrapper,
-              { top: coordinateY + 350 },
+              { top: coordinateY * 0.9 },
               chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
             ]}
           >
