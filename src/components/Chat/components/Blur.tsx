@@ -7,6 +7,7 @@ import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming
 } from 'react-native-reanimated'
 
@@ -28,8 +29,8 @@ export const Blur = () => {
 
   useEffect(() => {
     if (chatVM.blur) {
-      position.value = withTiming(-50, {
-        duration: 500,
+      position.value = withTiming(0, {
+        duration: 700,
         easing: Easing.out(Easing.exp)
       })
     } else {
@@ -52,9 +53,13 @@ export const Blur = () => {
   }
 
   const clipboardToggle = useCallback(() => {
+    position.value = withTiming(150, {
+      duration: 500,
+      easing: Easing.out(Easing.exp)
+    })
     Clipboard.setString(chatVM.blurMessage)
     chatVM.blurToggle()
-  }, [chatVM])
+  }, [chatVM, position])
 
   // style={[
   //   SS.blurWrapper,
