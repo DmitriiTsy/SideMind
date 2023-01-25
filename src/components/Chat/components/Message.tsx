@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View, PanResponder } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 
 import { useInject } from 'IoC'
@@ -17,10 +17,13 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
   const isLast = useMemo(() => index === 0, [index])
   const chatVM = useInject<IChatVM>(IChatVMTid)
 
-  const BlurToggleOn = useCallback(() => {
-    Clipboard.setString('')
-    chatVM.blurToggle(message.text.trim(), isBot)
-  }, [chatVM, isBot, message.text])
+  const BlurToggleOn = useCallback(
+    (element: { nativeEvent: any }) => {
+      Clipboard.setString('')
+      chatVM.blurToggle(message.text.trim(), isBot, element.nativeEvent)
+    },
+    [chatVM, isBot, message.text]
+  )
 
   return (
     <View style={isBot ? SS.mainContainerBot : SS.mainContainerHuman}>

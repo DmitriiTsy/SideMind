@@ -17,13 +17,14 @@ export interface IChatVM {
   blur: boolean
   blurMessage: string
   isBot: boolean
+  coordinate: object
 
   changeResetState(value: boolean): void
   sendMessage(message: string): void
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
-  blurToggle(message?: string, botStatus?: boolean): void
+  blurToggle(message?: string, botStatus?: boolean, coordinate?: object): void
 }
 
 @Injectable()
@@ -34,7 +35,7 @@ export class ChatVM implements IChatVM {
   @observable resetting = false
   @observable blur = false
   @observable isBot = true
-
+  coordinate: object
   blurMessage: string
 
   constructor(
@@ -87,10 +88,11 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
-  blurToggle(message?: string, botStatus?: boolean) {
+  blurToggle(message?: string, botStatus?: boolean, coordinate?: object) {
     this.blur = !this.blur
     this.blurMessage = message
     this.isBot = botStatus
+    this.coordinate = coordinate
   }
 
   @action.bound

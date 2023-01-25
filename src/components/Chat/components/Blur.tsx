@@ -17,7 +17,7 @@ export const Blur = () => {
   const blurToggleOff = useCallback(() => {
     chatVM.blurToggle()
   }, [chatVM])
-
+  
   const copyButtonColorHandler = () => {
     copyOnPressColorToggle === false
       ? setCopyOnPressColorToggle(true)
@@ -110,8 +110,8 @@ const SS = StyleSheet.create({
     alignItems: 'flex-end'
   },
   blurWrapper: {
-    position: 'absolute',
-    top: '50%',
+    position: 'relative',
+    top: '50',
     flexDirection: 'column',
     marginLeft: 12
   },
