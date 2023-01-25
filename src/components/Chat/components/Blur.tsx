@@ -4,12 +4,12 @@ import { StyleSheet, View, Pressable, Text } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { BlurView } from '@react-native-community/blur'
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withTiming
 } from 'react-native-reanimated'
 
-import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
@@ -20,7 +20,7 @@ export const Blur = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [copyOnPressColorToggle, setCopyOnPressColorToggle] = useState(false)
-  const height = useMemo(() => chatVM.coordinate, [chatVM.coordinate])
+  const height = useMemo(() => chatVM.coordinate * 0.95, [chatVM.coordinate])
   const position = useSharedValue(chatVM.coordinate)
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: position.value }]
@@ -28,7 +28,10 @@ export const Blur = () => {
 
   useEffect(() => {
     if (chatVM.blur) {
-      position.value = withTiming(-50)
+      position.value = withTiming(-50, {
+        duration: 500,
+        easing: Easing.out(Easing.exp)
+      })
     } else {
       position.value = withTiming(height * 0.9)
     }
