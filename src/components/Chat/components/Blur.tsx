@@ -9,6 +9,7 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated'
 
+import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
@@ -19,13 +20,12 @@ export const Blur = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [copyOnPressColorToggle, setCopyOnPressColorToggle] = useState(false)
-
+  const height = useMemo(() => chatVM.coordinate, [chatVM.coordinate])
   const position = useSharedValue(chatVM.coordinate)
-
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: position.value }]
   }))
-  const height = useMemo(() => position.value * 0.9, [position.value])
+
   useEffect(() => {
     if (chatVM.blur) {
       position.value = withTiming(0)
@@ -55,54 +55,60 @@ export const Blur = () => {
   //   chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
   // ]}
   return (
-    <Pressable onPress={blurToggleOff} style={SS.blurViewBot}>
-      <View style={SS.blurViewBot}>
-        <BlurView
-          style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
-          blurType="dark"
-          blurAmount={6}
-          reducedTransparencyFallbackColor="white"
-          blurRadius={25}
-        >
-          <Animated.View
-            style={[
-              SS.blurWrapper,
-              {
-                top: height
-              },
-              chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman,
-              animatedStyle
-            ]}
+    <ScreenContainer
+      topInsetColor={'#000000'}
+      bottomInsetColor={'#000000'}
+      style={SS.screenContainer}
+    >
+      <Pressable onPress={blurToggleOff} style={SS.blurViewBot}>
+        <View style={SS.blurViewBot}>
+          <BlurView
+            style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
+            blurType="dark"
+            blurAmount={6}
+            reducedTransparencyFallbackColor="white"
+            blurRadius={25}
           >
-            <View
+            <Animated.View
               style={[
-                chatVM.isBot
-                  ? SS.blurContainerTextBot
-                  : SS.blurContainerTextHuman
+                SS.blurWrapper,
+                {
+                  top: height
+                },
+                chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman,
+                animatedStyle
               ]}
-            >
-              <Text style={SS.blurText}>{chatVM.blurMessage}</Text>
-            </View>
-            <Pressable
-              onPress={clipboardToggle}
-              onPressIn={copyButtonColorHandler}
             >
               <View
                 style={[
-                  SS.containerCopy,
-                  copyOnPressColorToggle
-                    ? { backgroundColor: '#707070' }
-                    : { backgroundColor: '#363637' }
+                  chatVM.isBot
+                    ? SS.blurContainerTextBot
+                    : SS.blurContainerTextHuman
                 ]}
               >
-                <Text style={SS.copyText}>{t.get('copy')}</Text>
-                <Svg name={'Copy'} />
+                <Text style={SS.blurText}>{chatVM.blurMessage}</Text>
               </View>
-            </Pressable>
-          </Animated.View>
-        </BlurView>
-      </View>
-    </Pressable>
+              <Pressable
+                onPress={clipboardToggle}
+                onPressIn={copyButtonColorHandler}
+              >
+                <View
+                  style={[
+                    SS.containerCopy,
+                    copyOnPressColorToggle
+                      ? { backgroundColor: '#707070' }
+                      : { backgroundColor: '#363637' }
+                  ]}
+                >
+                  <Text style={SS.copyText}>{t.get('copy')}</Text>
+                  <Svg name={'Copy'} />
+                </View>
+              </Pressable>
+            </Animated.View>
+          </BlurView>
+        </View>
+      </Pressable>
+    </ScreenContainer>
   )
 }
 
