@@ -10,6 +10,7 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { deviceWidth } from 'utils/dimentions'
 
+let coordinateY
 export const Blur = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
@@ -17,8 +18,7 @@ export const Blur = () => {
   const blurToggleOff = useCallback(() => {
     chatVM.blurToggle()
   }, [chatVM])
-  const bla = chatVM.coordinate
-  console.log(bla)
+  coordinateY = chatVM.coordinate
 
   const copyButtonColorHandler = () => {
     copyOnPressColorToggle === false
@@ -44,6 +44,7 @@ export const Blur = () => {
           <View
             style={[
               SS.blurWrapper,
+              { top: coordinateY + 350 },
               chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
             ]}
           >
@@ -112,8 +113,7 @@ const SS = StyleSheet.create({
     alignItems: 'flex-end'
   },
   blurWrapper: {
-    position: 'relative',
-    top: '50%',
+    position: 'absolute',
     flexDirection: 'column',
     marginLeft: 12
   },
