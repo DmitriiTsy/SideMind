@@ -15,33 +15,28 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { deviceWidth } from 'utils/dimentions'
 
-let coordinateY
 export const Blur = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [copyOnPressColorToggle, setCopyOnPressColorToggle] = useState(false)
-  const position = useSharedValue(coordinateY)
+
+  const position = useSharedValue(chatVM.coordinate)
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: position.value }]
   }))
-  const height = useMemo(
-    () =>
-      deviceHeight - (layoutService.insets.top + layoutService.statusBarHeight),
-    [layoutService.insets.top, layoutService.statusBarHeight]
-  )
+  const height = useMemo(() => position.value * 0.9, [position.value])
   useEffect(() => {
     if (chatVM.blur) {
-      position.value = withTiming(0)
+      position.value = withTiming(height)
     } else {
-      position.value = withTiming(100)
+      position.value = withTiming(position.value)
     }
-  }, [chatVM.blur, position])
+  }, [chatVM.blur, height, position])
 
   const blurToggleOff = useCallback(() => {
     chatVM.blurToggle()
   }, [chatVM])
-  coordinateY = chatVM.coordinate
 
   const copyButtonColorHandler = () => {
     copyOnPressColorToggle === false
@@ -54,17 +49,14 @@ export const Blur = () => {
     chatVM.blurToggle()
   }, [chatVM])
 
+  // style={[
+  //   SS.blurWrapper,
+  //   { top: coordinateY * 0.9 },
+  //   chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
+  // ]}
   return (
     <Pressable onPress={blurToggleOff} style={SS.blurViewBot}>
-      <Animated.View
-        style={[
-          SS.blurViewBot,
-          {
-            position
-          },
-          animatedStyle
-        ]}
-      >
+      <View style={SS.blurViewBot}>
         <BlurView
           style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
           blurType="dark"
@@ -72,11 +64,14 @@ export const Blur = () => {
           reducedTransparencyFallbackColor="white"
           blurRadius={25}
         >
-          <View
+          <Animated.View
             style={[
               SS.blurWrapper,
-              { top: coordinateY * 0.9 },
-              chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
+              {
+                top: height
+              },
+              chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman,
+              animatedStyle
             ]}
           >
             <View
@@ -104,9 +99,9 @@ export const Blur = () => {
                 <Svg name={'Copy'} />
               </View>
             </Pressable>
-          </View>
+          </Animated.View>
         </BlurView>
-      </Animated.View>
+      </View>
     </Pressable>
   )
 }
