@@ -18,7 +18,7 @@ export const Message: FC<IMessageProps> = ({ message, index }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
 
   const BlurToggleOn = useCallback(
-    (element: { nativeEvent: any }) => {
+    (element: any) => {
       Clipboard.setString('')
       chatVM.blurToggle(message.text.trim(), isBot, element.nativeEvent)
     },
