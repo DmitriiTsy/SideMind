@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react'
-import { Pressable, StyleSheet, Text, View, PanResponder } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 
 import { useInject } from 'IoC'

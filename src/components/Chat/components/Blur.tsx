@@ -1,8 +1,13 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect, useMemo } from 'react'
 import { StyleSheet, View, Pressable, Text } from 'react-native'
 
 import Clipboard from '@react-native-clipboard/clipboard'
 import { BlurView } from '@react-native-community/blur'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated'
 
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
@@ -15,6 +20,24 @@ export const Blur = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [copyOnPressColorToggle, setCopyOnPressColorToggle] = useState(false)
+  const position = useSharedValue(coordinateY)
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: position.value }]
+  }))
+  const height = useMemo(
+    () =>
+      deviceHeight - (layoutService.insets.top + layoutService.statusBarHeight),
+    [layoutService.insets.top, layoutService.statusBarHeight]
+  )
+  useEffect(() => {
+    if (chatVM.blur) {
+      position.value = withTiming(0)
+    } else {
+      position.value = withTiming(100)
+    }
+  }, [chatVM.blur, position])
+
   const blurToggleOff = useCallback(() => {
     chatVM.blurToggle()
   }, [chatVM])
@@ -33,7 +56,15 @@ export const Blur = () => {
 
   return (
     <Pressable onPress={blurToggleOff} style={SS.blurViewBot}>
-      <View style={SS.blurViewBot}>
+      <Animated.View
+        style={[
+          SS.blurViewBot,
+          {
+            position
+          },
+          animatedStyle
+        ]}
+      >
         <BlurView
           style={[chatVM.isBot ? SS.blurViewBot : SS.blurViewHuman]}
           blurType="dark"
@@ -75,7 +106,7 @@ export const Blur = () => {
             </Pressable>
           </View>
         </BlurView>
-      </View>
+      </Animated.View>
     </Pressable>
   )
 }
