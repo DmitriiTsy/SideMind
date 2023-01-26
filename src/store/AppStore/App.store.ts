@@ -16,9 +16,6 @@ export interface IAppStore {
 
   init(): void
 
-  getCommonAvatars(): void
-  getStartingAvatars(): void
-
   setUsersAvatars(id: number[]): void
   updateUsersAvatars(avatar: AvatarModel): AvatarModel | null
 
@@ -27,7 +24,9 @@ export interface IAppStore {
   setMessageToAvatar(avatarId: number, message: IMessage): void
   setHistoryToAvatar(avatarId: number, history: string): void
 
-  resetMessages(avatarId: number): void
+  resetMessages(avatarId: number): Promise<AvatarModel>
+
+  updateAvatarsFromFirebase(): void
 }
 
 @Injectable()
@@ -45,17 +44,17 @@ export class AppStore implements IAppStore {
   ) {}
 
   init() {
-    this.getCommonAvatars()
-    this.getStartingAvatars()
+    this._getCommonAvatars()
+    this._getStartingAvatars()
   }
 
-  async getCommonAvatars() {
-    const avatars = await this._firebaseService.getCommonAvatars()
+  async _getCommonAvatars() {
+    const avatars = await this._firebaseService.getCommonAvatars(true)
     runInAction(() => (this.commonAvatars = avatars))
   }
 
-  async getStartingAvatars() {
-    const avatars = await this._firebaseService.getStartingAvatars()
+  async _getStartingAvatars() {
+    const avatars = await this._firebaseService.getStartingAvatars(true)
     runInAction(() => (this.startingAvatars = avatars))
   }
 
@@ -90,7 +89,9 @@ export class AppStore implements IAppStore {
   }
 
   @action.bound
-  resetMessages(avatarId: number) {
+  async resetMessages(avatarId: number) {
+    await this.updateAvatarsFromFirebase()
+
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
         el.messages = { displayed: [], history: '' }
@@ -103,6 +104,8 @@ export class AppStore implements IAppStore {
       date: new Date()
     })
     this._storageService.setUserAvatars(this.usersAvatars)
+
+    return this.usersAvatars.find((avatar) => avatar.id === avatarId)
   }
 
   setMessageToAvatar(avatarId: number, message: IMessage) {
@@ -114,7 +117,7 @@ export class AppStore implements IAppStore {
       return el
     })
 
-    this.sortToFirst(avatarId)
+    this._sortToFirst(avatarId)
 
     this._firebaseService.setMessage(avatarId, message)
     this._storageService.setUserAvatars(this.usersAvatars)
@@ -130,10 +133,85 @@ export class AppStore implements IAppStore {
     })
   }
 
-  sortToFirst(avatarId: number) {
+  _sortToFirst(avatarId: number) {
     const index = this.usersAvatars.findIndex((el) => el.id === avatarId)
     const _avatar = this.usersAvatars[index]
     this.usersAvatars.splice(index, 1)
     this.usersAvatars.unshift(_avatar)
+  }
+
+  async updateAvatarsFromFirebase() {
+    const [commonAvatars, startingAvatars] = await Promise.all([
+      this._firebaseService.getCommonAvatars(),
+      this._firebaseService.getStartingAvatars()
+    ])
+
+    runInAction(() => {
+      this.commonAvatars = this._mapUpdateStoreAvatarsFromFirebase(
+        this.commonAvatars,
+        commonAvatars
+      )
+      this.startingAvatars = this._mapUpdateStoreAvatarsFromFirebase(
+        this.startingAvatars,
+        startingAvatars
+      )
+
+      this._mapUpdateUsersAvatarsFromFirebase()
+    })
+  }
+
+  _mapUpdateStoreAvatarsFromFirebase(
+    avatarsStore: AvatarModel[][],
+    avatarsFirebase: AvatarModel[][]
+  ) {
+    return avatarsStore.map((avatarsGroup, groupIndex) =>
+      avatarsGroup.map((avatar) => {
+        const _avatar = avatarsFirebase[groupIndex].find(
+          (el) => el.id === avatar.id
+        )
+        return {
+          ...avatar,
+          name: _avatar.name,
+          tagLine: _avatar.tagLine,
+          prompt: _avatar.prompt
+        }
+      })
+    )
+  }
+
+  @action.bound
+  _mapUpdateUsersAvatarsFromFirebase() {
+    const commonAvatarsList: AvatarModel[] = []
+    const startingAvatarsList: AvatarModel[] = []
+
+    this.commonAvatars.map((avatarsGroup) =>
+      avatarsGroup.map((avatar) => commonAvatarsList.push(avatar))
+    )
+    this.startingAvatars.map((avatarsGroup) =>
+      avatarsGroup.map((avatar) => startingAvatarsList.push(avatar))
+    )
+
+    this.usersAvatars = this.usersAvatars.map((avatar) => {
+      const startingAvatar = startingAvatarsList.find(
+        (el) => el.id === avatar.id
+      )
+      if (startingAvatar) {
+        return {
+          ...avatar,
+          name: startingAvatar.name,
+          tagLine: startingAvatar.tagLine,
+          prompt: startingAvatar.prompt
+        }
+      } else {
+        const commonAvatar = commonAvatarsList.find((el) => el.id === avatar.id)
+        return {
+          ...avatar,
+          name: commonAvatar.name,
+          tagLine: commonAvatar.tagLine,
+          prompt: commonAvatar.prompt
+        }
+      }
+    })
+    this._storageService.setUserAvatars(this.usersAvatars)
   }
 }
