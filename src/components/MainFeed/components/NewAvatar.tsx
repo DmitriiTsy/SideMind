@@ -7,14 +7,17 @@ import { Svg } from 'components/ui/Svg'
 
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 export const NewAvatar = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
+  const appStore = useInject<IAppStore>(IAppStoreTid)
 
   const addNewAvatar = useCallback(() => {
+    appStore.updateAvatarsFromFirebase()
     bottomPanelVM.toggle()
-  }, [bottomPanelVM])
+  }, [appStore, bottomPanelVM])
 
   return (
     <Pressable style={SS.container} onPress={addNewAvatar}>
