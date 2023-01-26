@@ -33,7 +33,7 @@ export const Dots = observer(() => {
   )
   useEffect(() => {
     if (chatVM.pending) {
-        const animationInterval = setInterval(() => {
+      const animationInterval = setInterval(() => {
         positions.forEach((position, index) => {
           position.value = withRepeat(
             withDelay(index * 300, withTiming(15), 2, true)
@@ -46,7 +46,7 @@ export const Dots = observer(() => {
               damping: 100
             })
           })
-         }, 900)
+        }, 900)
       }, 1000)
       return () => clearInterval(animationInterval)
     } else {
