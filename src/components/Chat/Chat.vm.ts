@@ -80,10 +80,12 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
-  resetMessages() {
+  async resetMessages() {
+    this.pending = true
+
     this.messages = []
-    this._appStore.resetMessages(this.avatar.id)
-    this.setAvatar(this.avatar)
+
+    this.setAvatar(await this._appStore.resetMessages(this.avatar.id))
   }
 
   @action.bound
