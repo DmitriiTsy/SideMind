@@ -9,7 +9,8 @@ import Animated, {
   withRepeat,
   withTiming,
   sequence,
-  withDelay
+  withDelay,
+  withSpring
 } from 'react-native-reanimated'
 
 import { useInject } from 'IoC'
@@ -32,21 +33,25 @@ export const Dots = observer(() => {
   )
   useEffect(() => {
     if (chatVM.pending) {
-      setTimeout(() => {
+        const animationInterval = setInterval(() => {
         positions.forEach((position, index) => {
           position.value = withRepeat(
-            withDelay(index * 50, withTiming(15), 2, true)
+            withDelay(index * 300, withTiming(15), 2, true)
           )
         })
         setTimeout(() => {
-            positions.forEach((position) => {
-              position.value = 0;
-            });
-          }, 600)
-      }, 750)
+          positions.forEach((position, index) => {
+            position.value = withSpring(0, {
+              stiffness: 1000,
+              damping: 100
+            })
+          })
+         }, 900)
+      }, 1000)
+      return () => clearInterval(animationInterval)
     } else {
       positions.forEach((position, index) => {
-        position.value = withTiming(40, { duration: index * 50 })
+        position.value = withSpring(40, { duration: index * 50 })
       })
     }
   }, [chatVM.pending, positions])
