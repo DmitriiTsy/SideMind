@@ -21,8 +21,8 @@ export const Blur = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [copyOnPressColorToggle, setCopyOnPressColorToggle] = useState(false)
-  const height = useMemo(() => chatVM.coordinate * 0.95, [chatVM.coordinate])
-  const position = useSharedValue(chatVM.coordinate)
+  const height = useMemo(() => chatVM.coordinate * 0.8, [chatVM.coordinate])
+  const position = useSharedValue(height * 0.3)
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: position.value }]
   }))
@@ -39,8 +39,8 @@ export const Blur = () => {
   }, [chatVM.blur, height, position])
 
   const blurToggleOff = useCallback(() => {
-    position.value = withTiming(150, {
-      duration: 500,
+    position.value = withTiming(0, {
+      duration: 700,
       easing: Easing.out(Easing.exp)
     })
     chatVM.blurToggle()
