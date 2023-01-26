@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react'
-import { StyleSheet, View, Pressable, Text } from 'react-native'
+import { StyleSheet, View, Pressable, Text, Vibration } from 'react-native'
 
 import Clipboard from '@react-native-clipboard/clipboard'
 import { BlurView } from '@react-native-community/blur'
@@ -54,6 +54,7 @@ export const Blur = () => {
   }
 
   const clipboardToggle = useCallback(() => {
+    Vibration.vibrate(25)
     position.value = withTiming(150, {
       duration: 500,
       easing: Easing.out(Easing.exp)
