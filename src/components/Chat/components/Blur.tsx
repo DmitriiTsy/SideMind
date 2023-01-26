@@ -5,6 +5,8 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { BlurView } from '@react-native-community/blur'
 import Animated, {
   Easing,
+  FadeInLeft,
+  FadeInRight,
   useAnimatedStyle,
   useSharedValue,
   withTiming
@@ -63,11 +65,6 @@ export const Blur = () => {
     chatVM.blurToggle()
   }, [chatVM, position])
 
-  // style={[
-  //   SS.blurWrapper,
-  //   { top: coordinateY * 0.9 },
-  //   chatVM.isBot ? SS.blurWrapperBot : SS.blurWrapperHuman
-  // ]}
   return (
     <Pressable onPress={blurToggleOff} style={SS.blurViewBot}>
       <View style={SS.blurViewBot}>
@@ -101,7 +98,9 @@ export const Blur = () => {
               onPress={clipboardToggle}
               onPressIn={copyButtonColorHandler}
             >
-              <View
+              <Animated.View
+                entering={chatVM.isBot ? FadeInLeft : FadeInRight}
+                exiting={chatVM.isBot ? FadeInRight : FadeInLeft}
                 style={[
                   SS.containerCopy,
                   copyOnPressColorToggle
@@ -111,7 +110,7 @@ export const Blur = () => {
               >
                 <Text style={SS.copyText}>{t.get('copy')}</Text>
                 <Svg name={'Copy'} />
-              </View>
+              </Animated.View>
             </Pressable>
           </Animated.View>
         </BlurView>
