@@ -7,7 +7,6 @@ import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
   withTiming
 } from 'react-native-reanimated'
 
@@ -39,12 +38,14 @@ export const Blur = () => {
   }, [chatVM.blur, height, position])
 
   const blurToggleOff = useCallback(() => {
-    position.value = withTiming(0, {
-      duration: 700,
+    position.value = withTiming(height * 0.2, {
+      duration: 500,
       easing: Easing.out(Easing.exp)
     })
-    chatVM.blurToggle()
-  }, [chatVM, position])
+    setTimeout(() => {
+      chatVM.blurToggle()
+    }, 250)
+  }, [chatVM, height, position])
 
   const copyButtonColorHandler = () => {
     copyOnPressColorToggle === false
