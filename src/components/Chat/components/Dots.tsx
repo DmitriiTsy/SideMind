@@ -1,37 +1,26 @@
 import React from 'react'
-import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import range from 'lodash/range'
 
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
-import { Message } from 'components/Chat/components/Message'
-import { IMessage } from 'components/Chat/types'
 
-import { Dots } from './Dots'
-
-export const List = observer(() => {
+export const Dots = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
 
-  const renderItem = ({ item, index }: ListRenderItemInfo<IMessage>) => {
-    return <Message message={item} index={index} />
-  }
-
-  const keyExtractor = (item, index) => index
-
-  const pending = () => <Dots />
-
-  return (
-    <FlatList
-      data={chatVM.messages}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      style={SS.flatList}
-      ListHeaderComponent={pending}
-      inverted
-    />
-  )
+  const Pending = () =>
+    chatVM.pending ? (
+      <View style={SS.pendingContainer}>
+        {range(3).map((_, index) => (
+          <View key={index} style={SS.pendingDot} />
+        ))}
+      </View>
+    ) : (
+      <></>
+    )
+  return <Pending />
 })
 
 const SS = StyleSheet.create({
