@@ -21,7 +21,7 @@ export const Blur = () => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [copyOnPressColorToggle, setCopyOnPressColorToggle] = useState(false)
   const height = useMemo(() => chatVM.coordinate * 0.8, [chatVM.coordinate])
-  const position = useSharedValue(height * 0.3)
+  const position = useSharedValue(height)
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: position.value }]
   }))
@@ -29,7 +29,7 @@ export const Blur = () => {
   useEffect(() => {
     if (chatVM.blur) {
       position.value = withTiming(0, {
-        duration: 700,
+        duration: 500,
         easing: Easing.out(Easing.exp)
       })
     } else {
@@ -44,7 +44,7 @@ export const Blur = () => {
     })
     setTimeout(() => {
       chatVM.blurToggle()
-    }, 250)
+    }, 150)
   }, [chatVM, height, position])
 
   const copyButtonColorHandler = () => {
