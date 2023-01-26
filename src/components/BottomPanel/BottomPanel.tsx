@@ -37,6 +37,7 @@ export const BottomPanel = observer(() => {
   const appStore = useInject<IAppStore>(IAppStoreTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const vm = useInject<IBottomPanelVM>(IBottomPanelVMTid)
+
   const height = useMemo(
     () =>
       deviceHeight - (layoutService.insets.top + layoutService.statusBarHeight),
@@ -60,7 +61,7 @@ export const BottomPanel = observer(() => {
   const renderItem = ({ item }: ListRenderItemInfo<AvatarModel[]>) => {
     return <GroupedAvatars avatar={item} single />
   }
-
+  requestUserPermission()
   return (
     <Animated.View
       style={[

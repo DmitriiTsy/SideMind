@@ -17,6 +17,7 @@ import {
   ISelectAvatarsVMTid
 } from 'components/SelectAvatars/SelectAvatars.vm'
 
+
 export const SelectAvatars = observer(() => {
   const vm = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
 
@@ -25,7 +26,7 @@ export const SelectAvatars = observer(() => {
   )
 
   const keyExtractor = (item, index) => index
-
+  requestUserPermission()
   return (
     <ScreenContainer
       topInsetColor={'black'}
