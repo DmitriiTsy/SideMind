@@ -61,7 +61,7 @@ export const BottomPanel = observer(() => {
   const renderItem = ({ item }: ListRenderItemInfo<AvatarModel[]>) => {
     return <GroupedAvatars avatar={item} single />
   }
-  requestUserPermission()
+
   return (
     <Animated.View
       style={[

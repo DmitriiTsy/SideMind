@@ -61,13 +61,31 @@ export class OpenAIService implements IOpenAIService {
 
       return res.data.choices[0].text.trim()
     } catch (e) {
-      this._firebaseService.setMessage(
-        this._avatar.id,
-        { sender: ESender.BOT, text: `Error occurred ${e}`, date: new Date() },
-        true
-      )
-      console.log(e)
-      return 'Some error occurred, now chat is unavailable'
+      if (e.response && e.response.status === '503') {
+        console.log('Service Unavailable Error:', e.response.status)
+        this._firebaseService.setMessage(
+          this._avatar.id,
+          {
+            sender: ESender.BOT,
+            text: `Error occurred ${e}`,
+            date: new Date()
+          },
+          true
+        )
+        return 'Service Unavailable Error'
+      } else {
+        this._firebaseService.setMessage(
+          this._avatar.id,
+          {
+            sender: ESender.BOT,
+            text: `Error occurred ${e}`,
+            date: new Date()
+          },
+          true
+        )
+        console.log(e)
+        return 'Some error occurred, now chat is unavailable'
+      }
     }
   }
 
