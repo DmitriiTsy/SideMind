@@ -10,7 +10,6 @@ interface IMessageProps {
   message: IMessage
   index: number
 }
-
 export const Message: FC<IMessageProps> = ({ message, index }) => {
   const isBot = useMemo(() => message.sender === ESender.BOT, [message.sender])
   const isLast = useMemo(() => index === 0, [index])

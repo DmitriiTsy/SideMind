@@ -8,7 +8,6 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withTiming,
-  sequence,
   withDelay,
   withSpring
 } from 'react-native-reanimated'
@@ -36,23 +35,22 @@ export const Dots = observer(() => {
       const animationInterval = setInterval(() => {
         positions.forEach((position, index) => {
           position.value = withRepeat(
-            withDelay(index * 150, withSpring(10), 2, true)
+            withDelay(index * 200, withSpring(-7), 2, true)
           )
         })
         setTimeout(() => {
           positions.forEach((position, index) => {
-            position.value = withSpring(0, {
-              stiffness: 1000,
-              damping: 100
-            })
+            position.value = withRepeat(
+              withDelay(index * 200, withSpring(7), 2, true)
+            )
           })
-        }, 590)
-      }, 800)
+        }, 500)
+      }, 1000)
       return () => clearInterval(animationInterval)
     } else {
       positions.forEach((position, index) => {
         position.value = withSpring(
-          withDelay(index * 100, withTiming(10), 2, true)
+          withDelay(index * 200, withTiming(7), 2, true)
         )
       })
     }
