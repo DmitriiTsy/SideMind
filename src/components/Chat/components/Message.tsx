@@ -6,7 +6,6 @@ import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { deviceWidth } from 'utils/dimentions'
 import { ESender, IMessage } from 'components/Chat/types'
-
 interface IMessageProps {
   message: IMessage
   index: number

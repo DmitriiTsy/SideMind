@@ -36,7 +36,7 @@ export const Dots = observer(() => {
       const animationInterval = setInterval(() => {
         positions.forEach((position, index) => {
           position.value = withRepeat(
-            withDelay(index * 300, withTiming(15), 2, true)
+            withDelay(index * 150, withSpring(10), 2, true)
           )
         })
         setTimeout(() => {
@@ -46,12 +46,14 @@ export const Dots = observer(() => {
               damping: 100
             })
           })
-        }, 900)
-      }, 1000)
+        }, 590)
+      }, 800)
       return () => clearInterval(animationInterval)
     } else {
       positions.forEach((position, index) => {
-        position.value = withSpring(40, { duration: index * 50 })
+        position.value = withSpring(
+          withDelay(index * 100, withTiming(10), 2, true)
+        )
       })
     }
   }, [chatVM.pending, positions])
