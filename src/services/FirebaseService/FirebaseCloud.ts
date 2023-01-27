@@ -1,11 +1,11 @@
 import messaging from '@react-native-firebase/messaging'
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-community/async-storage'
 
 export async function requestUserPermission() {
-  const authStatus = await messaging().requestPermission();
+  const authStatus = await messaging().requestPermission()
   const enabled =
     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL
 
   if (enabled) {
     console.log('Authorization status:', authStatus)
@@ -33,7 +33,7 @@ export const NotificationListner = () => {
   messaging().onNotificationOpenedApp((remoteMessage) => {
     console.log(
       'Notification caused app to open from background state:',
-      remoteMessage.notification,
+      remoteMessage.notification
     )
   })
 
@@ -43,11 +43,11 @@ export const NotificationListner = () => {
       if (remoteMessage) {
         console.log(
           'Notification caused app to open from quit state:',
-          remoteMessage.notification,
+          remoteMessage.notification
         )
       }
     })
   messaging().onMessage(async (remoteMessage) => {
     console.log('notification on froground state.....', remoteMessage)
-    })
+  })
 }
