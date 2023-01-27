@@ -11,6 +11,7 @@ import {
   IBottomPanelVM,
   IBottomPanelVMTid
 } from 'components/BottomPanel'
+import { BlurVM, IBlurVM, IBlurVMTid } from 'components/Blur'
 
 export class ComponentsModule implements IoCModule {
   public Configure(ioc: Container) {
@@ -23,5 +24,6 @@ export class ComponentsModule implements IoCModule {
       .bind<IBottomPanelVM>(IBottomPanelVMTid)
       .to(BottomPanelVM)
       .inSingletonScope()
+    ioc.bind<IBlurVM>(IBlurVMTid).to(BlurVM).inSingletonScope()
   }
 }

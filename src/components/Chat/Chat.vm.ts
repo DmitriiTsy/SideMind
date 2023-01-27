@@ -14,17 +14,12 @@ export interface IChatVM {
   avatar: AvatarModel
   pending: boolean
   resetting: boolean
-  blur: boolean
-  blurMessage: string
-  isBot: boolean
-  coordinate: number
 
   changeResetState(value: boolean): void
   sendMessage(message: string): void
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
-  blurToggle(message?: string, botStatus?: boolean, coordinate?: number): void
 }
 
 @Injectable()
@@ -33,10 +28,6 @@ export class ChatVM implements IChatVM {
   @observable avatar: AvatarModel
   @observable pending = false
   @observable resetting = false
-  @observable blur = false
-  @observable isBot = true
-  coordinate: number
-  blurMessage: string
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
@@ -87,14 +78,6 @@ export class ChatVM implements IChatVM {
     this.messages = []
 
     this.setAvatar(await this._appStore.resetMessages(this.avatar.id))
-  }
-
-  @action.bound
-  blurToggle(message?: string, botStatus?: boolean, coordinate?: number) {
-    this.blur = !this.blur
-    this.blurMessage = message
-    this.isBot = botStatus
-    this.coordinate = coordinate
   }
 
   @action.bound

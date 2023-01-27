@@ -73,7 +73,7 @@ export class FirebaseService implements IFirebaseService {
   }
 
   async getCommonAvatars(cache?: boolean) {
-    const data = (await this._avatarsCollection.doc('bots').get()).data()
+    const data = (await this._avatarsCollection.doc('Common').get()).data()
     return this.mapAvatars(data, cache)
   }
 

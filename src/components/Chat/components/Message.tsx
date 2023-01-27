@@ -1,11 +1,19 @@
 import React, { FC, useCallback, useMemo } from 'react'
-import { Pressable, StyleSheet, Text, View, Vibration } from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  GestureResponderEvent
+} from 'react-native'
+
+import HapticFeedback from 'react-native-haptic-feedback'
 
 import { useInject } from 'IoC'
-import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { deviceWidth } from 'utils/dimentions'
 import { ESender, IMessage } from 'components/Chat/types'
+import { IBlurVM, IBlurVMTid } from 'components/Blur'
+import { MessageToCopy } from 'components/Chat/components/MessageToCopy'
 
 interface IMessageProps {
   message: IMessage
@@ -13,33 +21,41 @@ interface IMessageProps {
 }
 
 export const Message: FC<IMessageProps> = ({ message, index }) => {
+  const blurVM = useInject<IBlurVM>(IBlurVMTid)
   const isBot = useMemo(() => message.sender === ESender.BOT, [message.sender])
   const isLast = useMemo(() => index === 0, [index])
-  const chatVM = useInject<IChatVM>(IChatVMTid)
 
-  const BlurToggleOn = useCallback(
-    (element: { nativeEvent: { pageY: number } }) => {
-      Clipboard.setString('')
-      Vibration.vibrate(50)
-      const { pageY } = element.nativeEvent
-      chatVM.blurToggle(message.text.trim(), isBot, pageY)
+  const measure = useCallback(
+    (e: GestureResponderEvent): Promise<number> =>
+      new Promise((resolve) => {
+        e.target.measure((x, y, width, height, pageX, pageY) => resolve(pageY))
+      }),
+    []
+  )
+
+  const showBlur = useCallback(
+    async (e: GestureResponderEvent) => {
+      const y = await measure(e)
+      HapticFeedback.trigger('impactMedium')
+      blurVM.show(() => (
+        <MessageToCopy positionY={y} isBot={isBot} text={message.text} />
+      ))
     },
-    [chatVM, isBot, message.text]
+    [blurVM, isBot, measure, message.text]
   )
 
   return (
     <View style={isBot ? SS.mainContainerBot : SS.mainContainerHuman}>
-      <View
+      <Pressable
         style={[
           SS.container,
           isBot ? SS.fromBot : SS.fromHuman,
           isLast && SS.last
         ]}
+        onLongPress={showBlur}
       >
-        <Pressable onLongPress={BlurToggleOn}>
-          <Text style={SS.text}>{message.text.trim()}</Text>
-        </Pressable>
-      </View>
+        <Text style={SS.text}>{message.text.trim()}</Text>
+      </Pressable>
     </View>
   )
 }
