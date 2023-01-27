@@ -22,6 +22,7 @@ import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
 
 import { IAppVM, IAppVMTid } from 'app/App.vm'
 import { BottomPanel } from 'components/BottomPanel'
+import { Blur } from 'components/Blur'
 
 const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
@@ -61,6 +62,7 @@ export const App = () => {
         />
       </Stack.Navigator>
       <BottomPanel />
+      <Blur />
     </NavigationContainer>
   )
 }
