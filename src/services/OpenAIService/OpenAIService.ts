@@ -7,6 +7,7 @@ import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 export interface IOpenAIService {
   init(): void
@@ -14,7 +15,6 @@ export interface IOpenAIService {
   createCompletion(prompt: string, isFirst?: boolean): Promise<string>
 
   setAvatar(avatar: AvatarModel): void
-}
 
 @Injectable()
 export class OpenAIService implements IOpenAIService {
@@ -25,6 +25,7 @@ export class OpenAIService implements IOpenAIService {
 
   constructor(
     @Inject(IFirebaseServiceTid)
+    @Inject(ILocalizationServiceTid) private readonly _ILocalizationService:  ILocalizationService,
     @Inject(IChatVMTid)
     private readonly _chatVM: IChatVM,
     private readonly _firebaseService: IFirebaseService,
@@ -45,7 +46,7 @@ export class OpenAIService implements IOpenAIService {
 
     try {
       const res = await this._openAIApi.createCompletion({
-        model: 'text-davinci-003',
+        model: this._ILocalizationService.get('davinci3'),
         prompt: this._history,
         temperature: this._avatar.params.temperature,
         max_tokens: this._avatar.params.max_tokens,
