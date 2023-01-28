@@ -20,6 +20,7 @@ export interface IChatVM {
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
+  getAfterErrorMessage(message: string): void
 }
 
 @Injectable()
@@ -95,6 +96,32 @@ export class ChatVM implements IChatVM {
 
       this.messages = [botMessage]
       this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+    })
+  }
+
+  async getAfterErrorMessage(message: string) {
+    setTimeout(() => {
+      this.pending = true
+    }, 500)
+
+    const humanMessage = {
+      sender: ESender.HUMAN,
+      text: message,
+      date: new Date()
+    }
+
+    this.messages = [humanMessage, ...this.messages]
+    this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
+
+    const res = await this._openAIService.createCompletion(message)
+
+    runInAction(() => {
+      const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
+
+      this.messages = [botMessage, ...this.messages]
+      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+
+      this.pending = false
     })
   }
 

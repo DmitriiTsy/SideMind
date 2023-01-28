@@ -5,7 +5,7 @@ import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { AvatarModel } from 'services/FirebaseService/types'
 import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
-
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 export interface IOpenAIService {
@@ -25,6 +25,8 @@ export class OpenAIService implements IOpenAIService {
 
   constructor(
     @Inject(IFirebaseServiceTid)
+    @Inject(IChatVMTid)
+    private readonly _chatVM: IChatVM,
     private readonly _firebaseService: IFirebaseService,
     @Inject(IAppStoreTid) private readonly _appStore: IAppStore
   ) {}
@@ -63,6 +65,7 @@ export class OpenAIService implements IOpenAIService {
     } catch (e) {
       if (e.response && e.response.status === '503') {
         console.log('Service Unavailable Error:', e.response.status)
+        this._chatVM.getAfterErrorMessage(this._history)
         this._firebaseService.setMessage(
           this._avatar.id,
           {
