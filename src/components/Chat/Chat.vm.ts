@@ -99,30 +99,28 @@ export class ChatVM implements IChatVM {
     })
   }
 
-  async getAfterErrorMessage(message: string) {
-    setTimeout(() => {
+  async getAfterErrorWaitLoop(message: string) {
+    setTimeout(async () => {
       this.pending = true
+      const humanMessage = {
+        sender: ESender.HUMAN,
+        text: message,
+        date: new Date()
+      }
+      this.messages = [humanMessage, ...this.messages]
+      this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
+      const res = await this._openAIService.createCompletion(message)
+      runInAction(() => {
+        const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
+        this.messages = [botMessage, ...this.messages]
+        this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+        this.pending = false
+      })
     }, 500)
+  }
 
-    const humanMessage = {
-      sender: ESender.HUMAN,
-      text: message,
-      date: new Date()
-    }
-
-    this.messages = [humanMessage, ...this.messages]
-    this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
-
-    const res = await this._openAIService.createCompletion(message)
-
-    runInAction(() => {
-      const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
-
-      this.messages = [botMessage, ...this.messages]
-      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
-
-      this.pending = false
-    })
+  async getAfterErrorMessage(message: string) {
+    this.getAfterErrorWaitLoop(message)
   }
 
   @action.bound

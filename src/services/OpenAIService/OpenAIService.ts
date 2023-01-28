@@ -15,6 +15,7 @@ export interface IOpenAIService {
   createCompletion(prompt: string, isFirst?: boolean): Promise<string>
 
   setAvatar(avatar: AvatarModel): void
+}
 
 @Injectable()
 export class OpenAIService implements IOpenAIService {
@@ -22,10 +23,13 @@ export class OpenAIService implements IOpenAIService {
   private _openAIApi: OpenAIApi
   private _history: string
   private _avatar: AvatarModel
+  private _model: string
+  private _countError: number
 
   constructor(
     @Inject(IFirebaseServiceTid)
-    @Inject(ILocalizationServiceTid) private readonly _ILocalizationService:  ILocalizationService,
+    @Inject(ILocalizationServiceTid)
+    private readonly _ILocalizationService: ILocalizationService,
     @Inject(IChatVMTid)
     private readonly _chatVM: IChatVM,
     private readonly _firebaseService: IFirebaseService,
@@ -37,6 +41,7 @@ export class OpenAIService implements IOpenAIService {
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
+    this._model = this._ILocalizationService.get('davinci3')
   }
 
   async createCompletion(prompt: string, isFirst?: boolean) {
@@ -46,7 +51,7 @@ export class OpenAIService implements IOpenAIService {
 
     try {
       const res = await this._openAIApi.createCompletion({
-        model: this._ILocalizationService.get('davinci3'),
+        model: this._model,
         prompt: this._history,
         temperature: this._avatar.params.temperature,
         max_tokens: this._avatar.params.max_tokens,
@@ -65,8 +70,20 @@ export class OpenAIService implements IOpenAIService {
       return res.data.choices[0].text.trim()
     } catch (e) {
       if (e.response && e.response.status === '503') {
+        this._countError += 1
         console.log('Service Unavailable Error:', e.response.status)
-        this._chatVM.getAfterErrorMessage(this._history)
+        if (this._countError === 1) {
+          this._chatVM.getAfterErrorMessage(this._history)
+        } else if (this._countError === 2) {
+          this._model = this._ILocalizationService.get('davinci2')
+          this._chatVM.getAfterErrorMessage(this._history)
+        } else if (this._countError === 3) {
+          this._chatVM.getAfterErrorMessage(this._history)
+        } else if (this._countError === 4) {
+          this._countError = 0
+          this._model = this._ILocalizationService.get('davinci3')
+          return 'Something came up, can you get back to me in a few minutes.'
+        }
         this._firebaseService.setMessage(
           this._avatar.id,
           {
