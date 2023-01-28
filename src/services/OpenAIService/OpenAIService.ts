@@ -84,6 +84,7 @@ export class OpenAIService implements IOpenAIService {
           this._model = this._ILocalizationService.get('davinci3')
           return 'Something came up, can you get back to me in a few minutes.'
         }
+        this._countError = 0
         this._firebaseService.setMessage(
           this._avatar.id,
           {
