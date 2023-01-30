@@ -781,7 +781,7 @@ PODS:
   - Libuv-gRPC/Interface (0.0.10)
   - MMKV (1.2.13):
     - MMKVCore (~> 1.2.13)
-  - MMKVCore (1.2.15)
+  - MMKVCore (1.2.14)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -1101,19 +1101,19 @@ PODS:
     - React-Core
   - RNDeviceInfo (10.3.0):
     - React-Core
-  - RNFBAnalytics (16.6.0):
+  - RNFBAnalytics (16.7.0):
     - Firebase/Analytics (= 10.3.0)
     - React-Core
     - RNFBApp
-  - RNFBApp (16.6.0):
+  - RNFBApp (16.7.0):
     - Firebase/CoreOnly (= 10.3.0)
     - React-Core
-  - RNFBFirestore (16.6.0):
+  - RNFBFirestore (16.7.0):
     - Firebase/Firestore (= 10.3.0)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - React-Core
     - RNFBApp
-  - RNFBStorage (16.6.0):
+  - RNFBStorage (16.7.0):
     - Firebase/Storage (= 10.3.0)
     - React-Core
     - RNFBApp
@@ -1366,7 +1366,7 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   Libuv-gRPC: 55e51798e14ef436ad9bc45d12d43b77b49df378
   MMKV: aac95d817a100479445633f2b3ed8961b4ac5043
-  MMKVCore: ddf41b9d9262f058419f9ba7598719af56c02cd3
+  MMKVCore: 89f5c8a66bba2dcd551779dea4d412eeec8ff5bb
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
@@ -1404,10 +1404,10 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
   RNCClipboard: 2834e1c4af68697089cdd455ee4a4cdd198fa7dd
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
-  RNFBAnalytics: 0edf2a61605a8002b9833e54c88579fa89f0fad4
-  RNFBApp: be32c341e78c8761c473fb9df3cd780e13a83899
-  RNFBFirestore: d5a092ce1a8d798507d5351551952e122bdd8d2b
-  RNFBStorage: a0e67b61c1850bb2222e7882c5e41d7d41aa0450
+  RNFBAnalytics: 4cd20dd7d8332ee4560e522c60b38d4a7e53a005
+  RNFBApp: 1ee535dcb7773ca612d3a2e53a1f78f8f2fb6abf
+  RNFBFirestore: 4fcf5ea5a3c8db867a5fc789322fb7abf53a7652
+  RNFBStorage: a587bb285b6f783e11ef16a539b697fddfaa5f6e
   RNReactNativeHapticFeedback: 1e3efeca9628ff9876ee7cdd9edec1b336913f8c
   RNReanimated: 6668b0587bebd4b15dd849b99e5a9c70fc12ed95
   RNScreens: ea4cd3a853063cda19a4e3c28d2e52180c80f4eb
