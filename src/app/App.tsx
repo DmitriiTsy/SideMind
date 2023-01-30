@@ -27,19 +27,10 @@ import { Blur } from 'components/Blur'
 const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
 const OPTS: { animation: StackAnimationTypes } = { animation: 'none' }
-import {
-  requestUserPermission,
-  NotificationListner
-} from '../../src/services/FirebaseService/FirebaseCloud'
 
 export const App = () => {
   const appVM = useInject<IAppVM>(IAppVMTid)
   const navigationContainerRef = useNavigationContainerRef<ScreenParamTypes>()
-
-  useEffect(() => {
-    requestUserPermission()
-    NotificationListner()
-  }, [])
 
   useEffect(() => {
     appVM.init()

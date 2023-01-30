@@ -12,6 +12,10 @@ import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { ScreenParamTypes } from 'constants/screen.types'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import {
+  IPushNotificationsService,
+  IPushNotificationsServiceTid
+} from 'services/PushNotificationsService/PushNotificationsService'
 
 export const IAppVMTid = Symbol.for('IAppVMTid')
 
@@ -31,14 +35,19 @@ export class AppVM implements IAppVM {
     @Inject(ILayoutServiceTid) private _layoutService: ILayoutService,
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
     @Inject(IAppStoreTid) private _appStore: IAppStore,
-    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService
+    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
+    @Inject(IPushNotificationsServiceTid)
+    private _pushNotificationService: IPushNotificationsService
   ) {}
 
   async init() {
     this._layoutService.init()
     this._openAIService.init()
     this._appStore.init()
-    await this._firebaseService.init()
+    await Promise.all([
+      this._firebaseService.init(),
+      this._pushNotificationService.init()
+    ])
   }
 
   initNavigation(
