@@ -12,16 +12,11 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { Svg } from 'components/ui/Svg'
 import { deviceWidth } from 'utils/dimentions'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
-import {
-  ISystemInfoService,
-  ISystemInfoServiceTid
-} from 'services/SystemInfoService'
 
 const MIN_HEIGHT = 28
 
 export const ChatInput = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const systemInfo = useInject<ISystemInfoService>(ISystemInfoServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [value, setValue] = useState('')
   const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
@@ -58,8 +53,6 @@ export const ChatInput = () => {
           onContentSizeChange={onContentSizeChange}
           style={[SS.input, { height: inputHeight }]}
           keyboardAppearance={'dark'}
-          onSubmitEditing={systemInfo.isTablet && submit}
-          blurOnSubmit={true}
         />
       </View>
       <Svg
