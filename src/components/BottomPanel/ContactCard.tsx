@@ -4,14 +4,14 @@ import { observer } from 'mobx-react'
 
 import { CardHeader } from './components'
 import { Profile } from './components'
-import { CardInput } from './components'
+import { CardBody } from './components'
 
 export const ContactCard = observer(() => {
   return (
     <View style={SS.container}>
       <CardHeader />
       <Profile />
-      <CardInput />
+      <CardBody />
     </View>
   )
 })

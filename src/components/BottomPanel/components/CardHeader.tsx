@@ -32,7 +32,7 @@ export const CardHeader = observer(() => {
 const SS = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 52,
+    height: 56,
     backgroundColor: '#1C1C1E',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,

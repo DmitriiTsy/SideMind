@@ -1,21 +1,45 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
-
+import { Pressable, StyleSheet, View, Text } from 'react-native'
 import { observer } from 'mobx-react'
 
+import { Svg } from 'components/ui/Svg'
+
+enum texts {
+  Edit = 'Edit Avatar'
+}
+
 export const Profile = observer(() => {
-  return <View style={SS.container}></View>
+  const AvatarChooseHandler = () => {
+    console.log("dummy")
+  }
+  return (
+    <View style={SS.container}>
+      <Pressable onPress={AvatarChooseHandler}>
+        <Svg name={'AvatarEmpty'} />
+      </Pressable>
+      <Pressable style={SS.textsWrapper} onPress={AvatarChooseHandler}>
+        <Text style={SS.texts}>{texts.Edit}</Text>
+      </Pressable>
+    </View>
+  )
 })
 
 const SS = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    height: 52,
+    flexDirection: 'column',
     backgroundColor: '#1C1C1E',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 14
+  },
+  textsWrapper: {
+    paddingVertical: 16
+  },
+  texts: {
+    fontWeight: '500',
+    fontSize: 16,
+    color: '#559EF8',
+    lineHeight: 16,
+    letterSpacing: -0.3
   }
 })
