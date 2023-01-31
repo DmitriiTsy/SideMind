@@ -31,7 +31,7 @@ import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { AvatarModel } from 'services/FirebaseService/types'
 import { SkeletonAvatars } from 'components/SelectAvatars/components/skeleton/Skeleton'
 import { GroupedAvatars } from 'components/SelectAvatars/components/GroupedAvatars'
-
+import { ContactCard } from './ContactCard'
 export const BottomPanel = observer(() => {
   const layoutService = useInject<ILayoutService>(ILayoutServiceTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
@@ -72,7 +72,8 @@ export const BottomPanel = observer(() => {
         animatedStyle
       ]}
     >
-      <View style={SS.headerContainer}>
+      <ContactCard />
+      {/* <View style={SS.headerContainer}>
         <View style={{ width: 20 }} />
         <Text style={SS.title}>{t.get('pick additional')}</Text>
         <Svg name={'Cross'} onPress={vm.toggle} />
@@ -81,7 +82,7 @@ export const BottomPanel = observer(() => {
         <SkeletonAvatars />
       ) : (
         <FlatList data={appStore.commonAvatars} renderItem={renderItem} />
-      )}
+      )} */}
     </Animated.View>
   )
 })

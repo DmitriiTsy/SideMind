@@ -9,5 +9,7 @@
   "loading ais": "Loading curated AIs for you",
   "resetting": "Clearing chat in",
   "cancel": "Cancel",
-  "copy": "Copy"
+  "copy": "Copy",
+  "save": "Save",
+  "mind info": "Mind Info"
 }
