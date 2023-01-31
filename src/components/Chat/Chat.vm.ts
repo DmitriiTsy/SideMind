@@ -48,7 +48,11 @@ export class ChatVM implements IChatVM {
     this.messages = [humanMessage, ...this.messages]
     this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
 
-    const res = await this._openAIService.createCompletion(message)
+    let res = await this._openAIService.createCompletion(message)
+
+    while (!res) {
+      res = await this._resend()
+    }
 
     runInAction(() => {
       const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
@@ -76,7 +80,6 @@ export class ChatVM implements IChatVM {
     this.pending = true
 
     this.messages = []
-
     this.setAvatar(await this._appStore.resetMessages(this.avatar.id))
   }
 
@@ -84,10 +87,14 @@ export class ChatVM implements IChatVM {
   async getFirstMessage() {
     this.pending = true
 
-    const res = await this._openAIService?.createCompletion(
+    let res = await this._openAIService?.createCompletion(
       this.avatar.prompt,
       true
     )
+
+    while (!res) {
+      res = await this._resend()
+    }
 
     this.pending = false
     runInAction(() => {
@@ -101,5 +108,13 @@ export class ChatVM implements IChatVM {
   @action.bound
   changeResetState(value: boolean) {
     this.resetting = value
+  }
+
+  @action.bound
+  async _resend() {
+    this.pending = false
+    setTimeout(() => runInAction(() => (this.pending = true)), 500)
+
+    return await this._openAIService.createCompletion()
   }
 }
