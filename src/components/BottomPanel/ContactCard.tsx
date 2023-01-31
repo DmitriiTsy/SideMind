@@ -6,8 +6,6 @@ import { CardHeader } from './components'
 import { Profile } from './components'
 import { CardInput } from './components'
 
-
-
 export const ContactCard = observer(() => {
   return (
     <View style={SS.container}>

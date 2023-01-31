@@ -15,3 +15,5 @@ export * from './SvgCross'
 export * from './Reset'
 
 export * from './Copy'
+
+export * from './AvatarEmpy'

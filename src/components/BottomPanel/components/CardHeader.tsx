@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Pressable, StyleSheet, View, Text } from 'react-native'
 
 import { observer } from 'mobx-react'
@@ -12,17 +12,16 @@ export const CardHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const vm = useInject<IContactCardVM>(IContactCardVMTid)
 
-  const enabled = useMemo(() => vm.enabled === true, [vm.enabled])
   return (
     <View style={SS.container}>
       <Pressable>
-        <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
+        <Text style={[SS.activeText, !vm.enabled && SS.inactiveText]}>
           {t.get('cancel')}
         </Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
       <Pressable>
-        <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
+        <Text style={[SS.activeText, !vm.enabled && SS.inactiveText]}>
           {t.get('save')}
         </Text>
       </Pressable>
@@ -59,5 +58,5 @@ const SS = StyleSheet.create({
     color: '#484849',
     fontWeight: '700',
     fontSize: 16
-  },
+  }
 })
