@@ -31,6 +31,12 @@ import {
 } from 'services/OpenAIService'
 
 import {
+  IPushNotificationsService,
+  IPushNotificationsServiceTid,
+  PushNotificationsService
+} from 'services/PushNotificationsService'
+
+import {
   IStorageService,
   IStorageServiceTid,
   StorageService
@@ -65,6 +71,10 @@ export class ServiceModule implements IoCModule {
     ioc
       .bind<IStorageService>(IStorageServiceTid)
       .to(StorageService)
+      .inSingletonScope()
+    ioc
+      .bind<IPushNotificationsService>(IPushNotificationsServiceTid)
+      .to(PushNotificationsService)
       .inSingletonScope()
   }
 }
