@@ -7,7 +7,7 @@ import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { Message } from 'components/Chat/components/Message'
 import { IMessage } from 'components/Chat/types'
 
-import { Dots } from './Dots'
+import { Pending } from './Pending'
 
 export const List = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
@@ -18,7 +18,7 @@ export const List = observer(() => {
 
   const keyExtractor = (item, index) => index
 
-  const pending = () => chatVM.pending && <Dots />
+  const pending = () => chatVM.pending && <Pending />
 
   return (
     <FlatList

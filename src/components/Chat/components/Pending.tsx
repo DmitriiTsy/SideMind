@@ -10,29 +10,26 @@ import Animated, {
   withSpring
 } from 'react-native-reanimated'
 
-import { useInject } from 'IoC'
-import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
-
-export const Dots = observer(() => {
-  const chatVM = useInject<IChatVM>(IChatVMTid)
-
+export const Pending = observer(() => {
   const positions = useRef<Animated.SharedValue<number>[]>([
     useSharedValue(0),
     useSharedValue(0),
     useSharedValue(0)
   ]).current
 
-  const animatedStyles = positions.map((position) => useAnimatedStyle(() => {
+  const animatedStyles = positions.map((position) =>
+    useAnimatedStyle(() => {
       return {
         transform: [{ translateY: position.value }]
       }
     })
   )
+
   useEffect(() => {
     const animationInterval = setInterval(() => {
       positions.forEach((position, index) => {
         position.value = withRepeat(
-          withDelay(index * 150, withSpring(-7)),
+          withDelay(index * 150, withSpring(-5)),
           2,
           true
         )
@@ -40,7 +37,7 @@ export const Dots = observer(() => {
       setTimeout(() => {
         positions.forEach((position, index) => {
           position.value = withRepeat(
-            withDelay(index * 150, withSpring(7)),
+            withDelay(index * 150, withSpring(5)),
             2,
             true
           )
@@ -48,23 +45,18 @@ export const Dots = observer(() => {
       }, 500)
     }, 1000)
     return () => clearInterval(animationInterval)
-
   }, [positions])
 
-  const Pending = () =>
-    chatVM.pending ? (
-      <View style={SS.pendingContainer}>
-        {Array.from({ length: 3 }, (_, index) => (
-          <Animated.View
-            key={index}
-            style={[SS.pendingDot, animatedStyles[index]]}
-          />
-        ))}
-      </View>
-    ) : (
-      <></>
-    )
-  return <Pending />
+  return (
+    <View style={SS.pendingContainer}>
+      {Array.from({ length: 3 }, (_, index) => (
+        <Animated.View
+          key={index}
+          style={[SS.pendingDot, animatedStyles[index]]}
+        />
+      ))}
+    </View>
+  )
 })
 
 const SS = StyleSheet.create({
