@@ -1,13 +1,11 @@
-import React, { useMemo, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { observer } from 'mobx-react'
 
-import range from 'lodash/range'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
-  withTiming,
   withDelay,
   withSpring
 } from 'react-native-reanimated'
@@ -31,32 +29,27 @@ export const Dots = observer(() => {
     })
   )
   useEffect(() => {
-    if (chatVM.pending) {
-      const animationInterval = setInterval(() => {
+    const animationInterval = setInterval(() => {
+      positions.forEach((position, index) => {
+        position.value = withRepeat(
+          withDelay(index * 150, withSpring(-7)),
+          2,
+          true
+        )
+      })
+      setTimeout(() => {
         positions.forEach((position, index) => {
           position.value = withRepeat(
-            withDelay(index * 150, withSpring(-7)),
+            withDelay(index * 150, withSpring(7)),
             2,
             true
           )
         })
-        setTimeout(() => {
-          positions.forEach((position, index) => {
-            position.value = withRepeat(
-              withDelay(index * 150, withSpring(7)),
-              2,
-              true
-            )
-          })
-        }, 500)
-      }, 1000)
-      return () => clearInterval(animationInterval)
-    } else {
-      positions.forEach((position, index) => {
-        position.value = withSpring(withDelay(index * 200, withTiming(-7)))
-      })
-    }
-  }, [chatVM.pending, positions])
+      }, 500)
+    }, 1000)
+    return () => clearInterval(animationInterval)
+
+  }, [positions])
 
   const Pending = () =>
     chatVM.pending ? (

@@ -1,8 +1,6 @@
 import React from 'react'
-import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native'
+import { FlatList, ListRenderItemInfo, StyleSheet } from 'react-native'
 import { observer } from 'mobx-react'
-
-import range from 'lodash/range'
 
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
@@ -20,7 +18,7 @@ export const List = observer(() => {
 
   const keyExtractor = (item, index) => index
 
-  const pending = () => <Dots />
+  const pending = () => chatVM.pending && <Dots />
 
   return (
     <FlatList
