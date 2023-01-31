@@ -1,3 +1,9 @@
+import {
+  ContactCardVM,
+  IContactCardVM,
+  IContactCardVMTid
+} from 'components/BottomPanel'
+
 import { Container, IoCModule } from 'IoC'
 
 import { ChatVM, IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
@@ -11,6 +17,7 @@ import {
   IBottomPanelVM,
   IBottomPanelVMTid
 } from 'components/BottomPanel'
+
 import { BlurVM, IBlurVM, IBlurVMTid } from 'components/Blur'
 
 export class ComponentsModule implements IoCModule {
@@ -23,6 +30,10 @@ export class ComponentsModule implements IoCModule {
     ioc
       .bind<IBottomPanelVM>(IBottomPanelVMTid)
       .to(BottomPanelVM)
+      .inSingletonScope()
+    ioc
+      .bind<IContactCardVM>(IContactCardVMTid)
+      .to(ContactCardVM)
       .inSingletonScope()
     ioc.bind<IBlurVM>(IBlurVMTid).to(BlurVM).inSingletonScope()
   }
