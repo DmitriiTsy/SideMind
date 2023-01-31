@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {
   FlatList,
   ListRenderItemInfo,
@@ -32,6 +32,11 @@ export const MainFeed = observer(() => {
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
 
+  const openPanel = useCallback(() => {
+    appStore.updateAvatarsFromFirebase()
+    bottomPanelVM.toggle()
+  }, [appStore, bottomPanelVM])
+
   const header = useMemo(
     () => (
       <View style={SS.headerContainer}>
@@ -39,12 +44,12 @@ export const MainFeed = observer(() => {
           <Svg name={'Logo'} />
           <Text style={SS.title}>{t.get('sideMind')}</Text>
         </View>
-        <Pressable onPress={bottomPanelVM.toggle}>
+        <Pressable onPress={openPanel}>
           <Svg name={'AddNote'} />
         </Pressable>
       </View>
     ),
-    [bottomPanelVM.toggle, t]
+    [openPanel, t]
   )
 
   const renderItem = ({ item, index }: ListRenderItemInfo<AvatarModel>) => (

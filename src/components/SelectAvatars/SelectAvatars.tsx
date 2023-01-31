@@ -25,7 +25,6 @@ export const SelectAvatars = observer(() => {
   )
 
   const keyExtractor = (item, index) => index
-
   return (
     <ScreenContainer
       topInsetColor={'black'}

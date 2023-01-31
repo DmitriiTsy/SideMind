@@ -26,9 +26,9 @@ export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 export interface IFirebaseService {
   init(): Promise<void>
 
-  getCommonAvatars(): Promise<AvatarModel[][]>
+  getCommonAvatars(cache?: boolean): Promise<AvatarModel[][]>
 
-  getStartingAvatars(): Promise<AvatarModel[][]>
+  getStartingAvatars(cache?: boolean): Promise<AvatarModel[][]>
 
   setAvatars(avatars: AvatarModel[]): void
 
@@ -72,30 +72,44 @@ export class FirebaseService implements IFirebaseService {
     }
   }
 
-  async getCommonAvatars() {
+  async getCommonAvatars(cache?: boolean) {
     const data = (await this._avatarsCollection.doc('Common').get()).data()
-    return this.mapAvatars(data)
+    return this.mapAvatars(data, cache)
   }
 
-  async getStartingAvatars() {
+  async getStartingAvatars(cache?: boolean) {
     const data = (await this._avatarsCollection.doc('Starting').get()).data()
-    return this.mapAvatars(data)
+    return this.mapAvatars(data, cache)
   }
 
-  async mapAvatars(data: IFirebaseResponseBots) {
+  async mapAvatars(data: IFirebaseResponseBots, cache?: boolean) {
     const botsList: AvatarModel[][] = []
     const prefetchImages = []
+
     for (const el of Object.entries(data)) {
-      for (const _el of Object.values(el[1])) {
-        _el.imagePath = await storage().ref(_el.imagePath).getDownloadURL()
-        prefetchImages.push(Image.prefetch(_el.imagePath))
+      if (cache) {
+        const cb = (url: string) => prefetchImages.push(Image.prefetch(url))
+
+        botsList.push(await this.cacheImages(el, cb))
+      } else {
+        botsList.push(el[1])
       }
-      botsList.push(el[1])
     }
 
     await Promise.all(prefetchImages)
 
     return botsList
+  }
+
+  async cacheImages(
+    avatars: [string, AvatarModel[]],
+    prefetchCb: (url: string) => void
+  ) {
+    for (const avatar of Object.values(avatars[1])) {
+      avatar.imagePath = await storage().ref(avatar.imagePath).getDownloadURL()
+      prefetchCb(avatar.imagePath)
+    }
+    return avatars[1]
   }
 
   async logFirstOpen() {
