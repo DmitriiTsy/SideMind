@@ -18,7 +18,7 @@ export const List = observer(() => {
 
   const keyExtractor = (item, index) => index
 
-  const pending = () =>
+  const pending = observer(() =>
     chatVM.pending ? (
       <View style={SS.pendingContainer}>
         {range(3).map((_, index) => (
@@ -28,6 +28,7 @@ export const List = observer(() => {
     ) : (
       <></>
     )
+  )
 
   return (
     <FlatList

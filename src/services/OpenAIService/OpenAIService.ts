@@ -5,14 +5,17 @@ import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { AvatarModel } from 'services/FirebaseService/types'
 import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
+
+enum EModel {
+  davinci2 = 'text-davinci-002',
+  davinci3 = 'text-davinci-003'
+}
 
 export interface IOpenAIService {
   init(): void
 
-  createCompletion(prompt: string, isFirst?: boolean): Promise<string>
+  createCompletion(prompt?: string, isFirst?: boolean): Promise<string | null>
 
   setAvatar(avatar: AvatarModel): void
 }
@@ -24,14 +27,10 @@ export class OpenAIService implements IOpenAIService {
   private _history: string
   private _avatar: AvatarModel
   private _model: string
-  private _countError: number
+  private _countError = 0
 
   constructor(
     @Inject(IFirebaseServiceTid)
-    @Inject(ILocalizationServiceTid)
-    private readonly _ILocalizationService: ILocalizationService,
-    @Inject(IChatVMTid)
-    private readonly _chatVM: IChatVM,
     private readonly _firebaseService: IFirebaseService,
     @Inject(IAppStoreTid) private readonly _appStore: IAppStore
   ) {}
@@ -41,11 +40,13 @@ export class OpenAIService implements IOpenAIService {
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
-    this._model = this._ILocalizationService.get('davinci3')
+    this._model = EModel.davinci3
   }
 
-  async createCompletion(prompt: string, isFirst?: boolean) {
-    this._history = `${this._history} \n\n###: ${prompt}. \n\n`
+  async createCompletion(prompt?: string, isFirst?: boolean) {
+    if (prompt) {
+      this._history = `${this._history} \n\n###: ${prompt}. \n\n`
+    }
 
     this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
@@ -64,37 +65,13 @@ export class OpenAIService implements IOpenAIService {
       this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
       if (isFirst) {
-        return this.checkQuotes(res.data.choices[0].text.trim())
+        return this._checkQuotes(res.data.choices[0].text.trim())
       }
 
       return res.data.choices[0].text.trim()
     } catch (e) {
-      if (e.response && e.response.status === '503') {
-        this._countError += 1
-        console.log('Service Unavailable Error:', e.response.status)
-        if (this._countError === 1) {
-          this._chatVM.getAfterErrorMessage(this._history)
-        } else if (this._countError === 2) {
-          this._model = this._ILocalizationService.get('davinci2')
-          this._chatVM.getAfterErrorMessage(this._history)
-        } else if (this._countError === 3) {
-          this._chatVM.getAfterErrorMessage(this._history)
-        } else if (this._countError === 4) {
-          this._countError = 0
-          this._model = this._ILocalizationService.get('davinci3')
-          return 'Something came up, can you get back to me in a few minutes.'
-        }
-        this._countError = 0
-        this._firebaseService.setMessage(
-          this._avatar.id,
-          {
-            sender: ESender.BOT,
-            text: `Error occurred ${e}`,
-            date: new Date()
-          },
-          true
-        )
-        return 'Service Unavailable Error'
+      if (e.response?.status === '503') {
+        return this._handle503(e)
       } else {
         this._firebaseService.setMessage(
           this._avatar.id,
@@ -106,12 +83,40 @@ export class OpenAIService implements IOpenAIService {
           true
         )
         console.log(e)
-        return 'Some error occurred, now chat is unavailable'
+        return 'Something came up, can you get back to me in a few minutes.'
       }
     }
   }
 
-  checkQuotes(text: string) {
+  _handle503(e) {
+    this._countError++
+    console.log('Service Unavailable Error:', e.response?.status)
+
+    if (this._countError === 1) {
+      return null
+    } else if (this._countError === 2) {
+      this._model = EModel.davinci2
+      return null
+    } else if (this._countError === 3) {
+      return null
+    } else {
+      this._countError = 0
+      this._model = EModel.davinci3
+
+      this._firebaseService.setMessage(
+        this._avatar.id,
+        {
+          sender: ESender.BOT,
+          text: `Error occurred ${e}`,
+          date: new Date()
+        },
+        true
+      )
+      return 'Something came up, can you get back to me in a few minutes.'
+    }
+  }
+
+  _checkQuotes(text: string) {
     if (text.startsWith('"') && text.endsWith('"')) {
       return text.replace(/^"|"$/g, '')
     }

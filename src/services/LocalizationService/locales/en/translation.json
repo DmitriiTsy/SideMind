@@ -9,7 +9,5 @@
   "loading ais": "Loading curated AIs for you",
   "resetting": "Clearing chat in",
   "cancel": "Cancel",
-  "copy": "Copy",
-  "davinci3": "text-davinci-003",
-  "davinci2": "text-davinci-002"
+  "copy": "Copy"
 }
