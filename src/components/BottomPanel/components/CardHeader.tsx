@@ -38,7 +38,7 @@ const SS = StyleSheet.create({
     borderTopRightRadius: 12,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 14
+    paddingHorizontal: 24
   },
   text: {
     fontWeight: '500',

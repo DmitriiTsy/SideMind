@@ -32,8 +32,7 @@ const SS = StyleSheet.create({
     backgroundColor: '#1C1C1E',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 14
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start'
   }
 })
