@@ -1,20 +1,32 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Pressable, StyleSheet, View, Text } from 'react-native'
 
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import {
+  ILocalizationService,
+  ILocalizationServiceTid,
+  INavigationService,
+  INavigationServiceTid
+} from 'services'
+
+import { CommonScreenName } from 'constants/screen.types'
 
 import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
 
 export const CardHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const vm = useInject<IContactCardVM>(IContactCardVMTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
+
+  const goBackHandler = useCallback(() => {
+    navigation.navigate(CommonScreenName.SelectAvatars)
+  }, [navigation])
 
   return (
     <View style={SS.container}>
-      <Pressable>
+      <Pressable onPress={goBackHandler}>
         <Text style={[SS.activeText, !vm.enabled && SS.inactiveText]}>
           {t.get('cancel')}
         </Text>

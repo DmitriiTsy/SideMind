@@ -15,14 +15,19 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated'
 
+import { useInject } from 'IoC'
+
 import { deviceWidth } from 'utils/dimentions'
 
 import { Svg } from 'components/ui/Svg'
+
+import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
 const CLEAR_WIDTH = 83
 const MIN_HEIGHT = 45
 export const CardInput = (props: { hint: any; placeholder: any }) => {
   const hints = props.hint
   const placeholder = props.placeholder
+  const vm = useInject<IContactCardVM>(IContactCardVMTid)
   const [value, setValue] = useState('')
   const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
   const clearPosition = useSharedValue(value ? -CLEAR_WIDTH : deviceWidth)
@@ -37,6 +42,8 @@ export const CardInput = (props: { hint: any; placeholder: any }) => {
 
   const onChangeText = (text: string) => {
     setValue(text)
+    vm.toggle(placeholder, value)
+    console.log(vm.FullName)
   }
 
   const onContentSizeChange = (
@@ -48,6 +55,7 @@ export const CardInput = (props: { hint: any; placeholder: any }) => {
 
   const InputCleanHandler = () => {
     setValue('')
+    vm.clean(placeholder)
   }
 
   return (
