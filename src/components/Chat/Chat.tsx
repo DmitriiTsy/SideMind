@@ -34,7 +34,10 @@ export const Chat = observer(() => {
         <Pressable style={SS.containerGoBack} onPress={goBack}>
           <Svg name={'PointerLeft'} />
         </Pressable>
-        <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
+        <Image
+          source={{ uri: chatVM.avatar.imagePath, cache: 'only-if-cached' }}
+          style={SS.avatar}
+        />
         <Text style={SS.title}>{chatVM.avatar.name}</Text>
       </View>
       <Pressable
