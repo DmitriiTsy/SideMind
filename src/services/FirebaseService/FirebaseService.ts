@@ -3,6 +3,7 @@ import firestore, {
 } from '@react-native-firebase/firestore'
 import storage from '@react-native-firebase/storage'
 import analytics from '@react-native-firebase/analytics'
+import auth from '@react-native-firebase/auth'
 import uuid from 'react-native-uuid'
 
 import { Image } from 'react-native'
@@ -51,6 +52,7 @@ export class FirebaseService implements IFirebaseService {
   }
 
   async init() {
+    await auth().signInAnonymously()
     await this._systemInfoService.init()
 
     try {
