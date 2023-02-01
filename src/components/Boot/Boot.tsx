@@ -32,7 +32,7 @@ export const Boot = () => {
   })
   return (
     <View style={SS.container}>
-      <Svg name={'Logo'} />
+      <Svg name={'Logo'} size={40} />
       <Text style={SS.title}>{t.get('sideMind')}</Text>
     </View>
   )
@@ -48,6 +48,7 @@ const SS = StyleSheet.create({
   title: {
     color: '#FFFFFF',
     fontWeight: '700',
-    fontSize: 20
+    fontSize: 20,
+    marginTop: 7
   }
 })
