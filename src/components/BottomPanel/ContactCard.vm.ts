@@ -3,7 +3,7 @@ import { action, observable } from 'mobx'
 import { Inject, Injectable } from 'IoC'
 
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 export const IContactCardVMTid = Symbol.for('IContactCardVMTid')
 
 enum masterPrompt {
@@ -43,7 +43,8 @@ enum placeholder {
 @Injectable()
 export class ContactCardVM implements IContactCardVM {
   constructor(
-    @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService
+    @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService,
+    @Inject(IChatVMTid) private _IChatVM: IChatVM
   ) {}
 
   MasterPromptOpenAi: string
@@ -79,12 +80,14 @@ export class ContactCardVM implements IContactCardVM {
 
   @action.bound
   async masterPromptHandler() {
+    this._IChatVM.pending = true
     this.MasterPromptOpenAi = `${masterPrompt.prompt} My first title is ${this.FullName} 
     who's bio is ${this.Bio}`
     const res = await this._OpenAIService.createCompletionMaster(
       this.MasterPromptOpenAi,
       true
     )
-    console.log(res)
+    this.GeneratedPromptOpenAi = res
+    this._IChatVM.getFirstMessage()
   }
 }

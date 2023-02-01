@@ -49,7 +49,7 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: 0,
         stop: ['###']
       })
-      console.log(res)
+      console.log(res.data.choices[0].text.trim())
       if (isFirst) {
         return this.checkQuotes(res.data.choices[0].text.trim())
       }
