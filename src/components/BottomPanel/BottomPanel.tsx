@@ -89,9 +89,9 @@ export const BottomPanel = observer(() => {
         <View>
           <View style={SS.containerNewMind}>
             <Svg name={'newMind'} onPress={vm.toggle} />
-            <Pressable>
-              <Text>{texts.newMind}</Text>
-            </Pressable>
+            <View style={SS.addMindTextWrapper}>
+              <Text style={SS.addMindText}>{texts.newMind}</Text>
+            </View>
           </View>
           <FlatList data={appStore.commonAvatars} renderItem={renderItem} />
         </View>
@@ -115,7 +115,23 @@ const SS = StyleSheet.create({
     paddingHorizontal: 18,
     alignItems: 'center',
     height: 45,
-    paddingTop: 16
+    paddingVertical: 16,
+    marginTop: 20,
+  },
+  addMindTextWrapper: {
+    height: 45,
+    justifyContent: 'center',
+    borderBottomWidth: 0.5,
+    width: '100%',
+    borderColor: '#333333',
+    marginLeft: 12
+  },
+  addMindText: {
+    color: '#559EF8',
+    fontWeight: '400',
+    fontSize: 16,
+    lineHeight: 16,
+    letterSpacing: -0.3
   },
   headerContainer: {
     borderTopLeftRadius: 12,
