@@ -49,12 +49,10 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: 0,
         stop: ['###']
       })
-      this._history = `${res.data.choices[0].text}`
-
+      console.log(res)
       if (isFirst) {
         return this.checkQuotes(res.data.choices[0].text.trim())
       }
-
       return res.data.choices[0].text.trim()
     } catch (e) {
       this._firebaseService.setMessage(

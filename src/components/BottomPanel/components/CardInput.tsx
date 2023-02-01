@@ -43,7 +43,6 @@ export const CardInput = (props: { hint: any; placeholder: any }) => {
   const onChangeText = (text: string) => {
     setValue(text)
     vm.toggle(placeholder, value)
-    console.log(vm.FullName)
   }
 
   const onContentSizeChange = (

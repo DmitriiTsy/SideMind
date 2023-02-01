@@ -1,33 +1,33 @@
 import React, { useCallback } from 'react'
 import { Pressable, StyleSheet, View, Text } from 'react-native'
-
 import { observer } from 'mobx-react'
 
-import { useInject } from 'IoC'
 import {
-  ILocalizationService,
-  ILocalizationServiceTid,
-  INavigationService,
-  INavigationServiceTid
-} from 'services'
+  IBottomPanelVM,
+  IBottomPanelVMTid
+} from 'components/BottomPanel/BottomPanel.vm'
 
-import { CommonScreenName } from 'constants/screen.types'
+import { useInject } from 'IoC'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
+
+import { AvatarModel } from 'services/FirebaseService/types'
 
 export const CardHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const vm = useInject<IContactCardVM>(IContactCardVMTid)
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const vmBottom = useInject<IBottomPanelVM>(IBottomPanelVMTid)
+  // const avatar: AvatarModel
 
   const goBackHandler = useCallback(() => {
-    console.log('dummy')
-    navigation.navigate(CommonScreenName.SelectAvatars)
-  }, [navigation])
+    vmBottom.toggle()
+  }, [vmBottom])
 
-  const onSubmitDataHandler = () => {
-    console.log('dummy')
-  }
+  const onSubmitDataHandler = useCallback(() => {
+    vm.masterPromptHandler()
+    vmBottom.toggle()
+  }, [vm, vmBottom])
 
   return (
     <View style={SS.container}>
