@@ -614,6 +614,9 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.70.6)
   - Firebase/Analytics (10.3.0):
     - Firebase/Core
+  - Firebase/Auth (10.3.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 10.3.0)
   - Firebase/Core (10.3.0):
     - Firebase/CoreOnly
     - FirebaseAnalytics (~> 10.3.0)
@@ -647,6 +650,11 @@ PODS:
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
   - FirebaseAppCheckInterop (10.3.0)
+  - FirebaseAuth (10.3.0):
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - FirebaseAuthInterop (10.3.0)
   - FirebaseCore (10.3.0):
     - FirebaseCoreInternal (~> 10.0)
@@ -1109,30 +1117,34 @@ PODS:
     - React-jsi (= 0.70.6)
     - React-logger (= 0.70.6)
     - React-perflogger (= 0.70.6)
-  - RNBootSplash (4.4.1):
+  - RNBootSplash (4.4.2):
     - React-Core
   - RNCClipboard (1.11.1):
     - React-Core
   - RNDeviceInfo (10.3.0):
     - React-Core
-  - RNFBAnalytics (16.5.2):
+  - RNFBAnalytics (16.7.0):
     - Firebase/Analytics (= 10.3.0)
     - React-Core
     - RNFBApp
-  - RNFBApp (16.5.2):
+  - RNFBApp (16.7.0):
     - Firebase/CoreOnly (= 10.3.0)
     - React-Core
-  - RNFBFirestore (16.5.2):
+  - RNFBAuth (16.7.0):
+    - Firebase/Auth (= 10.3.0)
+    - React-Core
+    - RNFBApp
+  - RNFBFirestore (16.7.0):
     - Firebase/Firestore (= 10.3.0)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - React-Core
     - RNFBApp
-  - RNFBMessaging (16.5.2):
+  - RNFBMessaging (16.7.0):
     - Firebase/Messaging (= 10.3.0)
     - FirebaseCoreExtension (= 10.3.0)
     - React-Core
     - RNFBApp
-  - RNFBStorage (16.5.2):
+  - RNFBStorage (16.7.0):
     - Firebase/Storage (= 10.3.0)
     - React-Core
     - RNFBApp
@@ -1217,6 +1229,7 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+  - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
@@ -1233,6 +1246,7 @@ SPEC REPOS:
     - Firebase
     - FirebaseAnalytics
     - FirebaseAppCheckInterop
+    - FirebaseAuth
     - FirebaseAuthInterop
     - FirebaseCore
     - FirebaseCoreExtension
@@ -1341,6 +1355,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
+  RNFBAuth:
+    :path: "../node_modules/@react-native-firebase/auth"
   RNFBFirestore:
     :path: "../node_modules/@react-native-firebase/firestore"
   RNFBMessaging:
@@ -1368,6 +1384,7 @@ SPEC CHECKSUMS:
   Firebase: f92fc551ead69c94168d36c2b26188263860acd9
   FirebaseAnalytics: 036232b6a1e2918e5f67572417be1173576245f3
   FirebaseAppCheckInterop: 9fc57dfa08f0abb737b185ea065422b55355c909
+  FirebaseAuth: 0e415d29d846c1dce2fb641e46f35e9888d9bec6
   FirebaseAuthInterop: 7a766bd56971347e0de4b7674aaa62ddc7820097
   FirebaseCore: 988754646ab3bd4bdcb740f1bfe26b9f6c0d5f2a
   FirebaseCoreExtension: 93d252fabdc9696bf14a73b04d84877ab9b3a832
@@ -1423,14 +1440,15 @@ SPEC CHECKSUMS:
   React-RCTVibration: c75ceef7aa60a33b2d5731ebe5800ddde40cefc4
   React-runtimeexecutor: 15437b576139df27635400de0599d9844f1ab817
   ReactCommon: 349be31adeecffc7986a0de875d7fb0dcf4e251c
-  RNBootSplash: 4f968c1e098c7ec97939ace039f735e3d335bd4b
+  RNBootSplash: b2014890e22f0b4895ed07ff4aebd52b63ade449
   RNCClipboard: 2834e1c4af68697089cdd455ee4a4cdd198fa7dd
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
-  RNFBAnalytics: 0c5cde0807272db3727795f35d3c232f1e13ef13
-  RNFBApp: 93d1a4e5ce5d2d20d721adf866d1a0c4b58e6432
-  RNFBFirestore: 9cd3d02bf57c184ad1ac0b6fdf1e320f126db33c
-  RNFBMessaging: 0dba94898b272142467bb3011ae107d0498a7bec
-  RNFBStorage: 06555c6bd0e009831d911db9bbd171df18f3d0a1
+  RNFBAnalytics: 4cd20dd7d8332ee4560e522c60b38d4a7e53a005
+  RNFBApp: 1ee535dcb7773ca612d3a2e53a1f78f8f2fb6abf
+  RNFBAuth: 58ab8f774f9ff45707f2bfbf4fd74e8f7b4220b9
+  RNFBFirestore: 4fcf5ea5a3c8db867a5fc789322fb7abf53a7652
+  RNFBMessaging: 04ecf12bae7543cd8df145f1b26d89d867594be7
+  RNFBStorage: a587bb285b6f783e11ef16a539b697fddfaa5f6e
   RNReactNativeHapticFeedback: 1e3efeca9628ff9876ee7cdd9edec1b336913f8c
   RNReanimated: 6668b0587bebd4b15dd849b99e5a9c70fc12ed95
   RNScreens: ea4cd3a853063cda19a4e3c28d2e52180c80f4eb
