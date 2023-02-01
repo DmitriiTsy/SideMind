@@ -13,6 +13,8 @@ export interface IOpenAIService {
 
   createCompletion(prompt: string, isFirst?: boolean): Promise<string>
 
+  createCompletionMaster(prompt: string, isFirst?: boolean): Promise<string>
+
   setAvatar(avatar: AvatarModel): void
 }
 
@@ -34,6 +36,35 @@ export class OpenAIService implements IOpenAIService {
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
+  }
+
+  async createCompletionMaster(prompt: string, isFirst?: boolean) {
+    try {
+      const res = await this._openAIApi.createCompletion({
+        model: 'text-davinci-003',
+        prompt: prompt,
+        temperature: 0.73,
+        max_tokens: 721,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        stop: ['###']
+      })
+      this._history = `${res.data.choices[0].text}`
+
+      if (isFirst) {
+        return this.checkQuotes(res.data.choices[0].text.trim())
+      }
+
+      return res.data.choices[0].text.trim()
+    } catch (e) {
+      this._firebaseService.setMessage(
+        this._avatar.id,
+        { sender: ESender.BOT, text: `Error occurred ${e}`, date: new Date() },
+        true
+      )
+      console.log(e)
+      return 'Some error occurred, now chat is unavailable'
+    }
   }
 
   async createCompletion(prompt: string, isFirst?: boolean) {
