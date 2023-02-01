@@ -7,6 +7,7 @@ import Animated, {
 import {
   FlatList,
   ListRenderItemInfo,
+  Pressable,
   StyleSheet,
   Text,
   View
@@ -32,6 +33,10 @@ import { AvatarModel } from 'services/FirebaseService/types'
 import { SkeletonAvatars } from 'components/SelectAvatars/components/skeleton/Skeleton'
 import { GroupedAvatars } from 'components/SelectAvatars/components/GroupedAvatars'
 import { ContactCard } from './ContactCard'
+
+enum texts {
+  newMind = 'New Mind'
+}
 export const BottomPanel = observer(() => {
   const layoutService = useInject<ILayoutService>(ILayoutServiceTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
@@ -72,8 +77,8 @@ export const BottomPanel = observer(() => {
         animatedStyle
       ]}
     >
-      <ContactCard />
-      {/* <View style={SS.headerContainer}>
+      {/* <ContactCard /> */}
+      <View style={SS.headerContainer}>
         <View style={{ width: 20 }} />
         <Text style={SS.title}>{t.get('pick additional')}</Text>
         <Svg name={'Cross'} onPress={vm.toggle} />
@@ -81,8 +86,16 @@ export const BottomPanel = observer(() => {
       {appStore.commonAvatars.length === 0 ? (
         <SkeletonAvatars />
       ) : (
-        <FlatList data={appStore.commonAvatars} renderItem={renderItem} />
-      )} */}
+        <View>
+          <View style={SS.containerNewMind}>
+            <Svg name={'newMind'} onPress={vm.toggle} />
+            <Pressable>
+              <Text>{texts.newMind}</Text>
+            </Pressable>
+          </View>
+          <FlatList data={appStore.commonAvatars} renderItem={renderItem} />
+        </View>
+      )}
     </Animated.View>
   )
 })
@@ -96,6 +109,13 @@ const SS = StyleSheet.create({
     bottom: 0,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12
+  },
+  containerNewMind: {
+    flexDirection: 'row',
+    paddingHorizontal: 18,
+    alignItems: 'center',
+    height: 45,
+    paddingTop: 16
   },
   headerContainer: {
     borderTopLeftRadius: 12,

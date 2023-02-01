@@ -19,3 +19,5 @@ export * from './Copy'
 export * from './AvatarEmpy'
 
 export * from './CleanTextInput'
+
+export * from './NewMind'

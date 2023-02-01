@@ -9,7 +9,8 @@ import {
   SvgReset,
   SvgCopy,
   SvgAvatarEmpty,
-  SvgCleanTextInput
+  SvgCleanTextInput,
+  SvgNewMind
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
@@ -23,5 +24,6 @@ export const SVG_MAP = {
   Reset: SvgReset,
   Copy: SvgCopy,
   AvatarEmpty: SvgAvatarEmpty,
-  CleanTextInput: SvgCleanTextInput
+  CleanTextInput: SvgCleanTextInput,
+  newMind: SvgNewMind
 }
