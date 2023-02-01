@@ -36,7 +36,10 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
 
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      <Image source={{ uri: avatar.imagePath }} style={SS.avatar} />
+      <Image
+        source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
+        style={SS.avatar}
+      />
       <View style={[SS.containerRight, !isFirst && SS.line]}>
         <View style={SS.firstLine}>
           <Text style={SS.botName}>{avatar.name}</Text>
