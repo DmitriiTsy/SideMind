@@ -77,8 +77,8 @@ export const BottomPanel = observer(() => {
         animatedStyle
       ]}
     >
-      {/* <ContactCard /> */}
-      <View style={SS.headerContainer}>
+      <ContactCard />
+      {/* <View style={SS.headerContainer}>
         <View style={{ width: 20 }} />
         <Text style={SS.title}>{t.get('pick additional')}</Text>
         <Svg name={'Cross'} onPress={vm.toggle} />
@@ -95,7 +95,7 @@ export const BottomPanel = observer(() => {
           </View>
           <FlatList data={appStore.commonAvatars} renderItem={renderItem} />
         </View>
-      )}
+      )} */}
     </Animated.View>
   )
 })
