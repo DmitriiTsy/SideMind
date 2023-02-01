@@ -17,3 +17,5 @@ export * from './Reset'
 export * from './Copy'
 
 export * from './AvatarEmpy'
+
+export * from './CleanTextInput'

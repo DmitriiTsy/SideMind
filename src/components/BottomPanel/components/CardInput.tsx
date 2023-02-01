@@ -8,6 +8,16 @@ import {
   TextInputContentSizeChangeEventData
 } from 'react-native'
 
+import Animated, {
+    Easing,
+    runOnJS,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming
+  } from 'react-native-reanimated'
+
+import { Svg } from 'components/ui/Svg'
+
 const MIN_HEIGHT = 45
 export const CardInput = (props: { hint: any; placeholder: any }) => {
   const hints = props.hint
@@ -29,17 +39,24 @@ export const CardInput = (props: { hint: any; placeholder: any }) => {
   return (
     <View style={SS.container}>
       <Text style={SS.texts}>{hints}</Text>
-      <TextInput
-        placeholder={placeholder}
-        placeholderTextColor="#989898"
-        multiline={true}
-        value={value}
-        onChangeText={onChangeText}
-        onContentSizeChange={onContentSizeChange}
-        style={[SS.textInput, { height: inputHeight }]}
-        keyboardAppearance={'dark'}
-        blurOnSubmit={true}
-      ></TextInput>
+      <View style={SS.textInputWrapper}>
+        <TextInput
+          placeholder={placeholder}
+          placeholderTextColor="#989898"
+          multiline={true}
+          value={value}
+          onChangeText={onChangeText}
+          onContentSizeChange={onContentSizeChange}
+          style={[SS.textInput, { height: inputHeight }]}
+          keyboardAppearance={'dark'}
+          blurOnSubmit={true}
+        ></TextInput>
+        {value && (
+          <View>
+            <Svg name={'CleanTextInput'} />
+          </View>
+        )}
+      </View>
     </View>
   )
 }
@@ -60,16 +77,24 @@ const SS = StyleSheet.create({
     color: '#989898',
     fontSize: 16,
     lineHeight: 16,
-    fontWeight: '400',
+    fontWeight: '500',
     marginBottom: 8,
     paddingHorizontal: 18
   },
+  textInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 36,
+    backgroundColor: '#2C2C2D'
+  },
   textInput: {
-    textAlignVertical: 'center',
+    paddingTop: 15,
     backgroundColor: '#2C2C2D',
     color: '#FFFFFF',
     width: '100%',
-    height: 45,
+    fontSize: 16,
+    lineHeight: 16,
+    fontWeight: '400',
     paddingHorizontal: 18
   }
 })
