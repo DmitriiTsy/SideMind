@@ -28,7 +28,7 @@ export const Boot = () => {
       } else {
         navigation.navigate(CommonScreenName.SelectAvatars)
       }
-    }, 10000)
+    }, 1000)
   })
   return (
     <View style={SS.container}>
