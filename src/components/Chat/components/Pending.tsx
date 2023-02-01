@@ -1,63 +1,55 @@
-import React, { useEffect, useRef } from 'react'
+import React, { FC, useCallback, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withRepeat,
-  withDelay,
-  withSpring
+  withTiming
 } from 'react-native-reanimated'
 
 export const Pending = observer(() => {
-  const positions = useRef<Animated.SharedValue<number>[]>([
-    useSharedValue(0),
-    useSharedValue(0),
-    useSharedValue(0)
-  ]).current
-
-  const animatedStyles = positions.map((position) =>
-    useAnimatedStyle(() => {
-      return {
-        transform: [{ translateY: position.value }]
-      }
-    })
-  )
-
-  useEffect(() => {
-    const animationInterval = setInterval(() => {
-      positions.forEach((position, index) => {
-        position.value = withRepeat(
-          withDelay(index * 150, withSpring(-5)),
-          2,
-          true
-        )
-      })
-      setTimeout(() => {
-        positions.forEach((position, index) => {
-          position.value = withRepeat(
-            withDelay(index * 150, withSpring(5)),
-            2,
-            true
-          )
-        })
-      }, 500)
-    }, 1000)
-    return () => clearInterval(animationInterval)
-  }, [positions])
-
   return (
     <View style={SS.pendingContainer}>
       {Array.from({ length: 3 }, (_, index) => (
-        <Animated.View
-          key={index}
-          style={[SS.pendingDot, animatedStyles[index]]}
-        />
+        <Dot index={index} key={index} />
       ))}
     </View>
   )
 })
+
+const Dot: FC<{ index: number }> = ({ index }) => {
+  const position = useSharedValue(0)
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: position.value }]
+  }))
+
+  const moveToTop = useCallback(() => {
+    position.value = withTiming(
+      -3,
+      {},
+      (finished) => finished && runOnJS(moveToBottom)()
+    )
+  }, [position])
+
+  const moveToBottom = useCallback(() => {
+    position.value = withTiming(
+      3,
+      {},
+      (finished) => finished && runOnJS(moveToTop)()
+    )
+  }, [position])
+
+  useEffect(() => {
+    setTimeout(() => {
+      moveToTop()
+    }, index * 100)
+  }, [])
+
+  return <Animated.View style={[SS.pendingDot, animatedStyle]} />
+}
 
 const SS = StyleSheet.create({
   flatList: {

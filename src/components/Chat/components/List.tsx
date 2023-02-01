@@ -18,7 +18,6 @@ export const List = observer(() => {
 
   const keyExtractor = (item, index) => index
 
-
   const pending = () => chatVM.pending && <Pending />
 
   return (
