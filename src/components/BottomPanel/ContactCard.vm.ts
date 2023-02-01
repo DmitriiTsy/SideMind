@@ -32,7 +32,7 @@ export class ContactCardVM implements IContactCardVM {
 
   @action.bound
   toggle(type: string, value: string) {
-    if (type === placeholder.FullName ) {
+    if (type === placeholder.FullName) {
       this.FullName = value
     } else if (type === placeholder.Tagline) {
       this.Tagline = value
@@ -43,7 +43,7 @@ export class ContactCardVM implements IContactCardVM {
 
   @action.bound
   clean(type: string) {
-    if (type === placeholder.FullName ) {
+    if (type === placeholder.FullName) {
       this.FullName = ''
     } else if (type === placeholder.Tagline) {
       this.Tagline = ''

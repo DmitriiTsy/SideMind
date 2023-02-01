@@ -21,8 +21,13 @@ export const CardHeader = observer(() => {
   const navigation = useInject<INavigationService>(INavigationServiceTid)
 
   const goBackHandler = useCallback(() => {
+    console.log('dummy')
     navigation.navigate(CommonScreenName.SelectAvatars)
   }, [navigation])
+
+  const onSubmitDataHandler = () => {
+    console.log('dummy')
+  }
 
   return (
     <View style={SS.container}>
@@ -32,7 +37,7 @@ export const CardHeader = observer(() => {
         </Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
-      <Pressable>
+      <Pressable onPress={onSubmitDataHandler}>
         <Text style={[SS.activeText, !vm.enabled && SS.inactiveText]}>
           {t.get('save')}
         </Text>

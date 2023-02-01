@@ -10,7 +10,7 @@ enum texts {
 
 export const Profile = observer(() => {
   const AvatarChooseHandler = () => {
-    console.log("dummy")
+    console.log('')
   }
   return (
     <View style={SS.container}>
