@@ -1,29 +1,39 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   StyleSheet,
   TextInput,
   View,
   Text,
   NativeSyntheticEvent,
-  TextInputContentSizeChangeEventData
+  TextInputContentSizeChangeEventData,
+  Pressable
 } from 'react-native'
 
 import Animated, {
-    Easing,
-    runOnJS,
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming
-  } from 'react-native-reanimated'
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated'
+
+import { deviceWidth } from 'utils/dimentions'
 
 import { Svg } from 'components/ui/Svg'
-
+const CLEAR_WIDTH = 83
 const MIN_HEIGHT = 45
 export const CardInput = (props: { hint: any; placeholder: any }) => {
   const hints = props.hint
   const placeholder = props.placeholder
   const [value, setValue] = useState('')
   const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
+  const clearPosition = useSharedValue(value ? -CLEAR_WIDTH : deviceWidth)
+
+  const animatedColor = useAnimatedStyle(() => ({
+    transform: [{ translateX: clearPosition.value }]
+  }))
+
+  useEffect(() => {
+    clearPosition.value = withTiming(value ? -18 : 0)
+  }, [clearPosition, value])
 
   const onChangeText = (text: string) => {
     setValue(text)
@@ -34,6 +44,10 @@ export const CardInput = (props: { hint: any; placeholder: any }) => {
   ) => {
     const { height } = e.nativeEvent.contentSize
     setInputHeight(height > MIN_HEIGHT ? height + 15 : MIN_HEIGHT)
+  }
+
+  const InputCleanHandler = () => {
+    setValue('')
   }
 
   return (
@@ -52,9 +66,13 @@ export const CardInput = (props: { hint: any; placeholder: any }) => {
           blurOnSubmit={true}
         ></TextInput>
         {value && (
-          <View>
-            <Svg name={'CleanTextInput'} />
-          </View>
+          <Animated.View
+            style={[animatedColor, value && { alignSelf: 'center' }]}
+          >
+            <Pressable onPress={InputCleanHandler}>
+              <Svg name={'CleanTextInput'} />
+            </Pressable>
+          </Animated.View>
         )}
       </View>
     </View>
@@ -84,7 +102,7 @@ const SS = StyleSheet.create({
   textInputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingRight: 36,
+    paddingRight: 18,
     backgroundColor: '#2C2C2D'
   },
   textInput: {
