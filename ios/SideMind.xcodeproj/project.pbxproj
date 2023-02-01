@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* SideMindTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SideMindTests.m */; };
 		112CE0C22964A87D00CDB083 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 112CE0C12964A87D00CDB083 /* GoogleService-Info.plist */; };
+		11637503298AEC8700847963 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11637502298AEC8700847963 /* BootSplash.storyboard */; };
+		11637504298AEC8700847963 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11637502298AEC8700847963 /* BootSplash.storyboard */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -32,6 +34,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* SideMindTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SideMindTests.m; sourceTree = "<group>"; };
 		112CE0C12964A87D00CDB083 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		11637502298AEC8700847963 /* BootSplash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = BootSplash.storyboard; sourceTree = "<group>"; };
 		11E02D8B298439A000F445AC /* SideMind.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SideMind.entitlements; path = SideMind/SideMind.entitlements; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* SideMind.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SideMind.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = SideMind/AppDelegate.h; sourceTree = "<group>"; };
@@ -97,6 +100,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				11637502298AEC8700847963 /* BootSplash.storyboard */,
 			);
 			name = SideMind;
 			sourceTree = "<group>";
@@ -241,6 +245,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11637504298AEC8700847963 /* BootSplash.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,6 +256,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				112CE0C22964A87D00CDB083 /* GoogleService-Info.plist in Resources */,
+				11637503298AEC8700847963 /* BootSplash.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
