@@ -65,7 +65,7 @@ export class ChatVM implements IChatVM {
     this.avatar = avatar
     this._openAIService.setAvatar(avatar)
     this.messages = avatar.messages?.displayed || []
-
+    this.getFirstMessage()
     if (this.messages.length === 0) {
       this.getFirstMessage()
     }
