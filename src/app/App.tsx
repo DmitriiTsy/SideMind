@@ -10,6 +10,8 @@ import { StatusBar } from 'react-native'
 
 import { StackAnimationTypes } from 'react-native-screens'
 
+import * as BootSplash from 'react-native-bootsplash'
+
 import { useInject } from 'IoC'
 
 import {
@@ -38,7 +40,10 @@ export const App = () => {
   })
 
   return (
-    <NavigationContainer ref={navigationContainerRef}>
+    <NavigationContainer
+      ref={navigationContainerRef}
+      onReady={() => BootSplash.hide({ fade: true })}
+    >
       <StatusBar translucent={true} barStyle={'light-content'} />
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
