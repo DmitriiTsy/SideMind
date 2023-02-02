@@ -1,9 +1,12 @@
 import { action, observable } from 'mobx'
 
+import uuid from 'react-native-uuid'
 import { Inject, Injectable } from 'IoC'
-
+import {  ESender, IMessage } from 'components/Chat/types'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
+import { AvatarModel } from 'services/FirebaseService/types'
+
 export const IContactCardVMTid = Symbol.for('IContactCardVMTid')
 
 enum masterPrompt {
@@ -28,6 +31,7 @@ export interface IContactCardVM {
   FullName: string
   MasterPromptOpenAi: string
   GeneratedPromptOpenAi: string
+  avatar: AvatarModel
 
   toggle(type: string, value: string): void
   clean(type: string): void
@@ -46,6 +50,7 @@ export class ContactCardVM implements IContactCardVM {
     @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService,
     @Inject(IChatVMTid) private _IChatVM: IChatVM
   ) {}
+  avatar: AvatarModel
 
   MasterPromptOpenAi: string
   GeneratedPromptOpenAi: string
@@ -80,7 +85,6 @@ export class ContactCardVM implements IContactCardVM {
 
   @action.bound
   async masterPromptHandler() {
-    this._IChatVM.pending = true
     this.MasterPromptOpenAi = `${masterPrompt.prompt} My first title is ${this.FullName} 
     who's bio is ${this.Bio}`
     const res = await this._OpenAIService.createCompletionMaster(
@@ -88,6 +92,29 @@ export class ContactCardVM implements IContactCardVM {
       true
     )
     this.GeneratedPromptOpenAi = res
-    this._IChatVM.getFirstMessage()
+    this.avatar = {
+      name: this.FullName,
+      tagLine: this.Tagline,
+      imagePath: 'bots/Roxy_The_Relaxer.png',
+      category: 'Self-Improvement',
+      id: Number(uuid.v4()),
+      prompt: this.GeneratedPromptOpenAi,
+      params: {
+        temperature: 0.73,
+        frequency_penalty: 0,
+        max_tokens: 721,
+        presence_penalty: 0,
+        top_p: 1
+      },
+      messages: {
+        displayed: {
+          sender: ESender.RESET,
+          text: '',
+          date: new Date()
+        },
+        history: ''
+      }
+    }
+    this._IChatVM.setAvatar(this.avatar)
   }
 }

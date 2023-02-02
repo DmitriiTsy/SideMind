@@ -9,16 +9,17 @@ import {
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import { INavigationService, INavigationServiceTid } from 'services'
 
-import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
-
+import { CommonScreenName } from 'constants/screen.types'
 import { AvatarModel } from 'services/FirebaseService/types'
+import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
 
 export const CardHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
   const vm = useInject<IContactCardVM>(IContactCardVMTid)
   const vmBottom = useInject<IBottomPanelVM>(IBottomPanelVMTid)
-  // const avatar: AvatarModel
 
   const goBackHandler = useCallback(() => {
     vmBottom.toggle()
@@ -26,8 +27,10 @@ export const CardHeader = observer(() => {
 
   const onSubmitDataHandler = useCallback(() => {
     vm.masterPromptHandler()
+    console.log(vm.avatar)
     vmBottom.toggle()
-  }, [vm, vmBottom])
+    navigation.navigate(CommonScreenName.Chat)
+  }, [navigation, vm, vmBottom])
 
   return (
     <View style={SS.container}>
