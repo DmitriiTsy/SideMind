@@ -27,11 +27,9 @@ export const CardHeader = observer(() => {
     vmBottom.toggle()
   }, [vmBottom])
 
-  const onSubmitDataHandler = useCallback(() => {
+  const onSubmitDataHandler = () => {
     vm.masterPromptHandler()
-    vmBottom.toggle()
-    navigation.navigate(CommonScreenName.Chat)
-  }, [navigation, vm, vmBottom])
+  }
 
   return (
     <View style={SS.container}>
@@ -41,8 +39,8 @@ export const CardHeader = observer(() => {
         </Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
-      <Pressable onPress={onSubmitDataHandler}>
-        <Text style={[SS.activeText, !vm.enabled && SS.inactiveText]}>
+      <Pressable onPress={onSubmitDataHandler} disabled={vm.pending}>
+        <Text style={[SS.activeText, vm.pending && SS.inactiveText]}>
           {t.get('save')}
         </Text>
       </Pressable>

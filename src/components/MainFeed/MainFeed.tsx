@@ -31,7 +31,6 @@ export const MainFeed = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
-
   const openPanel = useCallback(() => {
     appStore.updateAvatarsFromFirebase()
     bottomPanelVM.toggle()

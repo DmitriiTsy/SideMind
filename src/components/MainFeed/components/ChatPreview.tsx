@@ -20,8 +20,8 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const isFirst = useMemo(() => index === 0, [index])
   const existMessage = useMemo(
-    () => avatar.messages?.displayed?.length > 0,
-    [avatar.messages?.displayed?.length]
+    () => avatar?.messages?.displayed?.length > 0,
+    [avatar?.messages?.displayed?.length]
   )
 
   const onPress = () => {
@@ -30,21 +30,21 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
   }
 
   const timestamp = useMemo(
-    () => (existMessage ? useTimestamp(avatar.messages.displayed[0].date) : ''),
-    [avatar.messages?.displayed, existMessage]
+    () => (existMessage ? useTimestamp(avatar?.messages.displayed[0].date) : ''),
+    [avatar?.messages?.displayed, existMessage]
   )
 
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      <Image source={{ uri: avatar.imagePath }} style={SS.avatar} />
+      <Image source={{ uri: avatar?.imagePath }} style={SS.avatar} />
       <View style={[SS.containerRight, !isFirst && SS.line]}>
         <View style={SS.firstLine}>
-          <Text style={SS.botName}>{avatar.name}</Text>
+          <Text style={SS.botName}>{avatar?.name}</Text>
           {existMessage && <Text style={SS.timestamp}>{timestamp}</Text>}
         </View>
         <Text style={SS.botDesc} numberOfLines={2}>
-          {(existMessage && avatar.messages.displayed[0].text.trim()) ||
-            avatar.tagLine}
+          {(existMessage && avatar?.messages.displayed[0].text.trim()) ||
+            avatar?.tagLine}
         </Text>
       </View>
     </Pressable>

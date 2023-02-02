@@ -7,6 +7,10 @@ import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { AvatarModel } from 'services/FirebaseService/types'
 
+import { IBottomPanelVM, IBottomPanelVMTid  } from './BottomPanel.vm'
+import { INavigationService, INavigationServiceTid } from 'services/NavigationService'
+import { CommonScreenName } from 'constants/screen.types'
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
 export const IContactCardVMTid = Symbol.for('IContactCardVMTid')
 
 enum masterPrompt {
@@ -32,6 +36,7 @@ export interface IContactCardVM {
   MasterPromptOpenAi: string
   GeneratedPromptOpenAi: string
   avatar: AvatarModel
+  pending: boolean
 
   toggle(type: string, value: string): void
   clean(type: string): void
@@ -48,8 +53,13 @@ enum placeholder {
 export class ContactCardVM implements IContactCardVM {
   constructor(
     @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService,
-    @Inject(IChatVMTid) private _IChatVM: IChatVM
+    @Inject(IChatVMTid) private _ChatVM: IChatVM,
+    @Inject(INavigationServiceTid)
+    private _navigationService: INavigationService,
+    @Inject(IBottomPanelVMTid) private _bottomPanelVM: IBottomPanelVM,
+    @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {}
+  @observable pending = false
   avatar: AvatarModel
 
   MasterPromptOpenAi: string
@@ -85,19 +95,19 @@ export class ContactCardVM implements IContactCardVM {
 
   @action.bound
   async masterPromptHandler() {
+    this.pending = true
     this.MasterPromptOpenAi = `${masterPrompt.prompt} My first title is ${this.FullName} 
     who's bio is ${this.Bio}`
-    const res = await this._OpenAIService.createCompletionMaster(
+    this.GeneratedPromptOpenAi = `${await this._OpenAIService.createCompletionMaster(
       this.MasterPromptOpenAi,
       true
-    )
-    this.GeneratedPromptOpenAi = res
+    )} \r\n Now intro yourself to a new friend in under 10 words:###`
     this.avatar = {
       name: this.FullName,
       tagLine: this.Tagline,
       imagePath: 'bots/Roxy_The_Relaxer.png',
       category: 'Self-Improvement',
-      id: Number(uuid.v4()),
+      id: uuid.v4(),
       prompt: this.GeneratedPromptOpenAi,
       params: {
         temperature: 0.73,
@@ -105,16 +115,13 @@ export class ContactCardVM implements IContactCardVM {
         max_tokens: 721,
         presence_penalty: 0,
         top_p: 1
-      },
-      messages: {
-        displayed: {
-          sender: ESender.RESET,
-          text: '',
-          date: new Date()
-        },
-        history: ''
       }
     }
-    this._IChatVM.setAvatar(this.avatar)
+    console.log(this.avatar.id)
+    this.pending = false
+    this._appStore.updateUsersAvatars(this.avatar)
+    this._ChatVM.setAvatar(this.avatar)
+    this._bottomPanelVM.toggle()
+    this._navigationService.navigate(CommonScreenName.Chat)
   }
 }
