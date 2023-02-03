@@ -1,16 +1,15 @@
+import uuid from 'react-native-uuid'
 import { action, observable } from 'mobx'
 
-import uuid from 'react-native-uuid'
-import { Inject, Injectable } from 'IoC'
-import {  ESender, IMessage } from 'components/Chat/types'
-import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { AvatarModel } from 'services/FirebaseService/types'
-
-import { IBottomPanelVM, IBottomPanelVMTid  } from './BottomPanel.vm'
-import { INavigationService, INavigationServiceTid } from 'services/NavigationService'
+import { Inject, Injectable } from 'IoC'
+import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
 import { CommonScreenName } from 'constants/screen.types'
+import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
+import { INavigationService, INavigationServiceTid } from 'services'
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+
 export const IContactCardVMTid = Symbol.for('IContactCardVMTid')
 
 enum masterPrompt {
@@ -121,7 +120,7 @@ export class ContactCardVM implements IContactCardVM {
     this.pending = false
     this._appStore.updateUsersAvatars(this.avatar)
     this._ChatVM.setAvatar(this.avatar)
-    this._bottomPanelVM.toggle()
+    this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.Chat)
   }
 }

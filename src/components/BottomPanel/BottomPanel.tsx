@@ -4,43 +4,20 @@ import Animated, {
   useSharedValue,
   withTiming
 } from 'react-native-reanimated'
-import {
-  FlatList,
-  ListRenderItemInfo,
-  Pressable,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native'
+import { StyleSheet } from 'react-native'
 
 import { observer } from 'mobx-react'
 
 import { deviceHeight, deviceWidth } from 'utils/dimentions'
 import { useInject } from 'IoC'
-import {
-  ILayoutService,
-  ILayoutServiceTid,
-  ILocalizationService,
-  ILocalizationServiceTid
-} from 'services'
+import { ILayoutService, ILayoutServiceTid } from 'services'
 import {
   IBottomPanelVM,
   IBottomPanelVMTid
 } from 'components/BottomPanel/BottomPanel.vm'
-import { Svg } from 'components/ui/Svg'
-import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { AvatarModel } from 'services/FirebaseService/types'
-import { SkeletonAvatars } from 'components/SelectAvatars/components/skeleton/Skeleton'
-import { GroupedAvatars } from 'components/SelectAvatars/components/GroupedAvatars'
-import { ContactCard } from './ContactCard'
 
-enum texts {
-  newMind = 'New Mind'
-}
 export const BottomPanel = observer(() => {
   const layoutService = useInject<ILayoutService>(ILayoutServiceTid)
-  const appStore = useInject<IAppStore>(IAppStoreTid)
-  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const vm = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
   const height = useMemo(
@@ -56,16 +33,12 @@ export const BottomPanel = observer(() => {
   }))
 
   useEffect(() => {
-    if (vm.opened) {
+    if (vm.content) {
       position.value = withTiming(0)
     } else {
       position.value = withTiming(height)
     }
-  }, [height, position, vm.opened])
-
-  const renderItem = ({ item }: ListRenderItemInfo<AvatarModel[]>) => {
-    return <GroupedAvatars avatar={item} single />
-  }
+  }, [height, position, vm.content])
 
   return (
     <Animated.View
@@ -77,25 +50,7 @@ export const BottomPanel = observer(() => {
         animatedStyle
       ]}
     >
-      <ContactCard />
-      {/* <View style={SS.headerContainer}>
-        <View style={{ width: 20 }} />
-        <Text style={SS.title}>{t.get('pick additional')}</Text>
-        <Svg name={'Cross'} onPress={vm.toggle} />
-      </View>
-      {appStore.commonAvatars.length === 0 ? (
-        <SkeletonAvatars />
-      ) : (
-        <View>
-          <View style={SS.containerNewMind}>
-            <Svg name={'newMind'} onPress={vm.toggle} />
-            <View style={SS.addMindTextWrapper}>
-              <Text style={SS.addMindText}>{texts.newMind}</Text>
-            </View>
-          </View>
-          <FlatList data={appStore.commonAvatars} renderItem={renderItem} />
-        </View>
-      )} */}
+      {vm.content}
     </Animated.View>
   )
 })
@@ -109,43 +64,5 @@ const SS = StyleSheet.create({
     bottom: 0,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12
-  },
-  containerNewMind: {
-    flexDirection: 'row',
-    paddingHorizontal: 18,
-    alignItems: 'center',
-    height: 45,
-    paddingVertical: 16,
-    marginTop: 20,
-  },
-  addMindTextWrapper: {
-    height: 45,
-    justifyContent: 'center',
-    borderBottomWidth: 0.5,
-    width: '100%',
-    borderColor: '#333333',
-    marginLeft: 12
-  },
-  addMindText: {
-    color: '#559EF8',
-    fontWeight: '400',
-    fontSize: 16,
-    lineHeight: 16,
-    letterSpacing: -0.3
-  },
-  headerContainer: {
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    backgroundColor: '#303030',
-    height: 52,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 17
-  },
-  title: {
-    fontWeight: '700',
-    fontSize: 16,
-    color: '#FFFFFF'
   }
 })

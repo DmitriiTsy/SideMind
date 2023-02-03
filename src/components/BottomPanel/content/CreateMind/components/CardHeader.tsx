@@ -1,16 +1,15 @@
 import React, { useCallback } from 'react'
-import { Pressable, StyleSheet, View, Text } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
-
-import {
-  IBottomPanelVM,
-  IBottomPanelVMTid
-} from 'components/BottomPanel/BottomPanel.vm'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-
-import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
+import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
+import { EBottomPanelContent } from 'components/BottomPanel/types'
+import {
+  IContactCardVM,
+  IContactCardVMTid
+} from 'components/BottomPanel/content'
 
 export const CardHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
@@ -18,7 +17,7 @@ export const CardHeader = observer(() => {
   const vmBottom = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
   const goBackHandler = useCallback(() => {
-    vmBottom.toggle()
+    vmBottom.openPanel(EBottomPanelContent.AddMind)
   }, [vmBottom])
 
   const onSubmitDataHandler = () => {

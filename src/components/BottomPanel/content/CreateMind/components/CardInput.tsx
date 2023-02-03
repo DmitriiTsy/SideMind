@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   StyleSheet,
   TextInput,
@@ -20,13 +20,20 @@ import { useInject } from 'IoC'
 import { deviceWidth } from 'utils/dimentions'
 
 import { Svg } from 'components/ui/Svg'
+import {
+  IContactCardVM,
+  IContactCardVMTid
+} from 'components/BottomPanel/content'
 
-import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
 const CLEAR_WIDTH = 83
 const MIN_HEIGHT = 45
-export const CardInput = (props: { hint: any; placeholder: any }) => {
-  const hints = props.hint
-  const placeholder = props.placeholder
+
+interface ICardInputProps {
+  hint: any //todo
+  placeholder: any //todo
+}
+
+export const CardInput: FC<ICardInputProps> = ({ hint, placeholder }) => {
   const vm = useInject<IContactCardVM>(IContactCardVMTid)
   const [value, setValue] = useState('')
   const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
@@ -59,7 +66,7 @@ export const CardInput = (props: { hint: any; placeholder: any }) => {
 
   return (
     <View style={SS.container}>
-      <Text style={SS.texts}>{hints}</Text>
+      <Text style={SS.texts}>{hint}</Text>
       <View style={SS.textInputWrapper}>
         <TextInput
           placeholder={placeholder}
