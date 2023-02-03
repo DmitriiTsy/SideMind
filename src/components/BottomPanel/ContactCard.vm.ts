@@ -14,16 +14,16 @@ import { IAppStore, IAppStoreTid } from 'store/AppStore'
 export const IContactCardVMTid = Symbol.for('IContactCardVMTid')
 
 enum masterPrompt {
-  prompt = `I want you to act as a prompt generator. Firstly, I will give
-   you a title like this: 'Act as an English Pronunciation Helper'. 
+  prompt = `I want you to act as a prompt generator. Firstly, I will give you a 
+  title like this: "Act as an English Pronunciation
+   Helper for Turkish People". Then you give me a prompt like this: 
   \r\n
-  Then you give me a prompt like this:
-  I want you to act as an English pronunciation assistant for 
-  Turkish speaking people. 
-  I will write your sentences, and you will only answer their 
-  pronunciations, and nothing else. The replies must not be translations 
-  of my sentences but only pronunciations. Pronunciations should use Turkish 
-  Latin letters for phonetics. Do not write explanations on replies. 
+  "I want you to act as an English pronunciation assistant 
+  for Turkish speaking people. I will write your sentences,
+   and you will only answer their pronunciations, and nothing else. 
+   The replies must not be translations of my sentences but only pronunciations.
+   Pronunciations should use Turkish Latin letters for phonetics. 
+   Do not write explanations on replies."
   \r\n`
 }
 
@@ -101,7 +101,7 @@ export class ContactCardVM implements IContactCardVM {
     this.GeneratedPromptOpenAi = `${await this._OpenAIService.createCompletionMaster(
       this.MasterPromptOpenAi,
       true
-    )} \r\n Now I want you to introduce you to a new friend in under 10 words:###`
+    )} \r\n Now I want you to introduce yourself to a new friend in under 10 words:###`
     this.avatar = {
       name: this.FullName,
       tagLine: this.Tagline,
