@@ -106,7 +106,7 @@ export class ContactCardVM implements IContactCardVM {
       tagLine: this.Tagline,
       imagePath: 'bots/Roxy_The_Relaxer.png',
       category: 'Master',
-      id: uuid.v4(),
+      id: uuid.v4() as string,
       prompt: this.GeneratedPromptOpenAi,
       params: {
         temperature: 0.73,

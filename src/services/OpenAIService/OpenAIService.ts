@@ -64,9 +64,9 @@ export class OpenAIService implements IOpenAIService {
       return res.data.choices[0].text.trim()
     } catch (e) {
       this._firebaseService.setMessage(
-          this._avatar.id,
-          { sender: ESender.BOT, text: `Error occurred ${e}`, date: new Date() },
-          true
+        this._avatar.id,
+        { sender: ESender.BOT, text: `Error occurred ${e}`, date: new Date() },
+        true
       )
       console.log(e)
       return 'Some error occurred, now chat is unavailable'

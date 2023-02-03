@@ -16,13 +16,13 @@ export interface IAppStore {
 
   init(): void
 
-  setUsersAvatars(id: number[]): void
+  setUsersAvatars(id: number[] | string[]): void
   updateUsersAvatars(avatar: AvatarModel): AvatarModel | null
 
   setAvatarsFromStorage(): void
 
-  setMessageToAvatar(avatarId: number, message: IMessage): void
-  setHistoryToAvatar(avatarId: number, history: string): void
+  setMessageToAvatar(avatarId: number | string, message: IMessage): void
+  setHistoryToAvatar(avatarId: number | string, history: string): void
 
   resetMessages(
     avatarId: number | string | number[],
@@ -62,11 +62,14 @@ export class AppStore implements IAppStore {
   }
 
   @action.bound
-  setUsersAvatars(id: number[]) {
+  setUsersAvatars(id: number[] | string[]) {
     this._storageService.setUserLogin()
     const _avatars: AvatarModel[] = []
     this.commonAvatars.map((avatars) =>
-      avatars.map((avatar) => id.includes(avatar.id) && _avatars.push(avatar))
+      avatars.map(
+        (avatar) =>
+          id.findIndex((el) => el === avatar.id) !== -1 && _avatars.push(avatar)
+      )
     )
     this.startingAvatars.map((bots) => bots.map((bot) => _avatars.unshift(bot)))
     this.usersAvatars = _avatars
@@ -79,7 +82,7 @@ export class AppStore implements IAppStore {
     const _avatar = this.usersAvatars.find((el) => el.id === avatar.id)
     if (!_avatar) {
       this.usersAvatars = [avatar, ...this.usersAvatars]
-      // this._storageService.setUserAvatars(this.usersAvatars)
+      this._storageService.setUserAvatars(this.usersAvatars)
       this._firebaseService.updateAvatars(avatar.id)
       return null
     }

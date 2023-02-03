@@ -33,9 +33,13 @@ export interface IFirebaseService {
 
   setAvatars(avatars: AvatarModel[]): void
 
-  updateAvatars(avatarId: number): void
+  updateAvatars(avatarId: number | string): void
 
-  setMessage(avatarId: number, message: IMessage, isError?: boolean): void
+  setMessage(
+    avatarId: number | string,
+    message: IMessage,
+    isError?: boolean
+  ): void
 }
 
 @Injectable()
@@ -122,7 +126,7 @@ export class FirebaseService implements IFirebaseService {
 
   async logMessage(
     messageId: string,
-    botId: number,
+    botId: number | string,
     message: IMessage,
     isError: boolean
   ) {
@@ -135,7 +139,11 @@ export class FirebaseService implements IFirebaseService {
     })
   }
 
-  async setMessage(avatarId: number, message: IMessage, isError?: boolean) {
+  async setMessage(
+    avatarId: number | string,
+    message: IMessage,
+    isError?: boolean
+  ) {
     const id = uuid.v4() + `--${message.sender}`
     await Promise.all([
       this._usersCollection.doc(this._systemInfoService.deviceId).update({
@@ -160,7 +168,7 @@ export class FirebaseService implements IFirebaseService {
       .set(formatted)
   }
 
-  async updateAvatars(avatarId: number) {
+  async updateAvatars(avatarId: number | string) {
     await this._usersCollection
       .doc(this._systemInfoService.deviceId)
       .update({ [avatarId]: [] })
