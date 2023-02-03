@@ -36,10 +36,12 @@ export interface IContactCardVM {
   GeneratedPromptOpenAi: string
   avatar: AvatarModel
   pending: boolean
+  requirementFields: boolean
 
   toggle(type: string, value: string): void
   clean(type: string): void
   masterPromptHandler(): void
+  togglePending(value: boolean): void
 }
 
 enum placeholder {
@@ -58,6 +60,7 @@ export class ContactCardVM implements IContactCardVM {
     @Inject(IBottomPanelVMTid) private _bottomPanelVM: IBottomPanelVM,
     @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {}
+  @observable requirementFields = false
   @observable pending = false
   avatar: AvatarModel
 
@@ -79,6 +82,23 @@ export class ContactCardVM implements IContactCardVM {
     } else if (type === placeholder.Bio) {
       this.Bio = value
     }
+    if (
+      this.FullName !== undefined &&
+      this.FullName.length > 5 &&
+      this.Bio !== undefined &&
+      this.Bio.length > 15 &&
+      this.Tagline !== undefined &&
+      this.Tagline.length > 5
+    ) {
+      this.requirementFields = true
+    } else {
+      this.requirementFields = false
+    }
+  }
+
+  @action.bound
+  togglePending(value: boolean) {
+    this.pending = value
   }
 
   @action.bound

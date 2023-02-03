@@ -15,7 +15,6 @@ export const CardHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const vm = useInject<IContactCardVM>(IContactCardVMTid)
   const vmBottom = useInject<IBottomPanelVM>(IBottomPanelVMTid)
-
   const goBackHandler = useCallback(() => {
     vmBottom.openPanel(EBottomPanelContent.AddMind)
   }, [vmBottom])
@@ -41,7 +40,7 @@ export const CardHeader = observer(() => {
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
       <Pressable onPress={onSubmitDataHandler} disabled={vm.pending}>
-        <Text style={[SS.activeText, vm.pending && SS.inactiveText]}>
+        <Text style={[SS.inactiveText, vm.requirementFields && SS.activeText]}>
           {t.get('save')}
         </Text>
       </Pressable>
