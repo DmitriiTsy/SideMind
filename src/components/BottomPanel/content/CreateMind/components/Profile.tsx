@@ -1,7 +1,11 @@
 import React from 'react'
-import { Pressable, StyleSheet, View, Text } from 'react-native'
+import { Pressable, StyleSheet, View, Text, ActivityIndicator } from 'react-native'
 import { observer } from 'mobx-react'
-
+import { useInject } from 'IoC/'
+import {
+  IContactCardVM,
+  IContactCardVMTid
+} from 'components/BottomPanel/content'
 import { Svg } from 'components/ui/Svg'
 
 enum texts {
@@ -12,14 +16,21 @@ export const Profile = observer(() => {
   const AvatarChooseHandler = () => {
     console.log('')
   }
+  const vm = useInject<IContactCardVM>(IContactCardVMTid)
   return (
     <View style={SS.container}>
-      <Pressable onPress={AvatarChooseHandler}>
-        <Svg name={'AvatarEmpty'} />
-      </Pressable>
-      <Pressable style={SS.textsWrapper} onPress={AvatarChooseHandler}>
-        <Text style={SS.texts}>{texts.Edit}</Text>
-      </Pressable>
+      {vm.pending ? (
+        <ActivityIndicator size="small" color="#0000ff" />
+      ) : (
+        <>
+          <Pressable onPress={AvatarChooseHandler}>
+            <Svg name={'AvatarEmpty'} />
+          </Pressable>
+          <Pressable style={SS.textsWrapper} onPress={AvatarChooseHandler}>
+            <Text style={SS.texts}>{texts.Edit}</Text>
+          </Pressable>
+        </>
+      )}
     </View>
   )
 })
