@@ -45,7 +45,7 @@ export const CardInput: FC<ICardInputProps> = ({ hint, placeholder }) => {
 
   useEffect(() => {
     clearPosition.value = withTiming(value ? -18 : 0)
-  }, [clearPosition, value])
+  }, [clearPosition, value, vm])
 
   const onChangeText = (text: string) => {
     setValue(text)

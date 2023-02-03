@@ -40,6 +40,7 @@ export interface IContactCardVM {
 
   toggle(type: string, value: string): void
   clean(type: string): void
+  cleanAll(): void
   masterPromptHandler(): void
   togglePending(value: boolean): void
 }
@@ -97,8 +98,10 @@ export class ContactCardVM implements IContactCardVM {
   }
 
   @action.bound
-  togglePending(value: boolean) {
-    this.pending = value
+  cleanAll() {
+    this.FullName = ''
+    this.Tagline = ''
+    this.Bio = ''
   }
 
   @action.bound
@@ -138,6 +141,7 @@ export class ContactCardVM implements IContactCardVM {
     }
     console.log(this.avatar.id)
     this.pending = false
+    this.requirementFields = false
     this._appStore.updateUsersAvatars(this.avatar)
     this._ChatVM.setAvatar(this.avatar)
     this._bottomPanelVM.closePanel()
