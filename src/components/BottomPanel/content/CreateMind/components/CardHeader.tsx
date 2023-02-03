@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
@@ -21,7 +21,15 @@ export const CardHeader = observer(() => {
   }, [vmBottom])
 
   const onSubmitDataHandler = () => {
-    vm.masterPromptHandler()
+    if (vm.FullName.length < 5) {
+      Alert.alert('Name must have at least 5 characters')
+    } else if (vm.Tagline.length < 5) {
+      Alert.alert('Tagline must have at least 5 characters')
+    } else if (vm.Bio.length < 15) {
+      Alert.alert('Bio must have at least 15 characters')
+    } else {
+      vm.masterPromptHandler()
+    }
   }
 
   return (
