@@ -24,7 +24,10 @@ export interface IAppStore {
   setMessageToAvatar(avatarId: number, message: IMessage): void
   setHistoryToAvatar(avatarId: number, history: string): void
 
-  resetMessages(avatarId: number): Promise<AvatarModel>
+  resetMessages(
+    avatarId: number | string | number[],
+    avatarCat?: string
+  ): Promise<AvatarModel>
 
   updateAvatarsFromFirebase(): void
 }
@@ -89,8 +92,8 @@ export class AppStore implements IAppStore {
   }
 
   @action.bound
-  async resetMessages(avatarId: number) {
-    await this.updateAvatarsFromFirebase()
+  async resetMessages(avatarId: number, avatarCat?: string) {
+    avatarCat !== 'Master' ? await this.updateAvatarsFromFirebase() : null
 
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {

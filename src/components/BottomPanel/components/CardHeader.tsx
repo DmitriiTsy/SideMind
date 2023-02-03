@@ -9,17 +9,11 @@ import {
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-import { INavigationService, INavigationServiceTid } from 'services'
-import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
-import { CommonScreenName } from 'constants/screen.types'
-import { AvatarModel } from 'services/FirebaseService/types'
-import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
 
+import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
 
 export const CardHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
-  const chatVM = useInject<IChatVM>(IChatVMTid)
   const vm = useInject<IContactCardVM>(IContactCardVMTid)
   const vmBottom = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 

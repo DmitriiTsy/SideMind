@@ -101,12 +101,12 @@ export class ContactCardVM implements IContactCardVM {
     this.GeneratedPromptOpenAi = `${await this._OpenAIService.createCompletionMaster(
       this.MasterPromptOpenAi,
       true
-    )} \r\n Now intro yourself to a new friend in under 10 words:###`
+    )} \r\n Now I want you to introduce you to a new friend in under 10 words:###`
     this.avatar = {
       name: this.FullName,
       tagLine: this.Tagline,
       imagePath: 'bots/Roxy_The_Relaxer.png',
-      category: 'Self-Improvement',
+      category: 'Master',
       id: uuid.v4(),
       prompt: this.GeneratedPromptOpenAi,
       params: {
