@@ -15,7 +15,7 @@ export interface AvatarModel {
   tagLine: string
   imagePath: string
   category: string
-  id: number
+  id: number | string | number[]
   prompt: string
   params: {
     temperature: number

@@ -25,16 +25,17 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
+import { EBottomPanelContent } from 'components/BottomPanel/types'
+
 import { ChatPreview, NewAvatar } from './components'
 
 export const MainFeed = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
-
   const openPanel = useCallback(() => {
     appStore.updateAvatarsFromFirebase()
-    bottomPanelVM.toggle()
+    bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
   }, [appStore, bottomPanelVM])
 
   const header = useMemo(

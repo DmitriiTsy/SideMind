@@ -1,12 +1,14 @@
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
 import { observer } from 'mobx-react'
+import { StyleSheet, View } from 'react-native'
+import React from 'react'
 
-import { CardHeader } from './components'
-import { Profile } from './components'
-import { CardBody } from './components'
+import {
+  CardBody,
+  CardHeader,
+  Profile
+} from 'components/BottomPanel/content/CreateMind/components'
 
-export const ContactCard = observer(() => {
+export const CreateMind = observer(() => {
   return (
     <View style={SS.container}>
       <CardHeader />

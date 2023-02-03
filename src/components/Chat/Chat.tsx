@@ -19,6 +19,7 @@ export const Chat = observer(() => {
     navigation.goBack()
   }
 
+  console.log(chatVM.avatar)
   const resetAvailable = useMemo(
     () => chatVM.messages.length > 1,
     [chatVM.messages.length]

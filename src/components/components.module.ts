@@ -1,9 +1,3 @@
-import {
-  ContactCardVM,
-  IContactCardVM,
-  IContactCardVMTid
-} from 'components/BottomPanel'
-
 import { Container, IoCModule } from 'IoC'
 
 import { ChatVM, IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
@@ -19,6 +13,11 @@ import {
 } from 'components/BottomPanel'
 
 import { BlurVM, IBlurVM, IBlurVMTid } from 'components/Blur'
+import {
+  ContactCardVM,
+  IContactCardVM,
+  IContactCardVMTid
+} from 'components/BottomPanel/content'
 
 export class ComponentsModule implements IoCModule {
   public Configure(ioc: Container) {

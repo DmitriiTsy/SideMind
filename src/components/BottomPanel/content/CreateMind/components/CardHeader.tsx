@@ -1,32 +1,27 @@
 import React, { useCallback } from 'react'
-import { Pressable, StyleSheet, View, Text } from 'react-native'
-
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
+import { EBottomPanelContent } from 'components/BottomPanel/types'
 import {
-  ILocalizationService,
-  ILocalizationServiceTid,
-  INavigationService,
-  INavigationServiceTid
-} from 'services'
-
-import { CommonScreenName } from 'constants/screen.types'
-
-import { IContactCardVM, IContactCardVMTid } from '../ContactCard.vm'
+  IContactCardVM,
+  IContactCardVMTid
+} from 'components/BottomPanel/content'
 
 export const CardHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const vm = useInject<IContactCardVM>(IContactCardVMTid)
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const vmBottom = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
   const goBackHandler = useCallback(() => {
-    console.log('dummy')
-    navigation.navigate(CommonScreenName.SelectAvatars)
-  }, [navigation])
+    vmBottom.openPanel(EBottomPanelContent.AddMind)
+  }, [vmBottom])
 
   const onSubmitDataHandler = () => {
-    console.log('dummy')
+    vm.masterPromptHandler()
   }
 
   return (
@@ -37,8 +32,8 @@ export const CardHeader = observer(() => {
         </Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
-      <Pressable onPress={onSubmitDataHandler}>
-        <Text style={[SS.activeText, !vm.enabled && SS.inactiveText]}>
+      <Pressable onPress={onSubmitDataHandler} disabled={vm.pending}>
+        <Text style={[SS.activeText, vm.pending && SS.inactiveText]}>
           {t.get('save')}
         </Text>
       </Pressable>
