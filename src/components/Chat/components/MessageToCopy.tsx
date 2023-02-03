@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated'
 
 import Clipboard from '@react-native-clipboard/clipboard'
+import HapticFeedback from 'react-native-haptic-feedback'
 
 import { deviceWidth } from 'utils/dimentions'
 import { Svg } from 'components/ui/Svg'
@@ -60,6 +61,7 @@ export const MessageToCopy: FC<IProps> = ({ positionY, isBot, text }) => {
   }, [copyPosition, isBot, position, positionY])
 
   const copy = () => {
+    HapticFeedback.trigger('impactLight')
     Clipboard.setString(text)
     blurVM.hide()
   }

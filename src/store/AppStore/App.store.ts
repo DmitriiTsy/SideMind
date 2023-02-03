@@ -207,6 +207,7 @@ export class AppStore implements IAppStore {
         }
       } else {
         const commonAvatar = commonAvatarsList.find((el) => el.id === avatar.id)
+        if (!commonAvatar) return avatar
         return {
           ...avatar,
           name: commonAvatar.name,

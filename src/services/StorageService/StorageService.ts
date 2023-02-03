@@ -9,10 +9,13 @@ export const IStorageServiceTid = Symbol.for('IStorageServiceTid')
 
 export interface IStorageService {
   storage: MMKVInstance
+
   setUserLogin(): void
   getUserLogin(): boolean
   setUserAvatars(avatars: AvatarModel[]): void
   getUserAvatars(): AvatarModel[] | null
+  setFCMToken(token: string): void
+  getFCMToken(): string
 }
 
 @Injectable()
@@ -40,5 +43,13 @@ export class StorageService implements IStorageService {
       if (!error) return value
       return null
     })
+  }
+
+  setFCMToken(token: string) {
+    this.storage.setString('FCMToken', token)
+  }
+
+  getFCMToken(): string {
+    return this.storage.getString('FCMToken')
   }
 }
