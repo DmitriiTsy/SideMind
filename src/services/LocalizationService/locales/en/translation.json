@@ -12,5 +12,9 @@
   "copy": "Copy",
   "save": "Save",
   "mind info": "Mind Info",
-  "new mind": "New Mind"
+  "new mind": "New Mind",
+  "edit avatar": "Edit Avatar",
+  "take photo": "Take Photo",
+  "upload photo": "Upload Photo",
+  "generate avatar": "AI-Generated Avatar"
 }

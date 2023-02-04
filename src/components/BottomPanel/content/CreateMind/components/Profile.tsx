@@ -1,24 +1,92 @@
-import React from 'react'
-import { Pressable, StyleSheet, View, Text } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Text,
+  ActionSheetIOS,
+  Image
+} from 'react-native'
 import { observer } from 'mobx-react'
 
-import { Svg } from 'components/ui/Svg'
+import {
+  ImagePickerResponse,
+  launchCamera,
+  launchImageLibrary
+} from 'react-native-image-picker'
 
-enum texts {
-  Edit = 'Edit Avatar'
+import { Svg } from 'components/ui/Svg'
+import { useInject } from 'IoC'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
+
+interface IFileData {
+  uri: string | null
+  fileName: string | null
+  type: string | null
 }
 
 export const Profile = observer(() => {
+  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const [avatar, setAvatar] = useState<IFileData>({
+    uri: null,
+    fileName: null,
+    type: null
+  })
+
+  const _setAvatar = useCallback((res: ImagePickerResponse) => {
+    if (!res.didCancel && !res.errorCode && res.assets.length) {
+      const asset = res.assets[0]
+      if (asset.uri && asset.fileName && asset.type) {
+        setAvatar({
+          uri: asset.uri,
+          fileName: asset.fileName,
+          type: asset.type
+        })
+      }
+    }
+  }, [])
+
   const AvatarChooseHandler = () => {
-    console.log('')
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: [
+          t.get('take photo'),
+          t.get('upload photo'),
+          t.get('generate avatar'),
+          t.get('cancel')
+        ],
+        cancelButtonIndex: 3,
+        userInterfaceStyle: 'dark'
+      },
+      async (buttonIndex) => {
+        if (buttonIndex === 0) {
+          const res = await launchCamera({ mediaType: 'photo' })
+          _setAvatar(res)
+        }
+        if (buttonIndex === 1) {
+          const res = await launchImageLibrary({ mediaType: 'photo' })
+          _setAvatar(res)
+        }
+        if (buttonIndex === 2) {
+          console.log('ai generated avatar')
+        }
+      }
+    )
   }
   return (
     <View style={SS.container}>
       <Pressable onPress={AvatarChooseHandler}>
-        <Svg name={'AvatarEmpty'} />
+        {avatar.uri ? (
+          <Image
+            style={{ width: 108, height: 108, borderRadius: 50 }}
+            source={{ uri: avatar.uri }}
+          />
+        ) : (
+          <Svg name={'AvatarEmpty'} />
+        )}
       </Pressable>
       <Pressable style={SS.textsWrapper} onPress={AvatarChooseHandler}>
-        <Text style={SS.texts}>{texts.Edit}</Text>
+        <Text style={SS.texts}>{t.get('edit avatar')}</Text>
       </Pressable>
     </View>
   )
