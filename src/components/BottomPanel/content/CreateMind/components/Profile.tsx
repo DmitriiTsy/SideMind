@@ -20,7 +20,7 @@ export const Profile = observer(() => {
   return (
     <View style={SS.container}>
       {vm.pending ? (
-        <ActivityIndicator size="small" color="#0000ff" />
+        <ActivityIndicator size="large" color="#D3D3D3" />
       ) : (
         <>
           <Pressable onPress={AvatarChooseHandler}>

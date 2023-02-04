@@ -20,11 +20,11 @@ export const CardHeader = observer(() => {
   }, [vmBottom])
 
   const onSubmitDataHandler = () => {
-    if (vm.FullName.length < 5) {
+    if (vm.FullName !== undefined && vm.FullName.length < 5) {
       Alert.alert('Name must have at least 5 characters')
-    } else if (vm.Tagline.length < 5) {
+    } else if (vm.Tagline !== undefined && vm.Tagline.length < 5) {
       Alert.alert('Tagline must have at least 5 characters')
-    } else if (vm.Bio.length < 15) {
+    } else if (vm.FullName !== undefined && vm.Bio.length < 15) {
       Alert.alert('Bio must have at least 15 characters')
     } else {
       vm.masterPromptHandler()

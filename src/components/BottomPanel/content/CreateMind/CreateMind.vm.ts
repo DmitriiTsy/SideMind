@@ -42,7 +42,6 @@ export interface IContactCardVM {
   clean(type: string): void
   cleanAll(): void
   masterPromptHandler(): void
-  togglePending(value: boolean): void
 }
 
 enum placeholder {

@@ -6,7 +6,7 @@ import { CardInput } from './CardInput'
 
 enum texts {
   FullName = 'Full Name',
-  TagLine = 'Tagline',
+  Tagline = 'Tagline',
   Bio = 'Bio'
 }
 
@@ -18,9 +18,13 @@ enum placeholder {
 export const CardBody = observer(() => {
   return (
     <View style={SS.container}>
-      <CardInput hint={texts.FullName} placeholder={placeholder.FullName} />
-      <CardInput hint={texts.TagLine} placeholder={placeholder.Tagline} />
-      <CardInput hint={texts.Bio} placeholder={placeholder.Bio} />
+      {Object.keys(texts).map((text, index) => (
+        <CardInput
+          hint={texts[text]}
+          key={index}
+          placeholder={placeholder[text]}
+        />
+      ))}
     </View>
   )
 })
