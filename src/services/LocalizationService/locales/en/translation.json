@@ -12,5 +12,8 @@
   "copy": "Copy",
   "save": "Save",
   "mind info": "Mind Info",
-  "new mind": "New Mind"
+  "new mind": "New Mind",
+  "name requirements": "Name must have at least 5 characters",
+  "tagline requirements": "Tagline must have at least 5 characters",
+  "bio requirements": "Bio must have at least 15 characters"
 }

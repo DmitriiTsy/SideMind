@@ -1,7 +1,15 @@
 import React from 'react'
-import { Pressable, StyleSheet, View, Text, ActivityIndicator } from 'react-native'
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator
+} from 'react-native'
 import { observer } from 'mobx-react'
-import { useInject } from 'IoC/'
+
+import { useInject } from 'IoC'
+
 import {
   IContactCardVM,
   IContactCardVMTid
