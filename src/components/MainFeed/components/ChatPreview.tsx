@@ -9,6 +9,7 @@ import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { CommonScreenName } from 'constants/screen.types'
 import { useTimestamp } from 'utils/timestamp/useTimestamp'
+import { Svg } from 'components/ui/Svg'
 
 interface IChatPreview {
   avatar: AvatarModel
@@ -36,10 +37,15 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
 
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      <Image
-        source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
-        style={SS.avatar}
-      />
+      {avatar.imagePath ? (
+        <Image
+          source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
+          style={SS.avatar}
+        />
+      ) : (
+        <Svg name={'AvatarEmpty'} size={52} />
+      )}
+
       <View style={[SS.containerRight, !isFirst && SS.line]}>
         <View style={SS.firstLine}>
           <Text style={SS.botName}>{avatar.name}</Text>

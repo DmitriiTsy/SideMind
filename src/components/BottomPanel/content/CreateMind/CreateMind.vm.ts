@@ -10,37 +10,42 @@ import {
   ILocalizationService,
   ILocalizationServiceTid,
   INavigationService,
-  INavigationServiceTid
+  INavigationServiceTid,
+  Translation
 } from 'services'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { INPUTS } from 'components/BottomPanel/content/CreateMind/constants'
-import {
-  EInputType,
-  ICreateMindInput
-} from 'components/BottomPanel/content/CreateMind/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+import { CommonScreenName } from 'constants/screen.types'
+import { InputVM } from 'components/Input/Input.vm'
 
 export const ICreateMindVMTid = Symbol.for('ICreateMindVMTid')
 
 export interface ICreateMindVM {
   masterPrompt: string
   pending: boolean
+  uri: string | null
 
-  inputs: { [p: string]: ICreateMindInput }
+  inputName: InputVM
+  inputTagLine: InputVM
+  inputBio: InputVM
+  inputGenerateAvatar: InputVM
 
-  hasError: ICreateMindInput | undefined
+  hasError: keyof Translation | boolean
 
-  onChangeText(text: string, type: EInputType): void
-  clean(type: EInputType): void
-  cleanAll(): void
+  clearAll(): void
   submit(): void
 }
 
 @Injectable()
 export class CreateMindVM implements ICreateMindVM {
   @observable pending = false
-  @observable inputs = INPUTS
+  @observable uri: string | null = null
+
+  inputName: InputVM
+  inputTagLine: InputVM
+  inputBio: InputVM
+  inputGenerateAvatar: InputVM
 
   masterPrompt: string
 
@@ -53,37 +58,53 @@ export class CreateMindVM implements ICreateMindVM {
     @Inject(IAppStoreTid) private _appStore: IAppStore,
     @Inject(ILocalizationServiceTid) private _t: ILocalizationService,
     @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService
-  ) {}
+  ) {
+    this.inputName = new InputVM({
+      label: 'full name',
+      placeholder: 'placeholder full name',
+      minLength: 5,
+      errorText: 'name requirements'
+    })
+    this.inputTagLine = new InputVM({
+      label: 'tagline',
+      placeholder: 'placeholder tagline',
+      minLength: 5,
+      errorText: 'tagline requirements'
+    })
+    this.inputBio = new InputVM({
+      label: 'bio',
+      placeholder: 'placeholder bio',
+      minLength: 10,
+      errorText: 'bio requirements'
+    })
+    this.inputGenerateAvatar = new InputVM({
+      label: 'generate avatar input label',
+      placeholder: 'generate avatar placeholder'
+    })
+  }
 
   @computed
   get hasError() {
-    return Object.values(this.inputs).find(
-      (el) => el.value.length < el.minLength
+    return (
+      this.inputName.hasError ||
+      this.inputTagLine.hasError ||
+      this.inputBio.hasError
     )
   }
 
   @action.bound
-  onChangeText(text: string, type: EInputType) {
-    this.inputs[type].value = text
-  }
-
-  @action.bound
-  cleanAll() {
-    Object.values(this.inputs).map((el) => (el.value = ''))
-  }
-
-  @action.bound
-  clean(type: EInputType) {
-    this.inputs[type].value = ''
+  clearAll() {
+    this.inputName.clear()
+    this.inputTagLine.clear()
+    this.inputBio.clear()
   }
 
   @action.bound
   submit() {
-    const validate = Object.values(this.inputs).find(
-      (el) => el.value.length < el.minLength
-    )
-    if (validate) {
-      Alert.alert(this._t.get(validate.validateError))
+    const error = this.hasError
+
+    if (error) {
+      Alert.alert(this._t.get(error))
     } else {
       this._masterPromptHandler()
     }
@@ -92,9 +113,10 @@ export class CreateMindVM implements ICreateMindVM {
   async _masterPromptHandler() {
     this.pending = true
 
-    const name = this.inputs[EInputType.FullName].value
-    const bio = this.inputs[EInputType.Bio].value
-    const tagLine = this.inputs[EInputType.Tagline].value
+    const name = this.inputName.value
+    const bio = this.inputBio.value
+    const tagLine = this.inputTagLine.value
+    const uri = this.uri
 
     const master = await this._firebaseService.getMasterPrompt()
     master.prompt = master.prompt.replace('{generated name by user}', name)
@@ -107,7 +129,7 @@ export class CreateMindVM implements ICreateMindVM {
     const avatar = {
       name,
       tagLine,
-      imagePath: 'bots/Roxy_The_Relaxer.png',
+      imagePath: uri,
       category: 'Master',
       id: uuid.v4() as string,
       prompt: generatedPrompt,
@@ -119,10 +141,12 @@ export class CreateMindVM implements ICreateMindVM {
         top_p: 1
       }
     }
+    console.log(avatar)
+    this._appStore.updateUsersAvatars(avatar)
+    this._ChatVM.setAvatar(avatar)
+    this._bottomPanelVM.closePanel()
+    this._navigationService.navigate(CommonScreenName.Chat)
+
     this.pending = false
-    // this._appStore.updateUsersAvatars(this.avatar)
-    // this._ChatVM.setAvatar(this.avatar)
-    // this._bottomPanelVM.closePanel()
-    // this._navigationService.navigate(CommonScreenName.Chat)
   }
 }

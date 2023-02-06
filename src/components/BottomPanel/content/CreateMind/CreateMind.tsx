@@ -2,26 +2,74 @@ import { observer } from 'mobx-react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import React, { useEffect } from 'react'
 
-import {
-  CardBody,
-  CreateMindHeader,
-  Profile
-} from 'components/BottomPanel/content/CreateMind/components'
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
+
+import {
+  CreateMindHeader,
+  CreateMindInputs,
+  CreateMindPickImage
+} from 'components/BottomPanel/content/CreateMind/components'
 
 export const CreateMind = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
 
   useEffect(() => {
-    createMindVM.cleanAll()
+    createMindVM.clearAll()
   })
 
   return (
     <View style={[SS.container]}>
       <CreateMindHeader />
-      <Profile />
-      <CardBody />
+      <CreateMindPickImage />
+      <CreateMindInputs />
+      {/*<View*/}
+      {/*  style={{*/}
+      {/*    flexDirection: 'row',*/}
+      {/*    height: 56,*/}
+      {/*    borderTopLeftRadius: 12,*/}
+      {/*    borderTopRightRadius: 12,*/}
+      {/*    alignItems: 'center',*/}
+      {/*    justifyContent: 'space-between',*/}
+      {/*    paddingHorizontal: 24*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <Pressable>*/}
+      {/*    <Text*/}
+      {/*      style={{*/}
+      {/*        fontWeight: '700',*/}
+      {/*        fontSize: 16,*/}
+      {/*        color: '#559EF8',*/}
+      {/*        lineHeight: 16*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      Cancel*/}
+      {/*    </Text>*/}
+      {/*  </Pressable>*/}
+      {/*  <Text*/}
+      {/*    style={{*/}
+      {/*      fontWeight: '500',*/}
+      {/*      fontSize: 16,*/}
+      {/*      color: '#FFFFFF',*/}
+      {/*      lineHeight: 16,*/}
+      {/*      letterSpacing: -0.3*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    AI GENERATED AVATAR*/}
+      {/*  </Text>*/}
+      {/*  <Pressable>*/}
+      {/*    <Text>Done</Text>*/}
+      {/*  </Pressable>*/}
+      {/*</View>*/}
+      {/*<View>*/}
+      {/*  <Input*/}
+      {/*    vm={createMindVM.inputGenerateAvatar}*/}
+      {/*    style={{ marginTop: 21 }}*/}
+      {/*  />*/}
+      {/*</View>*/}
+      {/*<Pressable style={{ marginTop: 21 }}>*/}
+      {/*  <Text>Generate avatar</Text>*/}
+      {/*</Pressable>*/}
       {createMindVM.pending && (
         <View style={SS.loading}>
           <ActivityIndicator size="large" color="#D3D3D3" />

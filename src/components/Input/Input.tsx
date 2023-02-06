@@ -1,14 +1,15 @@
 import React, { FC, useCallback, useEffect } from 'react'
 import {
-  StyleSheet,
-  TextInput,
-  View,
-  Text,
   NativeSyntheticEvent,
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TextInput,
   TextInputContentSizeChangeEventData,
-  Pressable
+  View,
+  ViewStyle
 } from 'react-native'
-
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,26 +18,25 @@ import Animated, {
 
 import { observer } from 'mobx-react'
 
-import { useInject } from 'IoC'
-
-import { deviceWidth } from 'utils/dimentions'
-
 import { Svg } from 'components/ui/Svg'
-import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
+import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-import { ICreateMindInput } from 'components/BottomPanel/content/CreateMind/types'
+import { deviceWidth } from 'utils/dimentions'
+import { IInputVM } from 'components/Input/Input.vm'
 
 const CLEAR_WIDTH = 83
 const MIN_HEIGHT = 45
 
-interface ICardInputProps {
-  input: ICreateMindInput
+interface IInputProps {
+  vm: IInputVM
+  style?: StyleProp<ViewStyle>
 }
 
-export const CardInput: FC<ICardInputProps> = observer(({ input }) => {
-  const { label, placeholder, value, type } = input
+export const Input: FC<IInputProps> = observer(({ vm, style }) => {
+  const { value, label, placeholder, onChangeText, clear } = vm
+
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+
   const height = useSharedValue(MIN_HEIGHT)
   const clearPosition = useSharedValue(value ? -CLEAR_WIDTH : deviceWidth)
 
@@ -46,14 +46,11 @@ export const CardInput: FC<ICardInputProps> = observer(({ input }) => {
 
   useEffect(() => {
     clearPosition.value = withTiming(value ? -18 : 0)
-  }, [clearPosition, value, createMindVM])
+  }, [clearPosition, value])
 
-  const onChangeText = useCallback(
-    (text: string) => {
-      createMindVM.onChangeText(text, type)
-    },
-    [createMindVM, type]
-  )
+  const animatedHeight = useAnimatedStyle(() => ({
+    height: height.value
+  }))
 
   const onContentSizeChange = useCallback(
     (e: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
@@ -63,16 +60,8 @@ export const CardInput: FC<ICardInputProps> = observer(({ input }) => {
     [height]
   )
 
-  const clean = useCallback(() => {
-    createMindVM.clean(type)
-  }, [createMindVM, type])
-
-  const animatedHeight = useAnimatedStyle(() => ({
-    height: height.value
-  }))
-
   return (
-    <View style={SS.container}>
+    <View style={[SS.container, style]}>
       <Text style={SS.texts}>{t.get(label)}</Text>
       <Animated.View style={[SS.textInputWrapper, animatedHeight]}>
         <TextInput
@@ -90,7 +79,7 @@ export const CardInput: FC<ICardInputProps> = observer(({ input }) => {
           <Animated.View
             style={[animatedCleanBttn, value && { alignSelf: 'center' }]}
           >
-            <Pressable onPress={clean}>
+            <Pressable onPress={clear}>
               <Svg name={'CleanTextInput'} />
             </Pressable>
           </Animated.View>

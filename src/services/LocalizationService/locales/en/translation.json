@@ -25,5 +25,7 @@
   "placeholder bio": "Enter bio",
   "take photo": "Take Photo",
   "upload photo": "Upload Photo",
-  "generate avatar": "AI-Generated Avatar"
+  "generate avatar": "AI-Generated Avatar",
+  "generate avatar input label": "Use a prompt for AI-generated avatar",
+  "generate avatar placeholder": "Ex.: professional picture of old drunk salesman against bright coloured background"
 }

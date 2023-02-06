@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import {
   Pressable,
   StyleSheet,
@@ -18,33 +18,23 @@ import {
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
-interface IFileData {
-  uri: string | null
-  fileName: string | null
-  type: string | null
-}
-
-export const Profile = observer(() => {
+export const CreateMindPickImage = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const [avatar, setAvatar] = useState<IFileData>({
-    uri: null,
-    fileName: null,
-    type: null
-  })
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
 
-  const _setAvatar = useCallback((res: ImagePickerResponse) => {
-    if (!res.didCancel && !res.errorCode && res.assets.length) {
-      const asset = res.assets[0]
-      if (asset.uri && asset.fileName && asset.type) {
-        setAvatar({
-          uri: asset.uri,
-          fileName: asset.fileName,
-          type: asset.type
-        })
+  const _setAvatar = useCallback(
+    (res: ImagePickerResponse) => {
+      if (!res.didCancel && !res.errorCode && res.assets.length) {
+        const asset = res.assets[0]
+        if (asset.uri) {
+          createMindVM.uri = asset.uri
+        }
       }
-    }
-  }, [])
+    },
+    [createMindVM]
+  )
 
   const AvatarChooseHandler = () => {
     ActionSheetIOS.showActionSheetWithOptions(
@@ -76,10 +66,10 @@ export const Profile = observer(() => {
   return (
     <View style={SS.container}>
       <Pressable onPress={AvatarChooseHandler}>
-        {avatar.uri ? (
+        {createMindVM.uri ? (
           <Image
             style={{ width: 108, height: 108, borderRadius: 50 }}
-            source={{ uri: avatar.uri }}
+            source={{ uri: createMindVM.uri }}
           />
         ) : (
           <Svg name={'AvatarEmpty'} />
