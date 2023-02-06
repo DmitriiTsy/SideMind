@@ -14,9 +14,9 @@ import {
 
 import { BlurVM, IBlurVM, IBlurVMTid } from 'components/Blur'
 import {
-  ContactCardVM,
-  IContactCardVM,
-  IContactCardVMTid
+  CreateMindVM,
+  ICreateMindVM,
+  ICreateMindVMTid
 } from 'components/BottomPanel/content'
 
 export class ComponentsModule implements IoCModule {
@@ -31,8 +31,8 @@ export class ComponentsModule implements IoCModule {
       .to(BottomPanelVM)
       .inSingletonScope()
     ioc
-      .bind<IContactCardVM>(IContactCardVMTid)
-      .to(ContactCardVM)
+      .bind<ICreateMindVM>(ICreateMindVMTid)
+      .to(CreateMindVM)
       .inSingletonScope()
     ioc.bind<IBlurVM>(IBlurVMTid).to(BlurVM).inSingletonScope()
   }

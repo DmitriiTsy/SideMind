@@ -17,6 +17,7 @@ import {
 import {
   AvatarModel,
   IFirebaseResponseBots,
+  IFirebaseResponseMasterPrompt,
   IFirebaseResponseUsers,
   LOG_TYPE
 } from 'services/FirebaseService/types'
@@ -40,12 +41,15 @@ export interface IFirebaseService {
     message: IMessage,
     isError?: boolean
   ): void
+
+  getMasterPrompt(): Promise<IFirebaseResponseMasterPrompt>
 }
 
 @Injectable()
 export class FirebaseService implements IFirebaseService {
   private _usersCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseUsers>
   private _avatarsCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
+  private _masterPrompt: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseMasterPrompt>
 
   constructor(
     @Inject(ISystemInfoServiceTid)
@@ -53,6 +57,7 @@ export class FirebaseService implements IFirebaseService {
   ) {
     this._usersCollection = firestore().collection('usersList')
     this._avatarsCollection = firestore().collection('botsList')
+    this._masterPrompt = firestore().collection('prompts')
   }
 
   async init() {
@@ -86,6 +91,10 @@ export class FirebaseService implements IFirebaseService {
   async getStartingAvatars(cache?: boolean) {
     const data = (await this._avatarsCollection.doc('Starting').get()).data()
     return this.mapAvatars(data, cache)
+  }
+
+  async getMasterPrompt() {
+    return (await this._masterPrompt.doc('master').get()).data()
   }
 
   async mapAvatars(data: IFirebaseResponseBots, cache?: boolean) {
