@@ -6,34 +6,25 @@ import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
-import {
-  IContactCardVM,
-  IContactCardVMTid
-} from 'components/BottomPanel/content'
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
-export const CardHeader = observer(() => {
+export const CreateMindHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const vm = useInject<IContactCardVM>(IContactCardVMTid)
-  const vmBottom = useInject<IBottomPanelVM>(IBottomPanelVMTid)
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+  const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
-  const goBackHandler = useCallback(() => {
-    vmBottom.openPanel(EBottomPanelContent.AddMind)
-  }, [vmBottom])
-
-  const onSubmitDataHandler = () => {
-    vm.masterPromptHandler()
-  }
+  const back = useCallback(() => {
+    bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
+  }, [bottomPanelVM])
 
   return (
     <View style={SS.container}>
-      <Pressable onPress={goBackHandler}>
-        <Text style={[SS.activeText, !vm.enabled && SS.inactiveText]}>
-          {t.get('cancel')}
-        </Text>
+      <Pressable onPress={back}>
+        <Text style={SS.activeText}>{t.get('cancel')}</Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
-      <Pressable onPress={onSubmitDataHandler} disabled={vm.pending}>
-        <Text style={[SS.activeText, vm.pending && SS.inactiveText]}>
+      <Pressable onPress={createMindVM.submit} disabled={createMindVM.pending}>
+        <Text style={createMindVM.hasError ? SS.inactiveText : SS.activeText}>
           {t.get('save')}
         </Text>
       </Pressable>
@@ -45,7 +36,6 @@ const SS = StyleSheet.create({
   container: {
     flexDirection: 'row',
     height: 56,
-    backgroundColor: '#1C1C1E',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     alignItems: 'center',
@@ -60,11 +50,10 @@ const SS = StyleSheet.create({
     letterSpacing: -0.3
   },
   activeText: {
-    fontWeight: '500',
+    fontWeight: '700',
     fontSize: 16,
     color: '#559EF8',
-    lineHeight: 16,
-    letterSpacing: -0.3
+    lineHeight: 16
   },
   inactiveText: {
     color: '#484849',

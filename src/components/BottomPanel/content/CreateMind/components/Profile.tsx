@@ -2,23 +2,24 @@ import React from 'react'
 import { Pressable, StyleSheet, View, Text } from 'react-native'
 import { observer } from 'mobx-react'
 
-import { Svg } from 'components/ui/Svg'
+import { useInject } from 'IoC'
 
-enum texts {
-  Edit = 'Edit Avatar'
-}
+import { Svg } from 'components/ui/Svg'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 export const Profile = observer(() => {
+  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const AvatarChooseHandler = () => {
     console.log('')
   }
+
   return (
     <View style={SS.container}>
       <Pressable onPress={AvatarChooseHandler}>
         <Svg name={'AvatarEmpty'} />
       </Pressable>
       <Pressable style={SS.textsWrapper} onPress={AvatarChooseHandler}>
-        <Text style={SS.texts}>{texts.Edit}</Text>
+        <Text style={SS.texts}>{t.get('edit avatar')}</Text>
       </Pressable>
     </View>
   )

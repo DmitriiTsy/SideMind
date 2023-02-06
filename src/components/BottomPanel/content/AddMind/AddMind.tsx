@@ -24,7 +24,6 @@ export const AddMind = observer(() => {
   const appStore = useInject<IAppStore>(IAppStoreTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-
   const renderItem = ({ item }: ListRenderItemInfo<AvatarModel[]>) => {
     return <GroupedAvatars avatar={item} single />
   }
@@ -50,7 +49,12 @@ export const AddMind = observer(() => {
               <Text style={SS.addMindText}>{t.get('new mind')}</Text>
             </View>
           </Pressable>
-          <FlatList data={appStore.commonAvatars} renderItem={renderItem} />
+          <FlatList
+            style={{ marginBottom: 25 }}
+            data={appStore.commonAvatars}
+            renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+          />
         </>
       )}
     </>
