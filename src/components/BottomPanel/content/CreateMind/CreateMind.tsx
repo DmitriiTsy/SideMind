@@ -1,28 +1,50 @@
 import { observer } from 'mobx-react'
-import { StyleSheet, View } from 'react-native'
-import React from 'react'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
+import React, { useEffect } from 'react'
 
 import {
   CardBody,
-  CardHeader,
+  CreateMindHeader,
   Profile
 } from 'components/BottomPanel/content/CreateMind/components'
+import { useInject } from 'IoC'
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 export const CreateMind = observer(() => {
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+
+  useEffect(() => {
+    createMindVM.cleanAll()
+  })
+
   return (
-    <View style={SS.container}>
-      <CardHeader />
+    <View style={[SS.container]}>
+      <CreateMindHeader />
       <Profile />
       <CardBody />
+      {createMindVM.pending && (
+        <View style={SS.loading}>
+          <ActivityIndicator size="large" color="#D3D3D3" />
+        </View>
+      )}
     </View>
   )
 })
 
 const SS = StyleSheet.create({
   container: {
-    flexDirection: 'column',
-    backgroundColor: '#1C1C1E',
     borderTopLeftRadius: 12,
-    borderTopRightRadius: 12
+    borderTopRightRadius: 12,
+    flex: 1
+  },
+  loading: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)'
   }
 })

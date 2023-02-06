@@ -33,3 +33,8 @@ export interface AvatarModel {
 export interface IFirebaseResponseBots {
   [key: string]: AvatarModel[]
 }
+
+export interface IFirebaseResponseMasterPrompt {
+  prompt: string
+  introduce: string
+}

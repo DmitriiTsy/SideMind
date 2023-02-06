@@ -18,7 +18,7 @@ export interface IOpenAIService {
 
   createCompletion(prompt?: string, isFirst?: boolean): Promise<string | null>
 
-  createCompletionMaster(prompt: string, isFirst?: boolean): Promise<string>
+  generatePrompt(prompt: string): Promise<string>
 
   setAvatar(avatar: AvatarModel): void
 }
@@ -46,7 +46,7 @@ export class OpenAIService implements IOpenAIService {
     this._model = EModel.davinci3
   }
 
-  async createCompletionMaster(prompt: string, isFirst?: boolean) {
+  async generatePrompt(prompt: string) {
     try {
       const res = await this._openAIApi.createCompletion({
         model: 'text-davinci-003',
@@ -57,11 +57,7 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: 0,
         stop: ['###']
       })
-      console.log(res.data.choices[0].text.trim())
-      if (isFirst) {
-        return this._checkQuotes(res.data.choices[0].text.trim())
-      }
-      return res.data.choices[0].text.trim()
+      return this._checkQuotes(res.data.choices[0].text.trim())
     } catch (e) {
       this._firebaseService.setMessage(
         this._avatar.id,
