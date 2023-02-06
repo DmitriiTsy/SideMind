@@ -53,6 +53,7 @@ export const ChatInput = () => {
           onContentSizeChange={onContentSizeChange}
           style={[SS.input, { height: inputHeight }]}
           keyboardAppearance={'dark'}
+          // numberOfLines={5}
         />
       </View>
       <Svg
@@ -82,13 +83,16 @@ const SS = StyleSheet.create({
     marginVertical: 6,
     marginRight: 8,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    maxHeight: 500
   },
   input: {
     color: '#FFF',
     width: deviceWidth * 0.85,
     paddingHorizontal: 8,
-    marginVertical: 4
+    paddingVertical: 8,
+    marginVertical: 4,
+    maxHeight: 500
   },
   containerOnChange: {
     alignItems: 'flex-end'
