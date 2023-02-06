@@ -51,6 +51,10 @@ export class OpenAIService implements IOpenAIService {
     this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
     try {
+      const violenceChecker = await this._openAIApi.createModeration({
+        input: this._history
+      })
+      console.log(violenceChecker.data.results[0].categories)
       const res = await this._openAIApi.createCompletion({
         model: this._model,
         prompt: this._history,
