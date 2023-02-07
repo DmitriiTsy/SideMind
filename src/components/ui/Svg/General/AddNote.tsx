@@ -1,25 +1,26 @@
 import React, { FC } from 'react'
 
-import Svg, { Path, Defs, G, ClipPath } from 'react-native-svg'
+import Svg, { Path, Defs, G, ClipPath, Rect } from 'react-native-svg'
 
 import { SvgStyleProps } from 'components/ui/Svg/Svg.types'
 import { createSvg } from 'utils/createSvg'
 
 const Component: FC<SvgStyleProps> = (props) => (
-  <Svg viewBox="0 0 20 20" fill="none" {...props}>
+  <Svg fill="none" {...props}>
+    <Rect width={36} height={36} rx={18} fill="#1C1C1E" />
     <G
       clipPath="url(#a)"
-      stroke="#fff"
+      stroke="#549EF7"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <Path d="M9.166 3.333H3.333A1.667 1.667 0 0 0 1.666 5v11.667a1.666 1.666 0 0 0 1.667 1.666h11.666a1.667 1.667 0 0 0 1.667-1.666v-5.834" />
-      <Path d="M15.416 2.083a1.768 1.768 0 0 1 2.5 2.5L9.999 12.5l-3.333.833L7.499 10l7.917-7.917Z" />
+      <Path d="M17.167 11.332h-5.834a1.667 1.667 0 0 0-1.666 1.667v11.666a1.667 1.667 0 0 0 1.666 1.667H23a1.667 1.667 0 0 0 1.667-1.667v-5.833" />
+      <Path d="M23.417 10.084a1.768 1.768 0 0 1 2.5 2.5L18 20.501l-3.333.833.833-3.333 7.917-7.917Z" />
     </G>
     <Defs>
       <ClipPath id="a">
-        <Path fill="#fff" d="M0 0h20v20H0z" />
+        <Path fill="#fff" transform="translate(8 8)" d="M0 0h20v20H0z" />
       </ClipPath>
     </Defs>
   </Svg>
@@ -27,6 +28,6 @@ const Component: FC<SvgStyleProps> = (props) => (
 
 export const SvgAddNote = createSvg({
   component: Component,
-  originalHeight: 20,
-  originalWidth: 20
+  originalHeight: 36,
+  originalWidth: 36
 })
