@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native'
 import React, { useEffect } from 'react'
 
 import {
@@ -20,13 +20,17 @@ export const CreateMind = observer(() => {
   return (
     <View style={[SS.container]}>
       <CreateMindHeader />
-      <Profile />
-      <CardBody />
-      {createMindVM.pending && (
-        <View style={SS.loading}>
-          <ActivityIndicator size="large" color="#D3D3D3" />
-        </View>
-      )}
+      <KeyboardAvoidingView behavior="padding">
+        <ScrollView automaticallyAdjustKeyboardInsets={true}>
+          <Profile />
+          <CardBody />
+          {createMindVM.pending && (
+            <View style={SS.loading}>
+              <ActivityIndicator size="large" color="#D3D3D3" />
+            </View>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   )
 })
