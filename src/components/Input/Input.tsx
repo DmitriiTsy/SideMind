@@ -23,6 +23,7 @@ import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { deviceWidth } from 'utils/dimentions'
 import { IInputVM } from 'components/Input/Input.vm'
+import { useRef } from 'react'
 
 const CLEAR_WIDTH = 83
 const MIN_HEIGHT = 45
@@ -59,15 +60,19 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
     },
     [height]
   )
-
+  const inputRef = useRef(null)
+  const handlePress = () => {
+    inputRef.current.focus()
+  }
   return (
-    <View style={[SS.container, style]}>
+    <Pressable style={[SS.container, style]} onPress={handlePress}>
       <Text style={SS.texts}>{t.get(label)}</Text>
       <Animated.View style={[SS.textInputWrapper, animatedHeight]}>
         <TextInput
           placeholder={t.get(placeholder)}
           placeholderTextColor="#989898"
           multiline={true}
+          ref={inputRef}
           value={value}
           onChangeText={onChangeText}
           onContentSizeChange={onContentSizeChange}
@@ -85,7 +90,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           </Animated.View>
         )}
       </Animated.View>
-    </View>
+    </Pressable>
   )
 })
 
@@ -94,8 +99,9 @@ const SS = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    width: '100%',
-    marginBottom: 15
+    marginBottom: 15,
+    minHeight: 45,
+    width: deviceWidth
   },
   texts: {
     textAlign: 'left',
