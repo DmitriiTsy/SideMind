@@ -88,7 +88,9 @@ const SS = StyleSheet.create({
     color: '#FFF',
     width: deviceWidth * 0.85,
     paddingHorizontal: 8,
-    marginVertical: 4
+    marginVertical: 4,
+    fontSize: 16,
+    fontWeight: '500'
   },
   containerOnChange: {
     alignItems: 'flex-end'

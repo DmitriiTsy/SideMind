@@ -116,9 +116,9 @@ const SS = StyleSheet.create({
     backgroundColor: '#2C2C2D',
     color: '#FFFFFF',
     width: '100%',
-    fontSize: 16,
     lineHeight: 16,
-    fontWeight: '400',
+    fontWeight: '500',
+    fontSize: 16,
     paddingHorizontal: 18
   }
 })
