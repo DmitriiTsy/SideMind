@@ -106,5 +106,9 @@ const SS = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 30
   },
-  resetContainer: { marginRight: 19 }
+  resetContainer: {
+    height: 20,
+    width: 20,
+    marginRight: 19
+  }
 })
