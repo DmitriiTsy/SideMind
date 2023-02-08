@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
-
+import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import {
   CreateMindHeader,
   CreateMindInputs,
@@ -13,16 +13,17 @@ import {
 
 export const EditMind = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
-
-  useEffect(() => {
-    createMindVM.clearAll()
-  })
+  createMindVM.edit = true
+  const chatVM = useInject<IChatVM>(IChatVMTid)
 
   return (
     <View style={[SS.container]}>
       <CreateMindHeader />
       <CreateMindPickImage />
-      <CreateMindInputs />
+      <CreateMindInputs
+        name={chatVM.avatar.name}
+        tagline={chatVM.avatar.tagLine}
+      />
       {createMindVM.pending && (
         <View style={SS.loading}>
           <ActivityIndicator size="large" color="#D3D3D3" />

@@ -26,6 +26,7 @@ export interface ICreateMindVM {
   pending: boolean
   uri: string | null
 
+  edit: boolean
   inputName: InputVM
   inputTagLine: InputVM
   inputBio: InputVM
@@ -82,6 +83,7 @@ export class CreateMindVM implements ICreateMindVM {
       placeholder: 'generate avatar placeholder'
     })
   }
+  edit: false
 
   @computed
   get hasError() {

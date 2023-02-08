@@ -7,6 +7,7 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
+import { RotateInDownRight } from 'react-native-reanimated'
 
 export const CreateMindHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
@@ -14,16 +15,23 @@ export const CreateMindHeader = observer(() => {
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
   const back = useCallback(() => {
-    bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
-  }, [bottomPanelVM])
+    !createMindVM.edit
+      ? bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
+      : bottomPanelVM.openPanel(bottomPanelVM.toggle)
+    createMindVM.edit = false
+  }, [bottomPanelVM, createMindVM])
 
   return (
     <View style={SS.container}>
-      <Pressable onPress={back}>
+      <Pressable style={SS.activeTextWrapper} onPress={back}>
         <Text style={SS.activeText}>{t.get('cancel')}</Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
-      <Pressable onPress={createMindVM.submit} disabled={createMindVM.pending}>
+      <Pressable
+        onPress={createMindVM.submit}
+        disabled={createMindVM.pending}
+        style={SS.activeTextWrapper}
+      >
         <Text style={createMindVM.hasError ? SS.inactiveText : SS.activeText}>
           {t.get('save')}
         </Text>
@@ -48,6 +56,11 @@ const SS = StyleSheet.create({
     color: '#FFFFFF',
     lineHeight: 16,
     letterSpacing: -0.3
+  },
+  activeTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 17
   },
   activeText: {
     fontWeight: '700',

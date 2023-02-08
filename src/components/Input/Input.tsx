@@ -23,7 +23,7 @@ import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { deviceWidth } from 'utils/dimentions'
 import { IInputVM } from 'components/Input/Input.vm'
-
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 const CLEAR_WIDTH = 83
 const MIN_HEIGHT = 45
 
@@ -31,10 +31,12 @@ interface IInputProps {
   vm: IInputVM
   style?: StyleProp<ViewStyle>
 }
-
+{/* <Input vm={createMindVM.inputName} name={props.name} />
+      <Input vm={createMindVM.inputTagLine} tagLine={props.TagLine} />
+      <Input vm={createMindVM.inputBio} /> */}
 export const Input: FC<IInputProps> = observer(({ vm, style }) => {
   const { value, label, placeholder, onChangeText, clear } = vm
-
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   const height = useSharedValue(MIN_HEIGHT)
@@ -68,7 +70,9 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           placeholder={t.get(placeholder)}
           placeholderTextColor="#989898"
           multiline={true}
-          value={value}
+          value={
+            !createMindVM.inputName.value ? value : createMindVM.inputName.value
+          }
           onChangeText={onChangeText}
           onContentSizeChange={onContentSizeChange}
           style={[SS.textInput]}

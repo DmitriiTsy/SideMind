@@ -13,10 +13,11 @@ import {
 
 export const CreateMind = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
-
-  useEffect(() => {
-    createMindVM.clearAll()
-  })
+  createMindVM.edit
+    ? null
+    : useEffect(() => {
+        createMindVM.clearAll()
+      })
 
   return (
     <View style={[SS.container]}>
