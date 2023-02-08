@@ -23,8 +23,10 @@ import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { deviceWidth } from 'utils/dimentions'
 import { IInputVM } from 'components/Input/Input.vm'
-import { useRef } from 'react'
 
+import { useRef } from 'react'
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
+import { useState } from 'react'
 const CLEAR_WIDTH = 83
 const MIN_HEIGHT = 45
 
@@ -35,19 +37,25 @@ interface IInputProps {
 
 export const Input: FC<IInputProps> = observer(({ vm, style }) => {
   const { value, label, placeholder, onChangeText, clear } = vm
-
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-
+  const [refIsActivated, setRefIsActivated] = useState()
   const height = useSharedValue(MIN_HEIGHT)
-  const clearPosition = useSharedValue(value ? -CLEAR_WIDTH : deviceWidth)
+  const clearPosition = useSharedValue(
+    refIsActivated ? -CLEAR_WIDTH : deviceWidth
+  )
 
   const animatedCleanBttn = useAnimatedStyle(() => ({
     transform: [{ translateX: clearPosition.value }]
   }))
 
   useEffect(() => {
-    clearPosition.value = withTiming(value ? -18 : 0)
-  }, [clearPosition, value])
+    clearPosition.value = withTiming(refIsActivated ? -18 : 0)
+  }, [clearPosition, refIsActivated, value])
+
+  useEffect(() => {
+    label === createMindVM.inputName.label && handlePress()
+  }, [createMindVM.inputName.label, label])
 
   const animatedHeight = useAnimatedStyle(() => ({
     height: height.value
@@ -61,9 +69,25 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
     [height]
   )
   const inputRef = useRef(null)
+
   const handlePress = () => {
     inputRef.current.focus()
   }
+
+  const gotRefHandler = () => {
+    setRefIsActivated(true)
+  }
+
+  const lostRefHandler = () => {
+    setRefIsActivated(false)
+  }
+
+  const clearHandler = () => {
+    setRefIsActivated(false)
+    clear()
+  }
+
+
   return (
     <Pressable style={[SS.container, style]} onPress={handlePress}>
       <Text style={SS.texts}>{t.get(label)}</Text>
@@ -72,6 +96,8 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           placeholder={t.get(placeholder)}
           placeholderTextColor="#989898"
           multiline={true}
+          onFocus={gotRefHandler}
+          onBlur={lostRefHandler}
           ref={inputRef}
           value={value}
           onChangeText={onChangeText}
@@ -80,11 +106,14 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           keyboardAppearance={'dark'}
           blurOnSubmit={true}
         />
-        {value && (
+        {refIsActivated && (
           <Animated.View
-            style={[animatedCleanBttn, value && { alignSelf: 'center' }]}
+            style={[
+              animatedCleanBttn,
+              refIsActivated && { alignSelf: 'center' }
+            ]}
           >
-            <Pressable onPress={clear}>
+            <Pressable onPress={clearHandler}>
               <Svg name={'CleanTextInput'} />
             </Pressable>
           </Animated.View>

@@ -45,7 +45,9 @@ const SS = StyleSheet.create({
     borderTopRightRadius: 12,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
+    backgroundColor: '#303030',
+    marginBottom: 12
   },
   text: {
     fontWeight: '500',
