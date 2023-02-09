@@ -141,7 +141,8 @@ export class CreateMindVM implements ICreateMindVM {
         max_tokens: 721,
         presence_penalty: 0,
         top_p: 1
-      }
+      },
+      bio: bio
     }
     console.log(avatar)
     this._appStore.updateUsersAvatars(avatar)

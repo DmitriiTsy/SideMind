@@ -23,6 +23,7 @@ export const EditMind = observer(() => {
       <CreateMindInputs
         name={chatVM.avatar.name}
         tagline={chatVM.avatar.tagLine}
+        bio={chatVM.avatar.bio}
       />
       {createMindVM.pending && (
         <View style={SS.loading}>

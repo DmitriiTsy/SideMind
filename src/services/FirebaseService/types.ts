@@ -24,6 +24,7 @@ export interface AvatarModel {
     presence_penalty: number
     top_p: number
   }
+  bio?: string
   messages?: {
     displayed?: IMessage[]
     history?: string

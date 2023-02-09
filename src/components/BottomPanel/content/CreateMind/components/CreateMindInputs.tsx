@@ -10,9 +10,9 @@ export const CreateMindInputs = observer((props) => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
   return (
     <>
-      <Input vm={createMindVM.inputName} props={props.name} />
-      <Input vm={createMindVM.inputTagLine} props={props.TagLine} />
-      <Input vm={createMindVM.inputBio} />
+      <Input vm={createMindVM.inputName} savedData={props.name} />
+      <Input vm={createMindVM.inputTagLine} savedData={props.tagline} />
+      <Input vm={createMindVM.inputBio} savedData={props.bio} />
     </>
   )
 })

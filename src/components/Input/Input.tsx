@@ -30,15 +30,13 @@ const MIN_HEIGHT = 45
 interface IInputProps {
   vm: IInputVM
   style?: StyleProp<ViewStyle>
+  savedData: any
 }
-{/* <Input vm={createMindVM.inputName} name={props.name} />
-      <Input vm={createMindVM.inputTagLine} tagLine={props.TagLine} />
-      <Input vm={createMindVM.inputBio} /> */}
-export const Input: FC<IInputProps> = observer(({ vm, style }) => {
+
+export const Input: FC<IInputProps> = observer(({ vm, style, savedData }) => {
   const { value, label, placeholder, onChangeText, clear } = vm
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-
   const height = useSharedValue(MIN_HEIGHT)
   const clearPosition = useSharedValue(value ? -CLEAR_WIDTH : deviceWidth)
 
@@ -70,9 +68,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           placeholder={t.get(placeholder)}
           placeholderTextColor="#989898"
           multiline={true}
-          value={
-            !createMindVM.inputName.value ? value : createMindVM.inputName.value
-          }
+          defaultValue={savedData ? savedData : value}
           onChangeText={onChangeText}
           onContentSizeChange={onContentSizeChange}
           style={[SS.textInput]}
