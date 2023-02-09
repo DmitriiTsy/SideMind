@@ -86,6 +86,7 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: this._avatar.params.presence_penalty,
         stop: ['###']
       })
+      console.log(res.data.choices[0].text)
       this._history = `${this._history} ${res.data.choices[0].text}`
 
       this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
@@ -96,7 +97,12 @@ export class OpenAIService implements IOpenAIService {
 
       return res.data.choices[0].text.trim()
     } catch (e) {
-      if (e.response?.status === '503') {
+      console.log(e)
+      if (
+        e.response?.status.toString().startsWith('5') ||
+        e.response?.status == 429 ||
+        e.response?.status == 400
+      ) {
         return this._handle503(e)
       } else {
         this._firebaseService.setMessage(

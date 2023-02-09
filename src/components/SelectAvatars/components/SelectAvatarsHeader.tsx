@@ -1,47 +1,20 @@
-import React, { useCallback, useMemo } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
-import {
-  ILocalizationService,
-  ILocalizationServiceTid,
-  INavigationService,
-  INavigationServiceTid
-} from 'services'
-
-import { CommonScreenName } from 'constants/screen.types'
-import { ISelectAvatarsVM, ISelectAvatarsVMTid } from 'components/SelectAvatars'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 export const SelectAvatarsHeader = observer(() => {
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const vm = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
-
-  const enabled = useMemo(() => vm.selected.length === 3, [vm.selected.length])
-
-  const addStarting = useCallback(() => {
-    if (enabled) {
-      vm.setAvatars()
-      navigation.navigate(CommonScreenName.MainFeed)
-    }
-  }, [enabled, navigation, vm])
 
   return (
     <View style={SS.container}>
-      <View style={{ width: 30, height: 1 }} />
-
       <View>
         <Text style={SS.title}>{t.get('choose bots')}</Text>
         <Text style={SS.counter}>{t.get('add more later')}</Text>
       </View>
-
-      <Pressable style={SS.doneContainer} onPress={addStarting}>
-        <Text style={[SS.activeText, !enabled && SS.inactiveText]}>
-          {t.get('done')}
-        </Text>
-      </Pressable>
     </View>
   )
 })
@@ -54,7 +27,7 @@ const SS = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 14
   },
   activeText: {

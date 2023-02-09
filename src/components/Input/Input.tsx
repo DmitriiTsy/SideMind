@@ -91,8 +91,8 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           onSubmitEditing={onSubmitEditing && onSubmitEditing}
         />
         <Animated.View style={[animatedCleanBttn]}>
-          <Pressable onPress={clear}>
-            <Svg name={'CleanTextInput'} />
+          <Pressable onPress={clear} style={SS.svgContainer}>
+            <Svg name={'CleanTextInput'} onPress={clear} />
           </Pressable>
         </Animated.View>
       </Animated.View>
@@ -132,5 +132,11 @@ const SS = StyleSheet.create({
     fontWeight: '500',
     fontSize: 16,
     paddingHorizontal: 18
+  },
+  svgContainer: {
+    width: 35,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })

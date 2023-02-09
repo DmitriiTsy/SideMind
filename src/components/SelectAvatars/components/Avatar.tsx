@@ -3,8 +3,6 @@ import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
 import { observer } from 'mobx-react'
 
-import { Svg } from 'components/ui/Svg'
-
 import { AvatarModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
 import { deviceWidth } from 'utils/dimentions'
@@ -27,11 +25,11 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
-  const selected = vm.selected.find((el) => el === avatar.id)
-
   const set = useCallback(() => {
-    vm.select(avatar.id)
-  }, [vm, avatar.id])
+    vm.setAvatars(avatar)
+    chatVM.setAvatar(avatar)
+    navigation.navigate(CommonScreenName.Chat)
+  }, [vm, avatar, chatVM, navigation])
 
   const update = useCallback(async () => {
     const _avatar = await appStore.updateUsersAvatars(avatar)
@@ -61,9 +59,6 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
             {avatar.tagLine}
           </Text>
         </View>
-        {!single && (
-          <View style={SS.empty}>{selected && <Svg name={'Check'} />}</View>
-        )}
       </View>
     </Pressable>
   )

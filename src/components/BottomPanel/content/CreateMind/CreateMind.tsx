@@ -1,11 +1,5 @@
 import { observer } from 'mobx-react'
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  ScrollView,
-  StyleSheet,
-  View
-} from 'react-native'
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native'
 import React, { useEffect } from 'react'
 
 import { useInject } from 'IoC'
@@ -27,12 +21,13 @@ export const CreateMind = observer(() => {
   return (
     <View style={[SS.container]}>
       <CreateMindHeader />
-      <KeyboardAvoidingView behavior="padding">
-        <ScrollView automaticallyAdjustKeyboardInsets={true}>
-          <CreateMindPickImage />
-          <CreateMindInputs />
-        </ScrollView>
-      </KeyboardAvoidingView>
+      <ScrollView
+        automaticallyAdjustKeyboardInsets={true}
+        showsVerticalScrollIndicator={false}
+      >
+        <CreateMindPickImage />
+        <CreateMindInputs />
+      </ScrollView>
       {/*<View*/}
       {/*  style={{*/}
       {/*    flexDirection: 'row',*/}
