@@ -100,15 +100,17 @@ const SS = StyleSheet.create({
     color: '#FFFFFF'
   },
   containerGoBack: {
-    height: 47,
-    width: 48,
+    height: 36,
+    width: 36,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 30
   },
   resetContainer: {
-    height: 20,
-    width: 20,
-    marginRight: 19
+    height: 36,
+    width: 36,
+    marginRight: 19,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })

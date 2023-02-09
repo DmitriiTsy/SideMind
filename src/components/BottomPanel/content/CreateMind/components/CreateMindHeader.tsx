@@ -59,7 +59,7 @@ const SS = StyleSheet.create({
   activeTextWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 17
+    height: 36
   },
   activeText: {
     fontWeight: '700',

@@ -100,7 +100,8 @@ const SS = StyleSheet.create({
     paddingHorizontal: 8,
     marginVertical: 4,
     fontSize: 16,
-    fontWeight: '500'
+    fontWeight: '400',
+    lineHeight: 18
   },
   containerOnChange: {
     alignItems: 'flex-end'

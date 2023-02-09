@@ -94,7 +94,9 @@ const SS = StyleSheet.create({
     height: 44,
     backgroundColor: '#000000',
     justifyContent: 'flex-end',
-    marginRight: 14
+    paddingBottom: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333'
   },
   row: {
     flexDirection: 'row',
