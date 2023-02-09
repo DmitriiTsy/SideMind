@@ -8,17 +8,13 @@ import {
 } from 'react-native'
 
 import { useInject } from 'IoC'
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { Svg } from 'components/ui/Svg'
 import { deviceWidth } from 'utils/dimentions'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
-import { useRef } from 'react'
-import { Pressable } from 'react-native'
 
 const MIN_HEIGHT = 28
 
 export const ChatInput = () => {
-  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [value, setValue] = useState('')
   const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
@@ -43,21 +39,13 @@ export const ChatInput = () => {
 
   const isMultiline = useMemo(() => inputHeight > 28, [inputHeight])
 
-  const inputRef = useRef(null)
-  const handlePress = () => {
-    inputRef.current.focus()
-  }
   return (
-    <Pressable
-      style={[SS.container, isMultiline && SS.containerOnChange]}
-      onPress={handlePress}
-    >
+    <View style={[SS.container, isMultiline && SS.containerOnChange]}>
       <View style={[SS.inputContainer]}>
         <TextInput
-          ref={inputRef}
           multiline={true}
-          placeholder={t.get('start message')}
-          placeholderTextColor={'#FFF'}
+          // placeholder={t.get('start message')}
+          placeholderTextColor={'#FFFFFF80'}
           value={value}
           onChangeText={onChangeText}
           onContentSizeChange={onContentSizeChange}
@@ -71,7 +59,7 @@ export const ChatInput = () => {
         style={isMultiline && SS.enter}
         size={32}
       />
-    </Pressable>
+    </View>
   )
 }
 

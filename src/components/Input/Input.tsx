@@ -24,9 +24,6 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { deviceWidth } from 'utils/dimentions'
 import { IInputVM } from 'components/Input/Input.vm'
 
-import { useRef } from 'react'
-import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
-import { useState } from 'react'
 const CLEAR_WIDTH = 83
 const MIN_HEIGHT = 45
 
@@ -36,26 +33,30 @@ interface IInputProps {
 }
 
 export const Input: FC<IInputProps> = observer(({ vm, style }) => {
-  const { value, label, placeholder, onChangeText, clear } = vm
-  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+  const {
+    value,
+    label,
+    placeholder,
+    onChangeText,
+    clear,
+    ref,
+    onFocus,
+    onBlur,
+    instantOpening,
+    isFocused,
+    onSubmitEditing
+  } = vm
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const [refIsActivated, setRefIsActivated] = useState()
   const height = useSharedValue(MIN_HEIGHT)
-  const clearPosition = useSharedValue(
-    refIsActivated ? -CLEAR_WIDTH : deviceWidth
-  )
+  const clearPosition = useSharedValue(0)
 
   const animatedCleanBttn = useAnimatedStyle(() => ({
     transform: [{ translateX: clearPosition.value }]
   }))
 
   useEffect(() => {
-    clearPosition.value = withTiming(refIsActivated ? -18 : 0)
-  }, [clearPosition, refIsActivated, value])
-
-  useEffect(() => {
-    label === createMindVM.inputName.label && handlePress()
-  }, [createMindVM.inputName.label, label])
+    clearPosition.value = withTiming(value && isFocused ? -20 : 20)
+  }, [clearPosition, isFocused, value])
 
   const animatedHeight = useAnimatedStyle(() => ({
     height: height.value
@@ -68,58 +69,34 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
     },
     [height]
   )
-  const inputRef = useRef(null)
-
-  const handlePress = () => {
-    inputRef.current.focus()
-  }
-
-  const gotRefHandler = () => {
-    setRefIsActivated(true)
-  }
-
-  const lostRefHandler = () => {
-    setRefIsActivated(false)
-  }
-
-  const clearHandler = () => {
-    setRefIsActivated(false)
-    clear()
-  }
-
 
   return (
-    <Pressable style={[SS.container, style]} onPress={handlePress}>
+    <View style={[SS.container, style]}>
       <Text style={SS.texts}>{t.get(label)}</Text>
       <Animated.View style={[SS.textInputWrapper, animatedHeight]}>
         <TextInput
           placeholder={t.get(placeholder)}
           placeholderTextColor="#989898"
           multiline={true}
-          onFocus={gotRefHandler}
-          onBlur={lostRefHandler}
-          ref={inputRef}
+          ref={ref && ref}
+          onFocus={onFocus && onFocus}
+          onBlur={onBlur && onBlur}
+          autoFocus={instantOpening}
           value={value}
           onChangeText={onChangeText}
           onContentSizeChange={onContentSizeChange}
           style={[SS.textInput]}
           keyboardAppearance={'dark'}
           blurOnSubmit={true}
+          onSubmitEditing={onSubmitEditing && onSubmitEditing}
         />
-        {refIsActivated && (
-          <Animated.View
-            style={[
-              animatedCleanBttn,
-              refIsActivated && { alignSelf: 'center' }
-            ]}
-          >
-            <Pressable onPress={clearHandler}>
-              <Svg name={'CleanTextInput'} />
-            </Pressable>
-          </Animated.View>
-        )}
+        <Animated.View style={[animatedCleanBttn]}>
+          <Pressable onPress={clear}>
+            <Svg name={'CleanTextInput'} />
+          </Pressable>
+        </Animated.View>
       </Animated.View>
-    </Pressable>
+    </View>
   )
 })
 

@@ -19,7 +19,6 @@ import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
-import { deviceWidth } from 'utils/dimentions'
 
 export const CreateMindPickImage = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
@@ -95,8 +94,7 @@ const SS = StyleSheet.create({
     paddingHorizontal: 14
   },
   textsWrapper: {
-    paddingVertical: 16,
-    width: deviceWidth,
+    padding: 16,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center'

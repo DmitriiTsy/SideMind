@@ -7,7 +7,6 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
-import { RotateInDownRight } from 'react-native-reanimated'
 
 export const CreateMindHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)

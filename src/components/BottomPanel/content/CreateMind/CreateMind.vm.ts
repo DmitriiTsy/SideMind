@@ -1,7 +1,9 @@
 import uuid from 'react-native-uuid'
 import { action, computed, observable } from 'mobx'
 
-import { Alert } from 'react-native'
+import { Alert, TextInput } from 'react-native'
+
+import { createRef } from 'react'
 
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
@@ -70,23 +72,39 @@ export class CreateMindVM implements ICreateMindVM {
     @Inject(ISystemInfoServiceTid)
     private _systemInfoService: ISystemInfoService
   ) {
+    const refInputName = createRef<TextInput>()
+    const refInputTag = createRef<TextInput>()
+    const refInputBio = createRef<TextInput>()
+
     this.inputName = new InputVM({
       label: 'full name',
       placeholder: 'placeholder full name',
-      minLength: 5,
-      errorText: 'name requirements'
+      minLength: 2,
+      errorText: 'name requirements',
+      instantOpening: true,
+      ref: refInputName,
+      onSubmitEditing: () => {
+        refInputName.current.blur()
+        refInputTag.current.focus()
+      }
     })
     this.inputTagLine = new InputVM({
       label: 'tagline',
       placeholder: 'placeholder tagline',
       minLength: 5,
-      errorText: 'tagline requirements'
+      errorText: 'tagline requirements',
+      ref: refInputTag,
+      onSubmitEditing: () => {
+        refInputTag.current.blur()
+        refInputBio.current.focus()
+      }
     })
     this.inputBio = new InputVM({
       label: 'bio',
       placeholder: 'placeholder bio',
       minLength: 10,
-      errorText: 'bio requirements'
+      errorText: 'bio requirements',
+      ref: refInputBio
     })
     this.inputGenerateAvatar = new InputVM({
       label: 'generate avatar input label',

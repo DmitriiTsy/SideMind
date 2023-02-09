@@ -15,12 +15,12 @@ const Component: FC<SvgStyleProps> = (props) => (
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <Path d="M17.167 11.332h-5.834a1.667 1.667 0 0 0-1.666 1.667v11.666a1.667 1.667 0 0 0 1.666 1.667H23a1.667 1.667 0 0 0 1.667-1.667v-5.833" />
-      <Path d="M23.417 10.084a1.768 1.768 0 0 1 2.5 2.5L18 20.501l-3.333.833.833-3.333 7.917-7.917Z" />
+      <Path d="M17.332 12.666h-4.667A1.333 1.333 0 0 0 11.332 14v9.333a1.333 1.333 0 0 0 1.333 1.334H22a1.333 1.333 0 0 0 1.333-1.334v-4.666" />
+      <Path d="M22.332 11.667a1.414 1.414 0 1 1 2 2L17.999 20l-2.667.667.667-2.667 6.333-6.333Z" />
     </G>
     <Defs>
       <ClipPath id="a">
-        <Path fill="#fff" transform="translate(8 8)" d="M0 0h20v20H0z" />
+        <Path fill="#fff" transform="translate(10 10)" d="M0 0h16v16H0z" />
       </ClipPath>
     </Defs>
   </Svg>
