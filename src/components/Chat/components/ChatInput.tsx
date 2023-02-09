@@ -8,7 +8,6 @@ import {
 } from 'react-native'
 
 import { useInject } from 'IoC'
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { Svg } from 'components/ui/Svg'
 import { deviceWidth } from 'utils/dimentions'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
@@ -16,7 +15,6 @@ import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 const MIN_HEIGHT = 28
 
 export const ChatInput = () => {
-  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [value, setValue] = useState('')
   const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
@@ -46,8 +44,8 @@ export const ChatInput = () => {
       <View style={[SS.inputContainer]}>
         <TextInput
           multiline={true}
-          placeholder={t.get('start message')}
-          placeholderTextColor={'#FFF'}
+          // placeholder={t.get('start message')}
+          placeholderTextColor={'#FFFFFF80'}
           value={value}
           onChangeText={onChangeText}
           onContentSizeChange={onContentSizeChange}
@@ -88,7 +86,10 @@ const SS = StyleSheet.create({
     color: '#FFF',
     width: deviceWidth * 0.85,
     paddingHorizontal: 8,
-    marginVertical: 4
+    marginVertical: 4,
+    fontSize: 16,
+    fontWeight: '400',
+    lineHeight: 18
   },
   containerOnChange: {
     alignItems: 'flex-end'

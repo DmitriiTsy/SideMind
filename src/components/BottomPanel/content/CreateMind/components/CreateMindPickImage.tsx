@@ -94,7 +94,10 @@ const SS = StyleSheet.create({
     paddingHorizontal: 14
   },
   textsWrapper: {
-    paddingVertical: 16
+    padding: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center'
   },
   texts: {
     fontWeight: '500',

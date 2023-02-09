@@ -87,8 +87,9 @@ const SS = StyleSheet.create({
     marginTop: 12
   },
   text: {
-    fontWeight: '500',
+    fontWeight: '400',
     fontSize: 16,
+    lineHeight: 18,
     color: '#FFF'
   }
 })

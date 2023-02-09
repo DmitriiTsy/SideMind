@@ -33,20 +33,30 @@ interface IInputProps {
 }
 
 export const Input: FC<IInputProps> = observer(({ vm, style }) => {
-  const { value, label, placeholder, onChangeText, clear } = vm
-
+  const {
+    value,
+    label,
+    placeholder,
+    onChangeText,
+    clear,
+    ref,
+    onFocus,
+    onBlur,
+    instantOpening,
+    isFocused,
+    onSubmitEditing
+  } = vm
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-
   const height = useSharedValue(MIN_HEIGHT)
-  const clearPosition = useSharedValue(value ? -CLEAR_WIDTH : deviceWidth)
+  const clearPosition = useSharedValue(0)
 
   const animatedCleanBttn = useAnimatedStyle(() => ({
     transform: [{ translateX: clearPosition.value }]
   }))
 
   useEffect(() => {
-    clearPosition.value = withTiming(value ? -18 : 0)
-  }, [clearPosition, value])
+    clearPosition.value = withTiming(value && isFocused ? -20 : 20)
+  }, [clearPosition, isFocused, value])
 
   const animatedHeight = useAnimatedStyle(() => ({
     height: height.value
@@ -68,22 +78,23 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           placeholder={t.get(placeholder)}
           placeholderTextColor="#989898"
           multiline={true}
+          ref={ref && ref}
+          onFocus={onFocus && onFocus}
+          onBlur={onBlur && onBlur}
+          autoFocus={instantOpening}
           value={value}
           onChangeText={onChangeText}
           onContentSizeChange={onContentSizeChange}
           style={[SS.textInput]}
           keyboardAppearance={'dark'}
           blurOnSubmit={true}
+          onSubmitEditing={onSubmitEditing && onSubmitEditing}
         />
-        {value && (
-          <Animated.View
-            style={[animatedCleanBttn, value && { alignSelf: 'center' }]}
-          >
-            <Pressable onPress={clear}>
-              <Svg name={'CleanTextInput'} />
-            </Pressable>
-          </Animated.View>
-        )}
+        <Animated.View style={[animatedCleanBttn]}>
+          <Pressable onPress={clear}>
+            <Svg name={'CleanTextInput'} />
+          </Pressable>
+        </Animated.View>
       </Animated.View>
     </View>
   )
@@ -94,8 +105,9 @@ const SS = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    width: '100%',
-    marginBottom: 15
+    marginBottom: 15,
+    minHeight: 45,
+    width: deviceWidth
   },
   texts: {
     textAlign: 'left',
@@ -116,9 +128,9 @@ const SS = StyleSheet.create({
     backgroundColor: '#2C2C2D',
     color: '#FFFFFF',
     width: '100%',
-    fontSize: 16,
     lineHeight: 16,
-    fontWeight: '400',
+    fontWeight: '500',
+    fontSize: 16,
     paddingHorizontal: 18
   }
 })

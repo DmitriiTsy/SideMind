@@ -37,7 +37,9 @@ export const AddMind = observer(() => {
       <View style={SS.headerContainer}>
         <View style={{ width: 20 }} />
         <Text style={SS.title}>{t.get('pick additional')}</Text>
-        <Svg name={'Cross'} onPress={bottomPanelVM.closePanel} />
+        <Pressable style={SS.crossWrapper} onPress={bottomPanelVM.closePanel}>
+          <Svg name={'Cross'} />
+        </Pressable>
       </View>
       {appStore.commonAvatars.length === 0 ? (
         <SkeletonAvatars />
@@ -71,6 +73,12 @@ const SS = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 17
+  },
+  crossWrapper: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   title: {
     fontWeight: '700',

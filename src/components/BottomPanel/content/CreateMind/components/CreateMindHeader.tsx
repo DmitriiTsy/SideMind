@@ -19,11 +19,15 @@ export const CreateMindHeader = observer(() => {
 
   return (
     <View style={SS.container}>
-      <Pressable onPress={back}>
+      <Pressable style={SS.activeTextWrapper} onPress={back}>
         <Text style={SS.activeText}>{t.get('cancel')}</Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
-      <Pressable onPress={createMindVM.submit} disabled={createMindVM.pending}>
+      <Pressable
+        onPress={createMindVM.submit}
+        disabled={createMindVM.pending}
+        style={SS.activeTextWrapper}
+      >
         <Text style={createMindVM.hasError ? SS.inactiveText : SS.activeText}>
           {t.get('save')}
         </Text>
@@ -40,7 +44,9 @@ const SS = StyleSheet.create({
     borderTopRightRadius: 12,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
+    backgroundColor: '#303030',
+    marginBottom: 12
   },
   text: {
     fontWeight: '500',
@@ -48,6 +54,11 @@ const SS = StyleSheet.create({
     color: '#FFFFFF',
     lineHeight: 16,
     letterSpacing: -0.3
+  },
+  activeTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 36
   },
   activeText: {
     fontWeight: '700',
