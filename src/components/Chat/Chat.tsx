@@ -35,10 +35,7 @@ export const Chat = observer(() => {
           <Svg name={'PointerLeft'} />
         </Pressable>
         {chatVM.avatar.imagePath ? (
-          <Image
-            source={{ uri: chatVM.avatar.imagePath, cache: 'only-if-cached' }}
-            style={SS.avatar}
-          />
+          <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
         ) : (
           <Svg name={'AvatarEmpty'} size={36} style={{ marginRight: 7 }} />
         )}

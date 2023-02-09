@@ -18,6 +18,11 @@ export interface IAppStore {
 
   setUsersAvatars(id: number[] | string[]): void
   updateUsersAvatars(avatar: AvatarModel): AvatarModel | null
+  updateUsersAvatars(
+    avatar: AvatarModel,
+    imagePath: string,
+    localPath: string
+  ): AvatarModel | null
 
   setAvatarsFromStorage(): void
 
@@ -77,13 +82,28 @@ export class AppStore implements IAppStore {
     this._firebaseService.setAvatars(this.usersAvatars)
   }
 
-  @action.bound
-  updateUsersAvatars(avatar: AvatarModel) {
+  async updateUsersAvatars(avatar: AvatarModel)
+  async updateUsersAvatars(
+    avatar: AvatarModel,
+    imagePath?: string,
+    localPath?: string
+  ) {
     const _avatar = this.usersAvatars.find((el) => el.id === avatar.id)
     if (!_avatar) {
-      this.usersAvatars = [avatar, ...this.usersAvatars]
-      this._storageService.setUserAvatars(this.usersAvatars)
-      this._firebaseService.updateAvatars(avatar.id)
+      if (imagePath && localPath) {
+        avatar.imagePath = await this._firebaseService.createCustomAvatar(
+          avatar,
+          imagePath,
+          localPath
+        )
+      }
+
+      runInAction(() => {
+        this.usersAvatars.unshift(avatar)
+        this._storageService.setUserAvatars(this.usersAvatars)
+        this._firebaseService.updateAvatars(avatar.id)
+      })
+
       return null
     }
     return _avatar

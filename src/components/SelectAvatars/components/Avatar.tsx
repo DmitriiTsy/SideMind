@@ -33,10 +33,10 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
     vm.select(avatar.id)
   }, [vm, avatar.id])
 
-  const update = useCallback(() => {
-    const _avatar = appStore.updateUsersAvatars(avatar)
+  const update = useCallback(async () => {
+    const _avatar = await appStore.updateUsersAvatars(avatar)
     chatVM.setAvatar(_avatar || avatar)
-    bottomPanelVM.toggle()
+    bottomPanelVM.closePanel()
     navigation.navigate(CommonScreenName.Chat)
   }, [appStore, avatar, bottomPanelVM, chatVM, navigation])
 

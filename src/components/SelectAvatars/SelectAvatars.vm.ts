@@ -10,7 +10,7 @@ export interface ISelectAvatarsVM {
   commonAvatars: AvatarModel[][]
   selected: number[]
 
-  select(id: number): void
+  select(id: number | string): void
   setAvatars(): void
 }
 

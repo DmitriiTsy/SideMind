@@ -43,6 +43,12 @@ export interface IFirebaseService {
   ): void
 
   getMasterPrompt(): Promise<IFirebaseResponseMasterPrompt>
+
+  createCustomAvatar(
+    avatar: AvatarModel,
+    imagePath: string,
+    localPath: string
+  ): Promise<string>
 }
 
 @Injectable()
@@ -181,5 +187,37 @@ export class FirebaseService implements IFirebaseService {
     await this._usersCollection
       .doc(this._systemInfoService.deviceId)
       .update({ [avatarId]: [] })
+  }
+
+  async createCustomAvatar(
+    avatar: AvatarModel,
+    imagePath: string,
+    localPath: string
+  ) {
+    const downloadUrl = await this._uploadFile(imagePath, localPath)
+    await Promise.all([
+      await this._avatarsCollection.doc('Custom').update({
+        [this._systemInfoService.deviceId]:
+          firestore.FieldValue.arrayUnion(avatar)
+      }),
+      Image.prefetch(downloadUrl)
+    ])
+
+    return downloadUrl
+  }
+
+  _uploadFile(imagePath: string, localPath: string) {
+    try {
+      const ref = storage().ref(imagePath)
+
+      const task = ref.putFile(localPath)
+
+      return task.then(() => {
+        return ref.getDownloadURL()
+      })
+    } catch (e) {
+      console.log(e)
+      return ''
+    }
   }
 }

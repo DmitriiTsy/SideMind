@@ -33,6 +33,7 @@ export const MainFeed = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
+
   const openPanel = useCallback(() => {
     appStore.updateAvatarsFromFirebase()
     bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
@@ -53,9 +54,9 @@ export const MainFeed = observer(() => {
     [openPanel, t]
   )
 
-  const renderItem = ({ item, index }: ListRenderItemInfo<AvatarModel>) => (
-    <ChatPreview avatar={item} index={index} />
-  )
+  const renderItem = ({ item, index }: ListRenderItemInfo<AvatarModel>) => {
+    return <ChatPreview avatar={item} index={index} />
+  }
 
   const keyExtractor = (item, index) => index
 
