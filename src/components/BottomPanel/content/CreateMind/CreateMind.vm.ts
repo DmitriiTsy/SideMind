@@ -18,13 +18,22 @@ import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { CommonScreenName } from 'constants/screen.types'
 import { InputVM } from 'components/Input/Input.vm'
+import {
+  ISystemInfoService,
+  ISystemInfoServiceTid
+} from 'services/SystemInfoService'
 
 export const ICreateMindVMTid = Symbol.for('ICreateMindVMTid')
+
+interface IImage {
+  localePath: string
+  fileName: string
+}
 
 export interface ICreateMindVM {
   masterPrompt: string
   pending: boolean
-  uri: string | null
+  image: IImage | null
 
   inputName: InputVM
   inputTagLine: InputVM
@@ -40,7 +49,7 @@ export interface ICreateMindVM {
 @Injectable()
 export class CreateMindVM implements ICreateMindVM {
   @observable pending = false
-  @observable uri: string | null = null
+  @observable image: IImage | null = null
 
   inputName: InputVM
   inputTagLine: InputVM
@@ -57,7 +66,9 @@ export class CreateMindVM implements ICreateMindVM {
     @Inject(IBottomPanelVMTid) private _bottomPanelVM: IBottomPanelVM,
     @Inject(IAppStoreTid) private _appStore: IAppStore,
     @Inject(ILocalizationServiceTid) private _t: ILocalizationService,
-    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService
+    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
+    @Inject(ISystemInfoServiceTid)
+    private _systemInfoService: ISystemInfoService
   ) {
     this.inputName = new InputVM({
       label: 'full name',
@@ -97,6 +108,7 @@ export class CreateMindVM implements ICreateMindVM {
     this.inputName.clear()
     this.inputTagLine.clear()
     this.inputBio.clear()
+    this.image = null
   }
 
   @action.bound
@@ -116,7 +128,13 @@ export class CreateMindVM implements ICreateMindVM {
     const name = this.inputName.value
     const bio = this.inputBio.value
     const tagLine = this.inputTagLine.value
-    const uri = this.uri
+    const image = this.image
+    const imagePath = image
+      ? `Custom/${this._systemInfoService.deviceId}/${image.fileName}`.replace(
+          /-/g,
+          ''
+        )
+      : ''
 
     const master = await this._firebaseService.getMasterPrompt()
     master.prompt = master.prompt.replace('{generated name by user}', name)
@@ -129,8 +147,8 @@ export class CreateMindVM implements ICreateMindVM {
     const avatar = {
       name,
       tagLine,
-      imagePath: uri,
-      category: 'Master',
+      imagePath,
+      category: 'Custom',
       id: uuid.v4() as string,
       prompt: generatedPrompt,
       params: {
@@ -141,9 +159,11 @@ export class CreateMindVM implements ICreateMindVM {
         top_p: 1
       }
     }
-    console.log(avatar)
-    this._appStore.updateUsersAvatars(avatar)
-    this._ChatVM.setAvatar(avatar)
+
+    await this._appStore.updateUsersAvatars(avatar, imagePath, image.localePath)
+    this._ChatVM.setAvatar(
+      this._appStore.usersAvatars.find((el) => el.id === avatar.id)
+    )
     this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.Chat)
 

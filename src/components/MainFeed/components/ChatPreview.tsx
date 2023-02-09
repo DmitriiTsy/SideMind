@@ -37,11 +37,8 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
 
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      {avatar.imagePath ? (
-        <Image
-          source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
-          style={SS.avatar}
-        />
+      {!!avatar.imagePath ? (
+        <Image source={{ uri: avatar.imagePath }} style={SS.avatar} />
       ) : (
         <Svg name={'AvatarEmpty'} size={52} />
       )}

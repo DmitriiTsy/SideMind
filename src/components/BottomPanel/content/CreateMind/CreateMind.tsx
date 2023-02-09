@@ -9,7 +9,7 @@ import {
   CreateMindHeader,
   CreateMindInputs,
   CreateMindPickImage
-} from 'components/BottomPanel/content/CreateMind/components'
+} from './components'
 
 export const CreateMind = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
@@ -67,7 +67,7 @@ export const CreateMind = observer(() => {
       {/*    style={{ marginTop: 21 }}*/}
       {/*  />*/}
       {/*</View>*/}
-      {/*<Pressable style={{ marginTop: 21 }}>*/}
+      {/*<Pressable style={{ marginTop: 21 }} onPress={generateImage}>*/}
       {/*  <Text>Generate avatar</Text>*/}
       {/*</Pressable>*/}
       {createMindVM.pending && (
