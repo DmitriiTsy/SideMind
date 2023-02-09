@@ -88,7 +88,7 @@ export const CardInput: FC<ICardInputProps> = observer(({ input }) => {
         />
         {value && (
           <Animated.View
-            style={[animatedCleanBttn, value && { alignSelf: 'center' }]}
+            style={[animatedCleanBttn, value && { alignSelf: 'flex-start', paddingTop: 14, paddingLeft: 4 }]}
           >
             <Pressable onPress={clean}>
               <Svg name={'CleanTextInput'} />
