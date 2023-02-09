@@ -112,7 +112,7 @@ export class CreateMindVM implements ICreateMindVM {
       this._masterPromptHandler()
     }
   }
-
+  @action.bound
   editAvatar() {
     const error = this.hasError
     if (error) {
@@ -154,7 +154,7 @@ export class CreateMindVM implements ICreateMindVM {
       },
       bio: bio
     }
-    this._appStore.updateUsersAvatars(avatar)
+    this._ChatVM.avatar = avatar
     this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.Chat)
 
@@ -193,7 +193,6 @@ export class CreateMindVM implements ICreateMindVM {
       },
       bio: bio
     }
-    console.log(avatar)
     this._appStore.updateUsersAvatars(avatar)
     this._ChatVM.setAvatar(avatar)
     this._bottomPanelVM.closePanel()
