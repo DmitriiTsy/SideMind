@@ -9,7 +9,8 @@ import { EBottomPanelContent } from 'components/BottomPanel/types'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 import { RotateInDownRight } from 'react-native-reanimated'
 
-export const CreateMindHeader = observer(() => {
+export const CreateMindHeader = observer((props) => {
+  const editable = props.editable
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
@@ -28,7 +29,7 @@ export const CreateMindHeader = observer(() => {
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
       <Pressable
-        onPress={createMindVM.submit}
+        onPress={editable ? createMindVM.editAvatar : createMindVM.submit}
         disabled={createMindVM.pending}
         style={SS.activeTextWrapper}
       >

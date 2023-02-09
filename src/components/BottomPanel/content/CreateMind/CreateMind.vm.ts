@@ -36,6 +36,7 @@ export interface ICreateMindVM {
 
   clearAll(): void
   submit(): void
+  editAvatar(): void
 }
 
 @Injectable()
@@ -110,6 +111,54 @@ export class CreateMindVM implements ICreateMindVM {
     } else {
       this._masterPromptHandler()
     }
+  }
+
+  editAvatar() {
+    const error = this.hasError
+    if (error) {
+      Alert.alert(this._t.get(error))
+    } else {
+      this._updateMasterPromptHandler()
+    }
+  }
+
+  async _updateMasterPromptHandler() {
+    this.pending = true
+
+    const name = this.inputName.value
+    const bio = this.inputBio.value
+    const tagLine = this.inputTagLine.value
+    const uri = this.uri
+
+    const master = await this._firebaseService.getMasterPrompt()
+    master.prompt = master.prompt.replace('{generated name by user}', name)
+    master.prompt = master.prompt.replace('{generated bio by user}', bio)
+
+    const generatedPrompt = `${await this._OpenAIService.generatePrompt(
+      master.prompt
+    )}${master.introduce}`
+
+    const avatar = {
+      name,
+      tagLine,
+      imagePath: uri,
+      category: 'Master',
+      id: uuid.v4() as string,
+      prompt: generatedPrompt,
+      params: {
+        temperature: 0.73,
+        frequency_penalty: 0,
+        max_tokens: 721,
+        presence_penalty: 0,
+        top_p: 1
+      },
+      bio: bio
+    }
+    this._appStore.updateUsersAvatars(avatar)
+    this._bottomPanelVM.closePanel()
+    this._navigationService.navigate(CommonScreenName.Chat)
+
+    this.pending = false
   }
 
   async _masterPromptHandler() {

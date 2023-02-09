@@ -18,7 +18,7 @@ export const EditMind = observer(() => {
 
   return (
     <View style={[SS.container]}>
-      <CreateMindHeader />
+      <CreateMindHeader editable />
       <CreateMindPickImage />
       <CreateMindInputs
         name={chatVM.avatar.name}
