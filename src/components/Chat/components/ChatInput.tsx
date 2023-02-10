@@ -56,6 +56,7 @@ export const ChatInput = () => {
         />
       </View>
       <Svg
+        style={SS.inputButtonContainer}
         name={value && !chatVM.pending ? 'EnterActive' : 'Enter'}
         onPress={submit}
         style={isMultiline && SS.enter}
