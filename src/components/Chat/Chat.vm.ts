@@ -14,12 +14,14 @@ export interface IChatVM {
   avatar: AvatarModel
   pending: boolean
   resetting: boolean
+  editable: boolean
 
   changeResetState(value: boolean): void
   sendMessage(message: string): void
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
+  changeEditable(value: boolean): void
 }
 
 @Injectable()
@@ -34,6 +36,7 @@ export class ChatVM implements IChatVM {
     @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
     @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {}
+  editable: boolean
 
   @action.bound
   async sendMessage(message: string) {
@@ -108,6 +111,11 @@ export class ChatVM implements IChatVM {
   @action.bound
   changeResetState(value: boolean) {
     this.resetting = value
+  }
+
+  @action.bound
+  changeEditable(value: boolean) {
+    this.editable = value
   }
 
   @action.bound
