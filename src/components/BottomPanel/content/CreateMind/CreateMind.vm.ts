@@ -178,7 +178,11 @@ export class CreateMindVM implements ICreateMindVM {
       }
     }
 
-    await this._appStore.updateUsersAvatars(avatar, imagePath, image.localePath)
+    await this._appStore.updateUsersAvatars(
+      avatar,
+      imagePath,
+      image ? image.localePath : ''
+    )
     this._ChatVM.setAvatar(
       this._appStore.usersAvatars.find((el) => el.id === avatar.id)
     )

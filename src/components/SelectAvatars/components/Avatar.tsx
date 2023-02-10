@@ -1,7 +1,9 @@
 import React, { FC, useCallback } from 'react'
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Pressable } from 'react-native'
 
 import { observer } from 'mobx-react'
+
+import RNFastImage from 'react-native-fast-image'
 
 import { AvatarModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
@@ -39,8 +41,10 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
 
   return (
     <Pressable onPress={single ? update : set} style={SS.container}>
-      <Image
-        source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
+      <RNFastImage
+        source={{
+          uri: avatar.imagePath
+        }}
         style={SS.image}
       />
 

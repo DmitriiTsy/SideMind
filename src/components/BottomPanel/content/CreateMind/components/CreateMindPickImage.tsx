@@ -71,7 +71,7 @@ export const CreateMindPickImage = observer(() => {
       <Pressable onPress={AvatarChooseHandler}>
         {createMindVM.image ? (
           <Image
-            style={{ width: 108, height: 108, borderRadius: 50 }}
+            style={{ width: 108, height: 108, borderRadius: 100 }}
             source={{ uri: createMindVM.image.localePath }}
           />
         ) : (

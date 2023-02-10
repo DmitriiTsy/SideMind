@@ -19,18 +19,22 @@ import { GroupedAvatars } from 'components/SelectAvatars/components/GroupedAvata
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 export const AddMind = observer(() => {
   const appStore = useInject<IAppStore>(IAppStoreTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+
   const renderItem = ({ item }: ListRenderItemInfo<AvatarModel[]>) => {
     return <GroupedAvatars avatar={item} single />
   }
 
   const newMind = useCallback(() => {
+    createMindVM.clearAll()
     bottomPanelVM.openPanel(EBottomPanelContent.CreateMind)
-  }, [bottomPanelVM])
+  }, [bottomPanelVM, createMindVM])
 
   return (
     <>

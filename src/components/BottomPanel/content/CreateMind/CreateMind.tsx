@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react'
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
@@ -13,10 +13,6 @@ import {
 
 export const CreateMind = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
-
-  useEffect(() => {
-    createMindVM.clearAll()
-  })
 
   return (
     <View style={[SS.container]}>

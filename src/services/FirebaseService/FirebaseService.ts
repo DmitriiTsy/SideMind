@@ -6,7 +6,7 @@ import analytics from '@react-native-firebase/analytics'
 import auth from '@react-native-firebase/auth'
 import uuid from 'react-native-uuid'
 
-import { Image } from 'react-native'
+import RNFastImage, { Source } from 'react-native-fast-image'
 
 import { Inject, Injectable } from 'IoC'
 
@@ -105,11 +105,11 @@ export class FirebaseService implements IFirebaseService {
 
   async mapAvatars(data: IFirebaseResponseBots, cache?: boolean) {
     const botsList: AvatarModel[][] = []
-    const prefetchImages = []
+    const prefetchImages: Source[] = []
 
     for (const el of Object.entries(data)) {
       if (cache) {
-        const cb = (url: string) => prefetchImages.push(Image.prefetch(url))
+        const cb = (url: string) => prefetchImages.push({ uri: url })
 
         botsList.push(await this.cacheImages(el, cb))
       } else {
@@ -117,7 +117,7 @@ export class FirebaseService implements IFirebaseService {
       }
     }
 
-    await Promise.all(prefetchImages)
+    RNFastImage.preload(prefetchImages)
 
     return botsList
   }
@@ -194,16 +194,26 @@ export class FirebaseService implements IFirebaseService {
     imagePath: string,
     localPath: string
   ) {
-    const downloadUrl = await this._uploadFile(imagePath, localPath)
-    await Promise.all([
-      await this._avatarsCollection.doc('Custom').update({
-        [this._systemInfoService.deviceId]:
-          firestore.FieldValue.arrayUnion(avatar)
-      }),
-      Image.prefetch(downloadUrl)
-    ])
+    try {
+      if (localPath) {
+        await this._uploadFile(imagePath, localPath)
 
-    return downloadUrl
+        imagePath = await storage().ref(imagePath).getDownloadURL()
+        RNFastImage.preload([{ uri: imagePath }])
+      }
+
+      await Promise.all([
+        await this._avatarsCollection.doc('Custom').update({
+          [this._systemInfoService.deviceId]:
+            firestore.FieldValue.arrayUnion(avatar)
+        })
+      ])
+
+      return imagePath
+    } catch (e) {
+      console.log('create custom Avatar', e)
+      return ''
+    }
   }
 
   _uploadFile(imagePath: string, localPath: string) {
@@ -212,12 +222,12 @@ export class FirebaseService implements IFirebaseService {
 
       const task = ref.putFile(localPath)
 
-      return task.then(() => {
-        return ref.getDownloadURL()
+      return task.then((e) => {
+        return true
       })
     } catch (e) {
-      console.log(e)
-      return ''
+      console.log('uploadFile', e)
+      return false
     }
   }
 }

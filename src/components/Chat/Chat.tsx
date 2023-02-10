@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react'
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
+
+import RNFastImage from 'react-native-fast-image'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
@@ -36,7 +38,12 @@ export const Chat = observer(() => {
           <Svg name={'PointerLeft'} />
         </Pressable>
         {chatVM.avatar.imagePath ? (
-          <Image source={{ uri: chatVM.avatar.imagePath }} style={SS.avatar} />
+          <RNFastImage
+            source={{
+              uri: chatVM.avatar.imagePath
+            }}
+            style={SS.avatar}
+          />
         ) : (
           <Svg name={'AvatarEmpty'} size={36} style={{ marginRight: 7 }} />
         )}
