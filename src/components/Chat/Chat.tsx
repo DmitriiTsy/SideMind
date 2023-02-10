@@ -10,16 +10,14 @@ import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { Resetting } from 'components/Chat/components/Resetting'
 
-import { CommonScreenName } from 'constants/screen.types'
-
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const goBack = () => {
-    // navigation.goBack()
-    navigation.navigate(CommonScreenName.MainFeed)
+    navigation.goBack()
+    // navigation.navigate(CommonScreenName.MainFeed)
   }
 
   const resetAvailable = useMemo(

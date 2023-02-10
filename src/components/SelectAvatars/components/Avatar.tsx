@@ -27,9 +27,8 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
 
   const set = useCallback(() => {
     vm.setAvatars(avatar)
-    chatVM.setAvatar(avatar)
-    navigation.navigate(CommonScreenName.Chat)
-  }, [vm, avatar, chatVM, navigation])
+    navigation.navigate(CommonScreenName.MainFeed)
+  }, [vm, avatar, navigation])
 
   const update = useCallback(async () => {
     const _avatar = await appStore.updateUsersAvatars(avatar)

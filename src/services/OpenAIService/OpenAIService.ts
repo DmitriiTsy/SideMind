@@ -86,14 +86,16 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: this._avatar.params.presence_penalty,
         stop: ['###']
       })
-      console.log(res.data.choices[0].text)
+
+      if (isFirst) {
+        res.data.choices[0].text = this._checkQuotes(
+          res.data.choices[0].text.trim()
+        )
+      }
+
       this._history = `${this._history} ${res.data.choices[0].text}`
 
       this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
-
-      if (isFirst) {
-        return this._checkQuotes(res.data.choices[0].text.trim())
-      }
 
       return res.data.choices[0].text.trim()
     } catch (e) {
