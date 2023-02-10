@@ -55,7 +55,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style, savedData }) => {
   const onContentSizeChange = useCallback(
     (e: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
       const h = e.nativeEvent.contentSize.height
-      height.value = withTiming(h > MIN_HEIGHT ? h + 30 : MIN_HEIGHT)
+      height.value = withTiming(h > MIN_HEIGHT * 0.2 ? h + 30 : MIN_HEIGHT)
     },
     [height]
   )
@@ -74,6 +74,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style, savedData }) => {
           style={[SS.textInput]}
           keyboardAppearance={'dark'}
           blurOnSubmit={true}
+
         />
         {value && (
           <Animated.View
