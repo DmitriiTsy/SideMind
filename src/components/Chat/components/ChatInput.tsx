@@ -26,11 +26,9 @@ export const ChatInput = () => {
       <View style={[SS.inputContainer]}>
         <TextInput
           multiline={true}
-          // placeholder={t.get('start message')}
-          // placeholderTextColor={'#FFFFFF80'}
           value={value}
           onChangeText={onChangeText}
-          style={[SS.input]}
+          style={SS.input}
           keyboardAppearance={'dark'}
         />
       </View>
