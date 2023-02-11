@@ -1,5 +1,5 @@
 import React, { FC, useCallback } from 'react'
-import { StyleSheet, Text, View, Pressable } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
@@ -21,16 +21,23 @@ interface IBotProps {
 }
 
 export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
-  const vm = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
+  const selectAvatarsVM = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
   const set = useCallback(() => {
-    vm.setAvatars(avatar)
-    navigation.navigate(CommonScreenName.MainFeed)
-  }, [vm, avatar, navigation])
+    selectAvatarsVM.setAvatars(avatar)
+    chatVM.setAvatar(avatar)
+    navigation.reset({
+      index: 1,
+      routes: [
+        { name: CommonScreenName.MainFeed },
+        { name: CommonScreenName.Chat }
+      ]
+    })
+  }, [selectAvatarsVM, avatar, chatVM, navigation])
 
   const update = useCallback(async () => {
     const _avatar = await appStore.updateUsersAvatars(avatar)
@@ -43,7 +50,8 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
     <Pressable onPress={single ? update : set} style={SS.container}>
       <RNFastImage
         source={{
-          uri: avatar.imagePath
+          uri: avatar.imagePath,
+          cache: RNFastImage.cacheControl.cacheOnly
         }}
         style={SS.image}
       />

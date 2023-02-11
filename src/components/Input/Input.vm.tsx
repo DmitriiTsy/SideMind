@@ -14,7 +14,7 @@ interface IInputVMProps {
   ref?: RefObject<TextInput>
   onFocus?: () => void
   onBlur?: () => void
-  instantOpening?: boolean
+  autoFocus?: boolean
   onSubmitEditing?: () => void
 }
 
@@ -28,7 +28,7 @@ export interface IInputVM {
   ref: RefObject<TextInput>
   onFocus: () => void
   onBlur: () => void
-  instantOpening: boolean
+  autoFocus: boolean
   onSubmitEditing: () => void
 
   isFocused: boolean
@@ -49,7 +49,7 @@ export class InputVM implements IInputVM {
   ref: RefObject<TextInput>
   onFocusProps: () => void
   onBlurProps: () => void
-  instantOpening: boolean
+  autoFocus: boolean
   onSubmitEditing: () => void
 
   @observable isFocused: boolean
@@ -63,10 +63,10 @@ export class InputVM implements IInputVM {
     this.ref = props.ref
     this.onFocusProps = props.onFocus
     this.onBlurProps = props.onBlur
-    this.instantOpening = props.instantOpening
+    this.autoFocus = props.autoFocus
     this.onSubmitEditing = props.onSubmitEditing
 
-    this.isFocused = props.instantOpening
+    this.isFocused = props.autoFocus
   }
 
   @computed

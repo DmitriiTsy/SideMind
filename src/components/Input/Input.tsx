@@ -1,12 +1,10 @@
-import React, { FC, useCallback, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import {
-  NativeSyntheticEvent,
   Pressable,
   StyleProp,
   StyleSheet,
   Text,
   TextInput,
-  TextInputContentSizeChangeEventData,
   View,
   ViewStyle
 } from 'react-native'
@@ -24,9 +22,6 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { deviceWidth } from 'utils/dimentions'
 import { IInputVM } from 'components/Input/Input.vm'
 
-const CLEAR_WIDTH = 83
-const MIN_HEIGHT = 45
-
 interface IInputProps {
   vm: IInputVM
   style?: StyleProp<ViewStyle>
@@ -42,12 +37,11 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
     ref,
     onFocus,
     onBlur,
-    instantOpening,
+    autoFocus,
     isFocused,
     onSubmitEditing
   } = vm
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const height = useSharedValue(MIN_HEIGHT)
   const clearPosition = useSharedValue(0)
 
   const animatedCleanBttn = useAnimatedStyle(() => ({
@@ -58,33 +52,20 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
     clearPosition.value = withTiming(value && isFocused ? -20 : 20)
   }, [clearPosition, isFocused, value])
 
-  const animatedHeight = useAnimatedStyle(() => ({
-    height: height.value
-  }))
-
-  const onContentSizeChange = useCallback(
-    (e: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-      const h = e.nativeEvent.contentSize.height
-      height.value = withTiming(h > MIN_HEIGHT ? h + 30 : MIN_HEIGHT)
-    },
-    [height]
-  )
-
   return (
     <View style={[SS.container, style]}>
       <Text style={SS.texts}>{t.get(label)}</Text>
-      <Animated.View style={[SS.textInputWrapper, animatedHeight]}>
+      <View style={[SS.textInputWrapper]}>
         <TextInput
           placeholder={t.get(placeholder)}
           placeholderTextColor="#989898"
           multiline={true}
           ref={ref && ref}
-          onFocus={onFocus && onFocus}
-          onBlur={onBlur && onBlur}
-          autoFocus={instantOpening}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          autoFocus={autoFocus}
           value={value}
           onChangeText={onChangeText}
-          onContentSizeChange={onContentSizeChange}
           style={[SS.textInput]}
           keyboardAppearance={'dark'}
           blurOnSubmit={true}
@@ -95,7 +76,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
             <Svg name={'CleanTextInput'} onPress={clear} />
           </Pressable>
         </Animated.View>
-      </Animated.View>
+      </View>
     </View>
   )
 })
@@ -125,13 +106,14 @@ const SS = StyleSheet.create({
     backgroundColor: '#2C2C2D'
   },
   textInput: {
-    backgroundColor: '#2C2C2D',
     color: '#FFFFFF',
     width: '100%',
     lineHeight: 16,
     fontWeight: '500',
     fontSize: 16,
-    paddingHorizontal: 18
+    paddingHorizontal: 18,
+    marginVertical: 12,
+    textAlignVertical: 'center'
   },
   svgContainer: {
     width: 35,

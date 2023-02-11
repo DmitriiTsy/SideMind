@@ -6,7 +6,7 @@ import analytics from '@react-native-firebase/analytics'
 import auth from '@react-native-firebase/auth'
 import uuid from 'react-native-uuid'
 
-import RNFastImage, { Source } from 'react-native-fast-image'
+import RNFastImage from 'react-native-fast-image'
 
 import { Inject, Injectable } from 'IoC'
 
@@ -105,30 +105,22 @@ export class FirebaseService implements IFirebaseService {
 
   async mapAvatars(data: IFirebaseResponseBots, cache?: boolean) {
     const botsList: AvatarModel[][] = []
-    const prefetchImages: Source[] = []
 
     for (const el of Object.entries(data)) {
       if (cache) {
-        const cb = (url: string) => prefetchImages.push({ uri: url })
-
-        botsList.push(await this.cacheImages(el, cb))
+        botsList.push(await this.cacheImages(el))
       } else {
         botsList.push(el[1])
       }
     }
 
-    RNFastImage.preload(prefetchImages)
-
     return botsList
   }
 
-  async cacheImages(
-    avatars: [string, AvatarModel[]],
-    prefetchCb: (url: string) => void
-  ) {
+  async cacheImages(avatars: [string, AvatarModel[]]) {
     for (const avatar of Object.values(avatars[1])) {
       avatar.imagePath = await storage().ref(avatar.imagePath).getDownloadURL()
-      prefetchCb(avatar.imagePath)
+      RNFastImage.preload([{ uri: avatar.imagePath }])
     }
     return avatars[1]
   }

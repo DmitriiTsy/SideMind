@@ -1,7 +1,11 @@
 import { Route } from '@react-navigation/routers'
 
 import { RefObject } from 'react'
-import { NavigationContainerRef } from '@react-navigation/native'
+import {
+  NavigationContainerRef,
+  NavigationState,
+  PartialState
+} from '@react-navigation/native'
 
 import { action, computed, observable } from 'mobx'
 
@@ -26,6 +30,8 @@ export interface INavigationService<RouteName extends ScreenName = any> {
   init(navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>): void
 
   emitNavigationStateChange(): void
+
+  reset(state: PartialState<NavigationState> | NavigationState): void
 }
 
 @Injectable()
@@ -60,6 +66,10 @@ export class NavigationService implements INavigationService {
   @action.bound
   emitNavigationStateChange() {
     this.currentRoute = this._navigationRef?.current?.getCurrentRoute()
+  }
+
+  reset(state: PartialState<NavigationState> | NavigationState) {
+    this._navigationRef?.current?.reset(state)
   }
 
   goBack() {
