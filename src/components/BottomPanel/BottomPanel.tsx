@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming
@@ -33,12 +34,20 @@ export const BottomPanel = observer(() => {
   }))
 
   useEffect(() => {
-    if (vm.content) {
+    if (vm.content && !vm.closing) {
       position.value = withTiming(0)
     } else {
-      position.value = withTiming(height)
+      const clear = () => {
+        vm.content = null
+        vm.closing = false
+      }
+      position.value = withTiming(
+        height,
+        {},
+        (finished) => finished && runOnJS(clear)()
+      )
     }
-  }, [height, position, vm.content])
+  }, [height, position, vm, vm.closing, vm.content])
 
   return (
     <Animated.View
