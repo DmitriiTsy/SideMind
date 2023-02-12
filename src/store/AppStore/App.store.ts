@@ -16,8 +16,14 @@ export interface IAppStore {
 
   init(): void
 
-  setUsersAvatars(id: number[] | string[]): void
+  setUsersAvatars(avatar: AvatarModel): void
+
   updateUsersAvatars(avatar: AvatarModel): AvatarModel | null
+  updateUsersAvatars(
+    avatar: AvatarModel,
+    imagePath: string,
+    localPath: string
+  ): AvatarModel | null
 
   setAvatarsFromStorage(): void
 
@@ -62,28 +68,39 @@ export class AppStore implements IAppStore {
   }
 
   @action.bound
-  setUsersAvatars(id: number[] | string[]) {
+  setUsersAvatars(avatar: AvatarModel) {
     this._storageService.setUserLogin()
-    const _avatars: AvatarModel[] = []
-    this.commonAvatars.map((avatars) =>
-      avatars.map(
-        (avatar) =>
-          id.findIndex((el) => el === avatar.id) !== -1 && _avatars.push(avatar)
-      )
-    )
+
+    const _avatars: AvatarModel[] = [avatar]
     this.startingAvatars.map((bots) => bots.map((bot) => _avatars.unshift(bot)))
     this.usersAvatars = _avatars
+
     this._storageService.setUserAvatars(this.usersAvatars)
     this._firebaseService.setAvatars(this.usersAvatars)
   }
 
-  @action.bound
-  updateUsersAvatars(avatar: AvatarModel) {
+  async updateUsersAvatars(avatar: AvatarModel)
+  async updateUsersAvatars(
+    avatar: AvatarModel,
+    imagePath?: string,
+    localPath?: string
+  ) {
     const _avatar = this.usersAvatars.find((el) => el.id === avatar.id)
     if (!_avatar) {
-      this.usersAvatars = [avatar, ...this.usersAvatars]
-      this._storageService.setUserAvatars(this.usersAvatars)
-      this._firebaseService.updateAvatars(avatar.id)
+      if (imagePath && localPath) {
+        avatar.imagePath = await this._firebaseService.createCustomAvatar(
+          avatar,
+          imagePath,
+          localPath
+        )
+      }
+
+      runInAction(() => {
+        this.usersAvatars.unshift(avatar)
+        this._storageService.setUserAvatars(this.usersAvatars)
+        this._firebaseService.updateAvatars(avatar.id)
+      })
+
       return null
     }
     return _avatar

@@ -1,35 +1,17 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  NativeSyntheticEvent,
-  TextInputContentSizeChangeEventData
-} from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { StyleSheet, View, TextInput } from 'react-native'
 
 import { useInject } from 'IoC'
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { Svg } from 'components/ui/Svg'
 import { deviceWidth } from 'utils/dimentions'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 
-const MIN_HEIGHT = 28
-
 export const ChatInput = () => {
-  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const [value, setValue] = useState('')
-  const [inputHeight, setInputHeight] = useState(MIN_HEIGHT)
 
   const onChangeText = (text: string) => {
     setValue(text)
-  }
-
-  const onContentSizeChange = (
-    e: NativeSyntheticEvent<TextInputContentSizeChangeEventData>
-  ) => {
-    const { height } = e.nativeEvent.contentSize
-    setInputHeight(height > MIN_HEIGHT ? height + 15 : MIN_HEIGHT)
   }
 
   const submit = useCallback(() => {
@@ -39,26 +21,21 @@ export const ChatInput = () => {
     }
   }, [chatVM, value])
 
-  const isMultiline = useMemo(() => inputHeight > 28, [inputHeight])
-
   return (
-    <View style={[SS.container, isMultiline && SS.containerOnChange]}>
+    <View style={[SS.container, SS.containerOnChange]}>
       <View style={[SS.inputContainer]}>
         <TextInput
           multiline={true}
-          placeholder={t.get('start message')}
-          placeholderTextColor={'#FFF'}
           value={value}
           onChangeText={onChangeText}
-          onContentSizeChange={onContentSizeChange}
-          style={[SS.input, { height: inputHeight }]}
+          style={SS.input}
           keyboardAppearance={'dark'}
         />
       </View>
       <Svg
         name={value && !chatVM.pending ? 'EnterActive' : 'Enter'}
         onPress={submit}
-        style={isMultiline && SS.enter}
+        style={SS.enter}
         size={32}
       />
     </View>
@@ -74,7 +51,7 @@ const SS = StyleSheet.create({
     borderColor: '#333333'
   },
   enter: {
-    marginBottom: 6
+    marginBottom: 10
   },
   inputContainer: {
     backgroundColor: '#222222',
@@ -88,7 +65,11 @@ const SS = StyleSheet.create({
     color: '#FFF',
     width: deviceWidth * 0.85,
     paddingHorizontal: 8,
-    marginVertical: 4
+    marginTop: 6,
+    marginBottom: 8,
+    fontSize: 16,
+    fontWeight: '400',
+    textAlignVertical: 'center'
   },
   containerOnChange: {
     alignItems: 'flex-end'

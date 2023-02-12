@@ -28,8 +28,11 @@ export const CreateMindPickImage = observer(() => {
     (res: ImagePickerResponse) => {
       if (!res.didCancel && !res.errorCode && res.assets.length) {
         const asset = res.assets[0]
-        if (asset.uri) {
-          createMindVM.uri = asset.uri
+        if (asset.uri && asset.fileName) {
+          createMindVM.image = {
+            localePath: asset.uri,
+            fileName: asset.fileName
+          }
         }
       }
     },
@@ -42,10 +45,10 @@ export const CreateMindPickImage = observer(() => {
         options: [
           t.get('take photo'),
           t.get('upload photo'),
-          t.get('generate avatar'),
+          // t.get('generate avatar'),
           t.get('cancel')
         ],
-        cancelButtonIndex: 3,
+        cancelButtonIndex: 2,
         userInterfaceStyle: 'dark'
       },
       async (buttonIndex) => {
@@ -57,19 +60,19 @@ export const CreateMindPickImage = observer(() => {
           const res = await launchImageLibrary({ mediaType: 'photo' })
           _setAvatar(res)
         }
-        if (buttonIndex === 2) {
-          console.log('ai generated avatar')
-        }
+        // if (buttonIndex === 2) {
+        //   console.log('ai generated avatar')
+        // }
       }
     )
   }
   return (
     <View style={SS.container}>
       <Pressable onPress={AvatarChooseHandler}>
-        {createMindVM.uri ? (
+        {createMindVM.image ? (
           <Image
-            style={{ width: 108, height: 108, borderRadius: 50 }}
-            source={{ uri: createMindVM.uri }}
+            style={{ width: 108, height: 108, borderRadius: 100 }}
+            source={{ uri: createMindVM.image.localePath }}
           />
         ) : (
           <Svg name={'AvatarEmpty'} />
@@ -91,7 +94,10 @@ const SS = StyleSheet.create({
     paddingHorizontal: 14
   },
   textsWrapper: {
-    paddingVertical: 16
+    padding: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center'
   },
   texts: {
     fontWeight: '500',

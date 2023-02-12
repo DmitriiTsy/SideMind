@@ -1,12 +1,10 @@
-import React, { FC, useCallback, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import {
-  NativeSyntheticEvent,
   Pressable,
   StyleProp,
   StyleSheet,
   Text,
   TextInput,
-  TextInputContentSizeChangeEventData,
   View,
   ViewStyle
 } from 'react-native'
@@ -23,68 +21,62 @@ import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { deviceWidth } from 'utils/dimentions'
 import { IInputVM } from 'components/Input/Input.vm'
-import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
-const CLEAR_WIDTH = 83
-const MIN_HEIGHT = 45
 
 interface IInputProps {
   vm: IInputVM
   style?: StyleProp<ViewStyle>
-  savedData: any
 }
 
-export const Input: FC<IInputProps> = observer(({ vm, style, savedData }) => {
-  const { value, label, placeholder, onChangeText, clear } = vm
-  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+export const Input: FC<IInputProps> = observer(({ vm, style }) => {
+  const {
+    value,
+    label,
+    placeholder,
+    onChangeText,
+    clear,
+    ref,
+    onFocus,
+    onBlur,
+    autoFocus,
+    isFocused,
+    onSubmitEditing
+  } = vm
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const height = useSharedValue(MIN_HEIGHT)
-  const clearPosition = useSharedValue(value ? -CLEAR_WIDTH : deviceWidth)
+  const clearPosition = useSharedValue(0)
 
   const animatedCleanBttn = useAnimatedStyle(() => ({
     transform: [{ translateX: clearPosition.value }]
   }))
 
   useEffect(() => {
-    clearPosition.value = withTiming(value ? -18 : 0)
-  }, [clearPosition, value])
-
-  const animatedHeight = useAnimatedStyle(() => ({
-    height: height.value
-  }))
-
-  const onContentSizeChange = useCallback(
-    (e: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
-      const h = e.nativeEvent.contentSize.height
-      height.value = withTiming(h > MIN_HEIGHT ? h + 30 : MIN_HEIGHT)
-    },
-    [height]
-  )
+    clearPosition.value = withTiming(value && isFocused ? -20 : 20)
+  }, [clearPosition, isFocused, value])
 
   return (
     <View style={[SS.container, style]}>
       <Text style={SS.texts}>{t.get(label)}</Text>
-      <Animated.View style={[SS.textInputWrapper, animatedHeight]}>
+      <View style={[SS.textInputWrapper]}>
         <TextInput
           placeholder={t.get(placeholder)}
           placeholderTextColor="#989898"
           multiline={true}
-          defaultValue={savedData ? savedData : value}
+          ref={ref && ref}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          autoFocus={autoFocus}
+          value={value}
           onChangeText={onChangeText}
-          onContentSizeChange={onContentSizeChange}
           style={[SS.textInput]}
           keyboardAppearance={'dark'}
           blurOnSubmit={true}
+          onSubmitEditing={onSubmitEditing && onSubmitEditing}
         />
-        {value && (
-          <Animated.View
-            style={[animatedCleanBttn, value && { alignSelf: 'center' }]}
-          >
-            <Pressable onPress={clear}>
-              <Svg name={'CleanTextInput'} />
-            </Pressable>
-          </Animated.View>
-        )}
-      </Animated.View>
+        <Animated.View style={[animatedCleanBttn]}>
+          <Pressable onPress={clear} style={SS.svgContainer}>
+            <Svg name={'CleanTextInput'} onPress={clear} />
+          </Pressable>
+        </Animated.View>
+      </View>
     </View>
   )
 })
@@ -94,8 +86,9 @@ const SS = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    width: '100%',
-    marginBottom: 15
+    marginBottom: 15,
+    minHeight: 45,
+    width: deviceWidth
   },
   texts: {
     textAlign: 'left',
@@ -113,12 +106,19 @@ const SS = StyleSheet.create({
     backgroundColor: '#2C2C2D'
   },
   textInput: {
-    backgroundColor: '#2C2C2D',
     color: '#FFFFFF',
     width: '100%',
-    fontSize: 16,
     lineHeight: 16,
-    fontWeight: '400',
-    paddingHorizontal: 18
+    fontWeight: '500',
+    fontSize: 16,
+    paddingHorizontal: 18,
+    marginVertical: 12,
+    textAlignVertical: 'center'
+  },
+  svgContainer: {
+    width: 35,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })

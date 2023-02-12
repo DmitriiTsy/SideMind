@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react'
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
-import React, { useEffect } from 'react'
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native'
+import React from 'react'
 
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
@@ -9,21 +9,21 @@ import {
   CreateMindHeader,
   CreateMindInputs,
   CreateMindPickImage
-} from 'components/BottomPanel/content/CreateMind/components'
+} from './components'
 
 export const CreateMind = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
-  createMindVM.edit
-    ? null
-    : useEffect(() => {
-        createMindVM.clearAll()
-      })
 
   return (
     <View style={[SS.container]}>
       <CreateMindHeader />
-      <CreateMindPickImage />
-      <CreateMindInputs />
+      <ScrollView
+        automaticallyAdjustKeyboardInsets={true}
+        showsVerticalScrollIndicator={false}
+      >
+        <CreateMindPickImage />
+        <CreateMindInputs />
+      </ScrollView>
       {/*<View*/}
       {/*  style={{*/}
       {/*    flexDirection: 'row',*/}
@@ -68,7 +68,7 @@ export const CreateMind = observer(() => {
       {/*    style={{ marginTop: 21 }}*/}
       {/*  />*/}
       {/*</View>*/}
-      {/*<Pressable style={{ marginTop: 21 }}>*/}
+      {/*<Pressable style={{ marginTop: 21 }} onPress={generateImage}>*/}
       {/*  <Text>Generate avatar</Text>*/}
       {/*</Pressable>*/}
       {createMindVM.pending && (

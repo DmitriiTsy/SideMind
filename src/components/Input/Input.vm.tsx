@@ -1,5 +1,8 @@
 import { action, computed, observable } from 'mobx'
 
+import { RefObject } from 'react'
+import { TextInput } from 'react-native'
+
 import { Translation } from 'services'
 
 interface IInputVMProps {
@@ -8,6 +11,11 @@ interface IInputVMProps {
   minLength?: number
   maxLength?: number
   errorText?: keyof Translation
+  ref?: RefObject<TextInput>
+  onFocus?: () => void
+  onBlur?: () => void
+  autoFocus?: boolean
+  onSubmitEditing?: () => void
 }
 
 export interface IInputVM {
@@ -17,6 +25,13 @@ export interface IInputVM {
   minLength: number
   maxLength: number
   errorText: keyof Translation
+  ref: RefObject<TextInput>
+  onFocus: () => void
+  onBlur: () => void
+  autoFocus: boolean
+  onSubmitEditing: () => void
+
+  isFocused: boolean
 
   hasError: boolean | keyof Translation
 
@@ -31,6 +46,13 @@ export class InputVM implements IInputVM {
   minLength: number
   maxLength: number
   errorText: keyof Translation
+  ref: RefObject<TextInput>
+  onFocusProps: () => void
+  onBlurProps: () => void
+  autoFocus: boolean
+  onSubmitEditing: () => void
+
+  @observable isFocused: boolean
 
   constructor(props: IInputVMProps) {
     this.placeholder = props.placeholder
@@ -38,6 +60,13 @@ export class InputVM implements IInputVM {
     this.minLength = props.minLength
     this.maxLength = props.maxLength
     this.errorText = props.errorText
+    this.ref = props.ref
+    this.onFocusProps = props.onFocus
+    this.onBlurProps = props.onBlur
+    this.autoFocus = props.autoFocus
+    this.onSubmitEditing = props.onSubmitEditing
+
+    this.isFocused = props.autoFocus
   }
 
   @computed
@@ -46,6 +75,18 @@ export class InputVM implements IInputVM {
       this.value.length > this.maxLength
       ? this.errorText
       : false
+  }
+
+  @action.bound
+  onFocus() {
+    this.onFocusProps && this.onFocusProps()
+    this.isFocused = true
+  }
+
+  @action.bound
+  onBlur() {
+    this.onBlurProps && this.onBlurProps()
+    this.isFocused = false
   }
 
   @action.bound

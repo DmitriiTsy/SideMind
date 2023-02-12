@@ -1,5 +1,7 @@
 import React, { FC, useMemo } from 'react'
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Pressable } from 'react-native'
+
+import RNFastImage from 'react-native-fast-image'
 
 import { observer } from 'mobx-react'
 
@@ -37,9 +39,11 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
 
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      {avatar.imagePath ? (
-        <Image
-          source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
+      {!!avatar.imagePath ? (
+        <RNFastImage
+          source={{
+            uri: avatar.imagePath
+          }}
           style={SS.avatar}
         />
       ) : (

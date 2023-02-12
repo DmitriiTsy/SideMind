@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react'
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
+
+import RNFastImage from 'react-native-fast-image'
 
 import { useCallback } from 'react'
 
@@ -45,8 +47,10 @@ export const Chat = observer(() => {
         </Pressable>
         <Pressable onPress={editMindHandler} style={SS.containerAvatarText}>
           {chatVM.avatar.imagePath ? (
-            <Image
-              source={{ uri: chatVM.avatar.imagePath, cache: 'only-if-cached' }}
+            <RNFastImage
+              source={{
+                uri: chatVM.avatar.imagePath
+              }}
               style={SS.avatar}
             />
           ) : (
@@ -112,17 +116,23 @@ const SS = StyleSheet.create({
   },
   containerAvatarText: {
     alignItems: 'center',
-    justidyContent: 'center',
+    justifyContent: 'center',
     flexDirection: 'row',
     height: 50,
     width: 200
   },
   containerGoBack: {
-    height: 47,
-    width: 48,
+    height: 36,
+    width: 36,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 30
   },
-  resetContainer: { marginRight: 19 }
+  resetContainer: {
+    height: 36,
+    width: 36,
+    marginRight: 19,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 })

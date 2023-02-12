@@ -7,7 +7,6 @@ import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
-import { RotateInDownRight } from 'react-native-reanimated'
 
 export const CreateMindHeader = observer((props) => {
   const editable = props.editable
@@ -49,7 +48,9 @@ const SS = StyleSheet.create({
     borderTopRightRadius: 12,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
+    backgroundColor: '#303030',
+    marginBottom: 12
   },
   text: {
     fontWeight: '500',
@@ -61,7 +62,7 @@ const SS = StyleSheet.create({
   activeTextWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 17
+    height: 36
   },
   activeText: {
     fontWeight: '700',
