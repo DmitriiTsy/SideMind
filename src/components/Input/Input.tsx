@@ -101,7 +101,7 @@ const SS = StyleSheet.create({
   },
   textInputWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingRight: 18,
     backgroundColor: '#2C2C2D'
   },
