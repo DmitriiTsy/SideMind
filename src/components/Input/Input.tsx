@@ -94,8 +94,8 @@ const SS = StyleSheet.create({
     textAlign: 'left',
     color: '#989898',
     fontSize: 16,
-    lineHeight: 16,
-    fontWeight: '500',
+    lineHeight: 19,
+    fontWeight: '400',
     marginBottom: 8,
     paddingHorizontal: 18
   },

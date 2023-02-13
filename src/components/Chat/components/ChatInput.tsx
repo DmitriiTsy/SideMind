@@ -69,6 +69,7 @@ const SS = StyleSheet.create({
     marginBottom: 8,
     fontSize: 16,
     fontWeight: '400',
+    lineHeight: 19,
     textAlignVertical: 'center'
   },
   containerOnChange: {
