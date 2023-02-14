@@ -159,7 +159,11 @@ export class CreateMindVM implements ICreateMindVM {
     const bio = this.inputBio.value
     const tagLine = this.inputTagLine.value
     const uri = this.uri
-
+    this._ChatVM.avatar.name = name
+    this._ChatVM.avatar.bio = bio
+    this._ChatVM.avatar.tagLine = tagLine
+    this._ChatVM.avatar.imagePath = uri
+    this._ChatVM.changeEditable(true)
     const master = await this._firebaseService.getMasterPrompt()
     master.prompt = master.prompt.replace('{generated name by user}', name)
     master.prompt = master.prompt.replace('{generated bio by user}', bio)
@@ -168,23 +172,8 @@ export class CreateMindVM implements ICreateMindVM {
       master.prompt
     )}${master.introduce}`
 
-    const avatar = {
-      name,
-      tagLine,
-      imagePath: uri,
-      category: 'Master',
-      id: uuid.v4() as string,
-      prompt: generatedPrompt,
-      params: {
-        temperature: 0.73,
-        frequency_penalty: 0,
-        max_tokens: 721,
-        presence_penalty: 0,
-        top_p: 1
-      },
-      bio: bio
-    }
-    this._ChatVM.avatar = avatar
+    this._ChatVM.avatar.prompt = generatedPrompt
+    this._ChatVM.resetMessages()
     this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.Chat)
 
