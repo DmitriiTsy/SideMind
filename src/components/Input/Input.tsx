@@ -43,13 +43,13 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
     editable
   } = vm
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
-  const clearPosition = useSharedValue(0)
+  const clearPosition = useSharedValue(30)
   const animatedCleanBttn = useAnimatedStyle(() => ({
     transform: [{ translateX: clearPosition.value }]
   }))
 
   useEffect(() => {
-    clearPosition.value = withTiming(isFocused ? -20 : 20)
+    clearPosition.value = withTiming(isFocused ? -10 : 30)
   }, [clearPosition, isFocused])
 
   return (
@@ -108,7 +108,7 @@ const SS = StyleSheet.create({
   },
   textInput: {
     color: '#FFFFFF',
-    width: '100%',
+    width: '97%',
     lineHeight: 16,
     fontWeight: '500',
     fontSize: 16,

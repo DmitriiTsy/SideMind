@@ -20,6 +20,7 @@ export const CreateMind = observer(() => {
       <ScrollView
         automaticallyAdjustKeyboardInsets={true}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps={'handled'}
       >
         <View style={SS.container_textarea}>
           <CreateMindPickImage />
