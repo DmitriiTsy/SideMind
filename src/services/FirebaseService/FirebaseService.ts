@@ -262,7 +262,7 @@ export class FirebaseService implements IFirebaseService {
       const task = ref.putFile(localPath)
 
       return task.then((e) => {
-        return true
+        return !(e.state === 'error' || e.state === 'cancelled')
       })
     } catch (e) {
       console.log('uploadFile', e)

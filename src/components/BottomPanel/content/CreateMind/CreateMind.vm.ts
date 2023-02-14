@@ -92,7 +92,9 @@ export class CreateMindVM implements ICreateMindVM {
       placeholder: 'placeholder full name',
       minLength: 2,
       errorText: 'name requirements',
-      autoFocus: avatar?.category === EAvatarsCategory.Custom && true,
+      autoFocus: !avatar
+        ? true
+        : avatar.category === EAvatarsCategory.Custom && true,
       ref: refInputName,
       onSubmitEditing: () => {
         refInputName.current.blur()
@@ -203,6 +205,7 @@ export class CreateMindVM implements ICreateMindVM {
 
   async _createAvatar() {
     this.pending = true
+    console.log('create avatar')
 
     const name = this.inputName.value
     const bio = this.inputBio.value
