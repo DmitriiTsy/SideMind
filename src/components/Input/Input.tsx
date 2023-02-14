@@ -72,7 +72,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           onSubmitEditing={onSubmitEditing && onSubmitEditing}
           editable={editable}
         />
-        <Animated.View style={animatedCleanBttn}>
+        <Animated.View style={[animatedCleanBttn, SS.animatedContainer]}>
           <Pressable onPress={clear} style={SS.svgContainer}>
             <Svg name={'CleanTextInput'} onPress={clear} />
           </Pressable>
@@ -121,5 +121,9 @@ const SS = StyleSheet.create({
     height: 35,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  animatedContainer: {
+    alignSelf: 'flex-start',
+    marginTop: 4.5
   }
 })
