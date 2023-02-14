@@ -247,12 +247,14 @@ export class FirebaseService implements IFirebaseService {
 
     if (localPath) {
       await this._uploadFile(editedAvatar.imagePath, localPath)
+
+      const uri = await storage().ref(editedAvatar.imagePath).getDownloadURL()
+      RNFastImage.preload([{ uri }])
+
+      return uri
     }
 
-    const uri = await storage().ref(editedAvatar.imagePath).getDownloadURL()
-    RNFastImage.preload([{ uri }])
-
-    return uri
+    return ''
   }
 
   _uploadFile(imagePath: string, localPath: string) {
