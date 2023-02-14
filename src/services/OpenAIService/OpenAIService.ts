@@ -29,7 +29,7 @@ export class OpenAIService implements IOpenAIService {
   private _openAIApi: OpenAIApi
   private _history: string
   private _avatar: AvatarModel
-  private _model: string
+  private _model: EModel
   private _countError = 0
 
   constructor(
@@ -43,13 +43,13 @@ export class OpenAIService implements IOpenAIService {
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
-    this._model = EModel.davinci3
+    this._model = EModel.davinci2
   }
 
   async generatePrompt(prompt: string) {
     try {
       const res = await this._openAIApi.createCompletion({
-        model: 'text-davinci-003',
+        model: this._model,
         prompt: prompt,
         temperature: 0.73,
         max_tokens: 721,
