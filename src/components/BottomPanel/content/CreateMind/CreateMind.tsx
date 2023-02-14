@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react'
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native'
-import React from 'react'
+import React, { useRef } from 'react'
 
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
@@ -14,18 +14,24 @@ import {
 export const CreateMind = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
 
+  const refScrollView = useRef<ScrollView>()
+
+  const onContentSizeChange = () => {
+    refScrollView?.current?.scrollToEnd({ animated: true })
+  }
+
   return (
     <View style={[SS.container]}>
       <CreateMindHeader />
       <ScrollView
+        ref={refScrollView}
         automaticallyAdjustKeyboardInsets={true}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps={'handled'}
+        onContentSizeChange={onContentSizeChange}
       >
-        <View style={SS.container_textarea}>
-          <CreateMindPickImage />
-          <CreateMindInputs />
-        </View>
+        <CreateMindPickImage />
+        <CreateMindInputs />
       </ScrollView>
       {/*<View*/}
       {/*  style={{*/}
@@ -98,8 +104,5 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.6)'
-  },
-  container_textarea: {
-    // marginTop: -20
   }
 })
