@@ -49,8 +49,8 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
   }))
 
   useEffect(() => {
-    clearPosition.value = withTiming(value && isFocused ? -20 : 20)
-  }, [clearPosition, isFocused, value])
+    clearPosition.value = withTiming(isFocused ? -20 : 20)
+  }, [clearPosition, isFocused])
 
   return (
     <View style={[SS.container, style]}>
@@ -72,7 +72,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           onSubmitEditing={onSubmitEditing && onSubmitEditing}
           editable={editable}
         />
-        <Animated.View style={[animatedCleanBttn]}>
+        <Animated.View style={animatedCleanBttn}>
           <Pressable onPress={clear} style={SS.svgContainer}>
             <Svg name={'CleanTextInput'} onPress={clear} />
           </Pressable>
