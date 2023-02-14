@@ -17,7 +17,7 @@
   "tagline requirements": "Tagline must have at least 5 characters",
   "bio requirements": "Bio must have at least 15 characters",
   "edit avatar": "Edit Avatar",
-  "full name": "Full Name",
+  "full name": "Name",
   "tagline": "Tagline",
   "bio": "Bio",
   "placeholder full name": "Ex.: Bailey",

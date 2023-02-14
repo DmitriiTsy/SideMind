@@ -21,8 +21,10 @@ export const CreateMind = observer(() => {
         automaticallyAdjustKeyboardInsets={true}
         showsVerticalScrollIndicator={false}
       >
-        <CreateMindPickImage />
-        <CreateMindInputs />
+        <View style={SS.container_textarea}>
+          <CreateMindPickImage />
+          <CreateMindInputs />
+        </View>
       </ScrollView>
       {/*<View*/}
       {/*  style={{*/}
@@ -95,5 +97,8 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.6)'
+  },
+  container_textarea: {
+    // marginTop: -20
   }
 })

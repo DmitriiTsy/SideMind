@@ -43,7 +43,6 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
   } = vm
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const clearPosition = useSharedValue(0)
-
   const animatedCleanBttn = useAnimatedStyle(() => ({
     transform: [{ translateX: clearPosition.value }]
   }))
@@ -101,7 +100,7 @@ const SS = StyleSheet.create({
   },
   textInputWrapper: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     paddingRight: 18,
     backgroundColor: '#2C2C2D'
   },
