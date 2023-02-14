@@ -24,6 +24,8 @@ import {
   ISystemInfoService,
   ISystemInfoServiceTid
 } from 'services/SystemInfoService'
+import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
+import { EBottomPanelContent } from 'components/BottomPanel/types'
 
 export const ICreateMindVMTid = Symbol.for('ICreateMindVMTid')
 
@@ -33,21 +35,22 @@ interface IImage {
 }
 
 export interface ICreateMindVM {
-  masterPrompt: string
   pending: boolean
   image: IImage | null
 
-  edit: boolean
   inputName: InputVM
   inputTagLine: InputVM
   inputBio: InputVM
   inputGenerateAvatar: InputVM
 
+  editingAvatar: AvatarModel | undefined
+
   hasError: keyof Translation | boolean
 
-  clearAll(): void
+  init(avatar?: AvatarModel): void
+
   submit(): void
-  editAvatar(): void
+  goBack(): void
 }
 
 @Injectable()
@@ -60,7 +63,7 @@ export class CreateMindVM implements ICreateMindVM {
   inputBio: InputVM
   inputGenerateAvatar: InputVM
 
-  masterPrompt: string
+  @observable editingAvatar: AvatarModel | undefined
 
   constructor(
     @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService,
@@ -73,7 +76,13 @@ export class CreateMindVM implements ICreateMindVM {
     @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
     @Inject(ISystemInfoServiceTid)
     private _systemInfoService: ISystemInfoService
-  ) {
+  ) {}
+
+  @action.bound
+  init(avatar?: AvatarModel) {
+    this.editingAvatar = avatar
+    this.image = null
+
     const refInputName = createRef<TextInput>()
     const refInputTag = createRef<TextInput>()
     const refInputBio = createRef<TextInput>()
@@ -83,12 +92,14 @@ export class CreateMindVM implements ICreateMindVM {
       placeholder: 'placeholder full name',
       minLength: 2,
       errorText: 'name requirements',
-      instantOpening: true,
+      autoFocus: avatar?.category === EAvatarsCategory.Custom && true,
       ref: refInputName,
       onSubmitEditing: () => {
         refInputName.current.blur()
         refInputTag.current.focus()
-      }
+      },
+      defaultValue: avatar && avatar.name,
+      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
     })
     this.inputTagLine = new InputVM({
       label: 'tagline',
@@ -99,21 +110,24 @@ export class CreateMindVM implements ICreateMindVM {
       onSubmitEditing: () => {
         refInputTag.current.blur()
         refInputBio.current.focus()
-      }
+      },
+      defaultValue: avatar && avatar.tagLine,
+      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
     })
     this.inputBio = new InputVM({
       label: 'bio',
       placeholder: 'placeholder bio',
       minLength: 10,
       errorText: 'bio requirements',
-      ref: refInputBio
+      ref: refInputBio,
+      defaultValue: avatar && avatar.bio,
+      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
     })
     this.inputGenerateAvatar = new InputVM({
       label: 'generate avatar input label',
       placeholder: 'generate avatar placeholder'
     })
   }
-  edit: false
 
   @computed
   get hasError() {
@@ -125,11 +139,12 @@ export class CreateMindVM implements ICreateMindVM {
   }
 
   @action.bound
-  clearAll() {
-    this.inputName.clear()
-    this.inputTagLine.clear()
-    this.inputBio.clear()
-    this.image = null
+  goBack() {
+    if (this.editingAvatar) {
+      this._bottomPanelVM.closePanel()
+    } else {
+      this._bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
+    }
   }
 
   @action.bound
@@ -139,31 +154,24 @@ export class CreateMindVM implements ICreateMindVM {
     if (error) {
       Alert.alert(this._t.get(error))
     } else {
-      this._masterPromptHandler()
-    }
-  }
-  @action.bound
-  editAvatar() {
-    const error = this.hasError
-    if (error) {
-      Alert.alert(this._t.get(error))
-    } else {
-      this._updateMasterPromptHandler()
+      if (this.editingAvatar) {
+        this._editAvatar()
+      } else {
+        this._createAvatar()
+      }
     }
   }
 
-  async _updateMasterPromptHandler() {
+  async _editAvatar() {
     this.pending = true
 
     const name = this.inputName.value
     const bio = this.inputBio.value
     const tagLine = this.inputTagLine.value
-    const uri = this.uri
-    this._ChatVM.avatar.name = name
-    this._ChatVM.avatar.bio = bio
-    this._ChatVM.avatar.tagLine = tagLine
-    this._ChatVM.avatar.imagePath = uri
-    this._ChatVM.changeEditable(true)
+    const imagePath = this.image
+      ? `Custom/${this._systemInfoService.deviceId}/${this.image.fileName}`
+      : this.editingAvatar.imagePath
+
     const master = await this._firebaseService.getMasterPrompt()
     master.prompt = master.prompt.replace('{generated name by user}', name)
     master.prompt = master.prompt.replace('{generated bio by user}', bio)
@@ -172,15 +180,28 @@ export class CreateMindVM implements ICreateMindVM {
       master.prompt
     )}${master.introduce}`
 
-    this._ChatVM.avatar.prompt = generatedPrompt
-    this._ChatVM.resetMessages()
+    const editedAvatar: AvatarModel = {
+      name,
+      tagLine,
+      imagePath,
+      category: this.editingAvatar.category,
+      id: this.editingAvatar.id,
+      prompt: generatedPrompt,
+      params: this.editingAvatar.params,
+      bio: bio
+    }
+
+    await this._appStore.editCustomAvatar(editedAvatar, this.image?.localePath)
+
+    this._ChatVM.setAvatar(
+      this._appStore.usersAvatars.find((el) => el.id === editedAvatar.id)
+    )
     this._bottomPanelVM.closePanel()
-    this._navigationService.navigate(CommonScreenName.Chat)
 
     this.pending = false
   }
 
-  async _masterPromptHandler() {
+  async _createAvatar() {
     this.pending = true
 
     const name = this.inputName.value
@@ -188,10 +209,7 @@ export class CreateMindVM implements ICreateMindVM {
     const tagLine = this.inputTagLine.value
     const image = this.image
     const imagePath = image
-      ? `Custom/${this._systemInfoService.deviceId}/${image.fileName}`.replace(
-          /-/g,
-          ''
-        )
+      ? `Custom/${this._systemInfoService.deviceId}/${image.fileName}`
       : ''
 
     const master = await this._firebaseService.getMasterPrompt()
@@ -206,7 +224,7 @@ export class CreateMindVM implements ICreateMindVM {
       name,
       tagLine,
       imagePath,
-      category: 'Custom',
+      category: EAvatarsCategory.Custom,
       id: uuid.v4() as string,
       prompt: generatedPrompt,
       params: {

@@ -50,7 +50,7 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
     <Pressable onPress={single ? update : set} style={SS.container}>
       <RNFastImage
         source={{
-          uri: avatar.imagePath,
+          uri: avatar.uri,
           cache: RNFastImage.cacheControl.cacheOnly
         }}
         style={SS.image}

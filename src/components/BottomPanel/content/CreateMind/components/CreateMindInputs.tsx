@@ -6,13 +6,13 @@ import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 import { Input } from 'components/Input/Input'
 
-export const CreateMindInputs = observer((props) => {
+export const CreateMindInputs = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
   return (
     <>
-      <Input vm={createMindVM.inputName} savedData={props.name} />
-      <Input vm={createMindVM.inputTagLine} savedData={props.tagline} />
-      <Input vm={createMindVM.inputBio} savedData={props.bio} />
+      <Input vm={createMindVM.inputName} />
+      <Input vm={createMindVM.inputTagLine} />
+      <Input vm={createMindVM.inputBio} />
     </>
   )
 })

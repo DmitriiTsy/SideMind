@@ -16,12 +16,16 @@ import { Resetting } from 'components/Chat/components/Resetting'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
+
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+
   const goBack = () => {
     navigation.goBack()
   }
@@ -36,8 +40,9 @@ export const Chat = observer(() => {
   }
 
   const editMindHandler = useCallback(() => {
-    bottomPanelVM.openPanel(EBottomPanelContent.EditMind)
-  }, [bottomPanelVM])
+    createMindVM.init(chatVM.avatar)
+    bottomPanelVM.openPanel(EBottomPanelContent.CreateMind)
+  }, [bottomPanelVM, chatVM.avatar, createMindVM])
 
   const header = () => (
     <View style={SS.container}>
@@ -46,10 +51,10 @@ export const Chat = observer(() => {
           <Svg name={'PointerLeft'} />
         </Pressable>
         <Pressable onPress={editMindHandler} style={SS.containerAvatarText}>
-          {chatVM.avatar.imagePath ? (
+          {chatVM.avatar.uri ? (
             <RNFastImage
               source={{
-                uri: chatVM.avatar.imagePath
+                uri: chatVM.avatar.uri
               }}
               style={SS.avatar}
             />

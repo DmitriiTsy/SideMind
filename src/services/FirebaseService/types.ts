@@ -10,11 +10,18 @@ export const LOG_TYPE = {
   [ESender.RESET]: 'Reset'
 }
 
+export enum EAvatarsCategory {
+  Starting = 'Starting',
+  Common = 'Common',
+  Custom = 'Custom'
+}
+
 export interface AvatarModel {
   name: string
   tagLine: string
   imagePath: string
-  category: string
+  uri?: string
+  category: EAvatarsCategory
   id: number | string
   prompt: string
   params: {

@@ -16,6 +16,8 @@ interface IInputVMProps {
   onBlur?: () => void
   autoFocus?: boolean
   onSubmitEditing?: () => void
+  defaultValue?: string
+  editable?: boolean
 }
 
 export interface IInputVM {
@@ -30,6 +32,7 @@ export interface IInputVM {
   onBlur: () => void
   autoFocus: boolean
   onSubmitEditing: () => void
+  editable: boolean
 
   isFocused: boolean
 
@@ -51,6 +54,7 @@ export class InputVM implements IInputVM {
   onBlurProps: () => void
   autoFocus: boolean
   onSubmitEditing: () => void
+  editable: boolean
 
   @observable isFocused: boolean
 
@@ -65,7 +69,11 @@ export class InputVM implements IInputVM {
     this.onBlurProps = props.onBlur
     this.autoFocus = props.autoFocus
     this.onSubmitEditing = props.onSubmitEditing
+    this.editable = props.editable
 
+    if (props.defaultValue) {
+      this.value = props.defaultValue
+    }
     this.isFocused = props.autoFocus
   }
 

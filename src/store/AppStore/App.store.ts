@@ -1,7 +1,7 @@
 import { action, observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
-import { AvatarModel } from 'services/FirebaseService/types'
+import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
 import { ESender, IMessage } from 'components/Chat/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
@@ -25,15 +25,14 @@ export interface IAppStore {
     localPath: string
   ): AvatarModel | null
 
+  editCustomAvatar(editedAvatar: AvatarModel, localPath?: string): Promise<void>
+
   setAvatarsFromStorage(): void
 
   setMessageToAvatar(avatarId: number | string, message: IMessage): void
   setHistoryToAvatar(avatarId: number | string, history: string): void
 
-  resetMessages(
-    avatarId: number | string | number[],
-    avatarCat?: string
-  ): Promise<AvatarModel>
+  resetMessages(avatarId: number | string | number[]): Promise<AvatarModel>
 
   updateAvatarsFromFirebase(): void
 }
@@ -88,7 +87,7 @@ export class AppStore implements IAppStore {
     const _avatar = this.usersAvatars.find((el) => el.id === avatar.id)
     if (!_avatar) {
       if (imagePath && localPath) {
-        avatar.imagePath = await this._firebaseService.createCustomAvatar(
+        avatar.uri = await this._firebaseService.createCustomAvatar(
           avatar,
           imagePath,
           localPath
@@ -107,13 +106,51 @@ export class AppStore implements IAppStore {
   }
 
   @action.bound
+  async editCustomAvatar(
+    editedAvatar: AvatarModel,
+    localPath?: string
+  ): Promise<void> {
+    const _avatar = this.usersAvatars.find((el) => el.id === editedAvatar.id)
+
+    const oldAvatar: AvatarModel = {
+      name: _avatar.name,
+      tagLine: _avatar.tagLine,
+      imagePath: _avatar.imagePath,
+      category: _avatar.category,
+      id: _avatar.id,
+      prompt: _avatar.prompt,
+      params: _avatar.params,
+      bio: _avatar.bio
+    }
+
+    const uri = await this._firebaseService.editCustomAvatar(
+      oldAvatar,
+      editedAvatar,
+      localPath
+    )
+
+    runInAction(() => {
+      this.usersAvatars = this.usersAvatars.map((el) => {
+        if (el.id === editedAvatar.id) {
+          return {
+            ...editedAvatar,
+            uri
+          }
+        }
+        return el
+      })
+      this._storageService.setUserAvatars(this.usersAvatars)
+    })
+  }
+
+  @action.bound
   setAvatarsFromStorage() {
     this.usersAvatars = this._storageService.getUserAvatars()
   }
 
   @action.bound
-  async resetMessages(avatarId: number, avatarCat?: string) {
-    avatarCat !== 'Master' ? await this.updateAvatarsFromFirebase() : null
+  async resetMessages(avatarId: number) {
+    await this.updateAvatarsFromFirebase()
 
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
@@ -164,9 +201,10 @@ export class AppStore implements IAppStore {
   }
 
   async updateAvatarsFromFirebase() {
-    const [commonAvatars, startingAvatars] = await Promise.all([
+    const [commonAvatars, startingAvatars, customAvatars] = await Promise.all([
       this._firebaseService.getCommonAvatars(),
-      this._firebaseService.getStartingAvatars()
+      this._firebaseService.getStartingAvatars(),
+      this._firebaseService.getCustomAvatars()
     ])
 
     runInAction(() => {
@@ -178,6 +216,21 @@ export class AppStore implements IAppStore {
         this.startingAvatars,
         startingAvatars
       )
+
+      if (customAvatars) {
+        this.usersAvatars = this.usersAvatars.map((el) => {
+          if (el.category === EAvatarsCategory.Custom) {
+            const _avatar = customAvatars.find((_el) => _el.id === el.id)
+
+            return {
+              ...el,
+              ..._avatar
+            }
+          }
+
+          return el
+        })
+      }
 
       this._mapUpdateUsersAvatarsFromFirebase()
     })

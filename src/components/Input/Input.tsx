@@ -39,7 +39,8 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
     onBlur,
     autoFocus,
     isFocused,
-    onSubmitEditing
+    onSubmitEditing,
+    editable
   } = vm
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const clearPosition = useSharedValue(0)
@@ -70,6 +71,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
           keyboardAppearance={'dark'}
           blurOnSubmit={true}
           onSubmitEditing={onSubmitEditing && onSubmitEditing}
+          editable={editable}
         />
         <Animated.View style={[animatedCleanBttn]}>
           <Pressable onPress={clear} style={SS.svgContainer}>

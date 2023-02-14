@@ -1,5 +1,4 @@
 export enum EBottomPanelContent {
   AddMind = 'AddMind',
-  CreateMind = 'CreateMind',
-  EditMind = 'EditMind'
+  CreateMind = 'CreateMind'
 }

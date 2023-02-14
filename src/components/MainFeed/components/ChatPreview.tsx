@@ -39,10 +39,10 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
 
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      {!!avatar.imagePath ? (
+      {!!avatar.uri ? (
         <RNFastImage
           source={{
-            uri: avatar.imagePath
+            uri: avatar.uri
           }}
           style={SS.avatar}
         />

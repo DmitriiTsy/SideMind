@@ -32,7 +32,7 @@ export const AddMind = observer(() => {
   }
 
   const newMind = useCallback(() => {
-    createMindVM.clearAll()
+    createMindVM.init(undefined, true)
     bottomPanelVM.openPanel(EBottomPanelContent.CreateMind)
   }, [bottomPanelVM, createMindVM])
 
