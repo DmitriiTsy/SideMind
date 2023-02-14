@@ -32,6 +32,8 @@ export interface IFirebaseService {
 
   getStartingAvatars(cache?: boolean): Promise<AvatarModel[][]>
 
+  getCustomAvatars(): Promise<AvatarModel[] | null>
+
   setAvatars(avatars: AvatarModel[]): void
 
   updateAvatars(avatarId: number | string): void
@@ -48,6 +50,12 @@ export interface IFirebaseService {
     avatar: AvatarModel,
     imagePath: string,
     localPath: string
+  ): Promise<string>
+
+  editCustomAvatar(
+    oldAvatar: AvatarModel,
+    editedAvatar: AvatarModel,
+    localPath?: string
   ): Promise<string>
 }
 
@@ -99,6 +107,18 @@ export class FirebaseService implements IFirebaseService {
     return this.mapAvatars(data, cache)
   }
 
+  async getCustomAvatars() {
+    const data = (await this._avatarsCollection.doc('Custom').get()).data()
+
+    for (const el of Object.keys(data)) {
+      if (el === this._systemInfoService.deviceId) {
+        return data[this._systemInfoService.deviceId]
+      }
+    }
+
+    return null
+  }
+
   async getMasterPrompt() {
     return (await this._masterPrompt.doc('master').get()).data()
   }
@@ -119,8 +139,8 @@ export class FirebaseService implements IFirebaseService {
 
   async cacheImages(avatars: [string, AvatarModel[]]) {
     for (const avatar of Object.values(avatars[1])) {
-      avatar.imagePath = await storage().ref(avatar.imagePath).getDownloadURL()
-      RNFastImage.preload([{ uri: avatar.imagePath }])
+      avatar.uri = await storage().ref(avatar.imagePath).getDownloadURL()
+      RNFastImage.preload([{ uri: avatar.uri }])
     }
     return avatars[1]
   }
@@ -206,6 +226,33 @@ export class FirebaseService implements IFirebaseService {
       console.log('create custom Avatar', e)
       return ''
     }
+  }
+
+  async editCustomAvatar(
+    oldAvatar: AvatarModel,
+    editedAvatar: AvatarModel,
+    localPath?: string
+  ) {
+    const docCustom = this._avatarsCollection.doc('Custom')
+    const { deviceId } = this._systemInfoService
+
+    await Promise.all([
+      docCustom.update({
+        [deviceId]: firestore.FieldValue.arrayRemove(oldAvatar)
+      }),
+      docCustom.update({
+        [deviceId]: firestore.FieldValue.arrayUnion(editedAvatar)
+      })
+    ])
+
+    if (localPath) {
+      await this._uploadFile(editedAvatar.imagePath, localPath)
+    }
+
+    const uri = await storage().ref(editedAvatar.imagePath).getDownloadURL()
+    RNFastImage.preload([{ uri }])
+
+    return uri
   }
 
   _uploadFile(imagePath: string, localPath: string) {

@@ -1,25 +1,18 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
-import { EBottomPanelContent } from 'components/BottomPanel/types'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 export const CreateMindHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
-  const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
-
-  const back = useCallback(() => {
-    bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
-  }, [bottomPanelVM])
 
   return (
     <View style={SS.container}>
-      <Pressable style={SS.activeTextWrapper} onPress={back}>
+      <Pressable style={SS.activeTextWrapper} onPress={createMindVM.goBack}>
         <Text style={SS.activeText}>{t.get('cancel')}</Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>

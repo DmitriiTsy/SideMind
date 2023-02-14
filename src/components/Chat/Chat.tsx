@@ -5,21 +5,29 @@ import { observer } from 'mobx-react'
 
 import RNFastImage from 'react-native-fast-image'
 
+import { useCallback } from 'react'
+
 import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
 import { Resetting } from 'components/Chat/components/Resetting'
+import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
+import { EBottomPanelContent } from 'components/BottomPanel/types'
+
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
+  const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+
   const goBack = () => {
     navigation.goBack()
-    // navigation.navigate(CommonScreenName.MainFeed)
   }
 
   const resetAvailable = useMemo(
@@ -31,23 +39,30 @@ export const Chat = observer(() => {
     chatVM.changeResetState(true)
   }
 
+  const editMindHandler = useCallback(() => {
+    createMindVM.init(chatVM.avatar)
+    bottomPanelVM.openPanel(EBottomPanelContent.CreateMind)
+  }, [bottomPanelVM, chatVM.avatar, createMindVM])
+
   const header = () => (
     <View style={SS.container}>
       <View style={SS.leftSide}>
         <Pressable style={SS.containerGoBack} onPress={goBack}>
           <Svg name={'PointerLeft'} />
         </Pressable>
-        {chatVM.avatar.imagePath ? (
-          <RNFastImage
-            source={{
-              uri: chatVM.avatar.imagePath
-            }}
-            style={SS.avatar}
-          />
-        ) : (
-          <Svg name={'AvatarEmpty'} size={36} style={{ marginRight: 7 }} />
-        )}
-        <Text style={SS.title}>{chatVM.avatar.name}</Text>
+        <Pressable onPress={editMindHandler} style={SS.containerAvatarText}>
+          {chatVM.avatar.uri ? (
+            <RNFastImage
+              source={{
+                uri: chatVM.avatar.uri
+              }}
+              style={SS.avatar}
+            />
+          ) : (
+            <Svg name={'AvatarEmpty'} size={36} style={{ marginRight: 7 }} />
+          )}
+          <Text style={SS.title}>{chatVM.avatar.name}</Text>
+        </Pressable>
       </View>
       <Pressable
         style={SS.resetContainer}
@@ -103,6 +118,13 @@ const SS = StyleSheet.create({
     lineHeight: 16,
     letterSpacing: -0.3,
     color: '#FFFFFF'
+  },
+  containerAvatarText: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    height: 50,
+    width: 200
   },
   containerGoBack: {
     height: 36,

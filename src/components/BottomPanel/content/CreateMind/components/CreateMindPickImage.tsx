@@ -1,13 +1,8 @@
-import React, { useCallback } from 'react'
-import {
-  Pressable,
-  StyleSheet,
-  View,
-  Text,
-  ActionSheetIOS,
-  Image
-} from 'react-native'
+import React, { useCallback, useMemo } from 'react'
+import { ActionSheetIOS, Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
+
+import RNFastImage from 'react-native-fast-image'
 
 import {
   ImagePickerResponse,
@@ -19,10 +14,19 @@ import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
+import { EAvatarsCategory } from 'services/FirebaseService/types'
+import { nop } from 'utils/nop'
 
 export const CreateMindPickImage = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+
+  const isCustomAvatar = useMemo(() => {
+    return (
+      !createMindVM.editingAvatar ||
+      createMindVM.editingAvatar?.category === EAvatarsCategory.Custom
+    )
+  }, [createMindVM.editingAvatar])
 
   const _setAvatar = useCallback(
     (res: ImagePickerResponse) => {
@@ -66,19 +70,30 @@ export const CreateMindPickImage = observer(() => {
       }
     )
   }
+
   return (
     <View style={SS.container}>
-      <Pressable onPress={AvatarChooseHandler}>
-        {createMindVM.image ? (
-          <Image
-            style={{ width: 108, height: 108, borderRadius: 100 }}
-            source={{ uri: createMindVM.image.localePath }}
+      <Pressable onPress={isCustomAvatar ? AvatarChooseHandler : nop}>
+        {createMindVM.image || createMindVM.editingAvatar?.uri ? (
+          <RNFastImage
+            style={SS.image}
+            source={{
+              uri:
+                createMindVM.image?.localePath ||
+                createMindVM.editingAvatar?.uri,
+              cache: createMindVM.image
+                ? RNFastImage.cacheControl.immutable
+                : RNFastImage.cacheControl.cacheOnly
+            }}
           />
         ) : (
           <Svg name={'AvatarEmpty'} />
         )}
       </Pressable>
-      <Pressable style={SS.textsWrapper} onPress={AvatarChooseHandler}>
+      <Pressable
+        style={SS.textsWrapper}
+        onPress={isCustomAvatar ? AvatarChooseHandler : nop}
+      >
         <Text style={SS.texts}>{t.get('edit avatar')}</Text>
       </Pressable>
     </View>
@@ -105,5 +120,6 @@ const SS = StyleSheet.create({
     color: '#559EF8',
     lineHeight: 16,
     letterSpacing: -0.3
-  }
+  },
+  image: { width: 108, height: 108, borderRadius: 100 }
 })
