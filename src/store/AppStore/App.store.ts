@@ -86,13 +86,11 @@ export class AppStore implements IAppStore {
   ) {
     const _avatar = this.usersAvatars.find((el) => el.id === avatar.id)
     if (!_avatar) {
-      if (imagePath && localPath) {
-        avatar.uri = await this._firebaseService.createCustomAvatar(
-          avatar,
-          imagePath,
-          localPath
-        )
-      }
+      avatar.uri = await this._firebaseService.createCustomAvatar(
+        avatar,
+        imagePath,
+        localPath
+      )
 
       runInAction(() => {
         this.usersAvatars.unshift(avatar)
