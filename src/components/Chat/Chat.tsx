@@ -121,7 +121,6 @@ const SS = StyleSheet.create({
   },
   containerAvatarText: {
     alignItems: 'center',
-    justifyContent: 'center',
     flexDirection: 'row',
     height: 50,
     width: 200
