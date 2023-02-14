@@ -43,13 +43,13 @@ export class OpenAIService implements IOpenAIService {
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
-    this._model = EModel.davinci2
+    this._model = EModel.davinci3
   }
 
   async generatePrompt(prompt: string) {
     try {
       const res = await this._openAIApi.createCompletion({
-        model: this._model,
+        model: EModel.davinci2,
         prompt: prompt,
         temperature: 0.73,
         max_tokens: 721,
