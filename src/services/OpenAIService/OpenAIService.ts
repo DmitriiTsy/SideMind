@@ -49,7 +49,7 @@ export class OpenAIService implements IOpenAIService {
   async generatePrompt(prompt: string) {
     try {
       const res = await this._openAIApi.createCompletion({
-        model: EModel.davinci2,
+        model: EModel.davinci3,
         prompt: prompt,
         temperature: 0.73,
         max_tokens: 721,
