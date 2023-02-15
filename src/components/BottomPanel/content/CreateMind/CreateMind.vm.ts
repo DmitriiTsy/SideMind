@@ -205,7 +205,6 @@ export class CreateMindVM implements ICreateMindVM {
 
   async _createAvatar() {
     this.pending = true
-    console.log('create avatar')
 
     const name = this.inputName.value
     const bio = this.inputBio.value

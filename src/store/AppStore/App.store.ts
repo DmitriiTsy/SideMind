@@ -145,7 +145,12 @@ export class AppStore implements IAppStore {
 
   @action.bound
   setAvatarsFromStorage() {
-    this.usersAvatars = this._storageService.getUserAvatars()
+    this.usersAvatars = this._storageService.getUserAvatars().map((el) => {
+      if (!el.uri) {
+        el.uri = el.imagePath
+      }
+      return el
+    })
   }
 
   @action.bound
