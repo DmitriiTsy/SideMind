@@ -13,25 +13,30 @@ export const ScreenContainer: FC<IScreenContainerProps> = observer(
     const layoutService = useInject<ILayoutService>(ILayoutServiceTid)
 
     return (
-      <Animated.View
-        style={[SS.container, { paddingBottom: layoutService.keyboardHeight }]}
-      >
-        <View
-          style={{
-            height: layoutService.insets.top,
-            backgroundColor: topInsetColor
-          }}
-        />
-        <View style={[SS.container, style && style]}>{children}</View>
-        <View
-          style={{
-            height: layoutService.keyboardIsVisible
-              ? 0
-              : layoutService.insets.bottom,
-            backgroundColor: bottomInsetColor
-          }}
-        />
-      </Animated.View>
+      <View style={{ backgroundColor: 'black', flex: 1 }}>
+        <Animated.View
+          style={[
+            SS.container,
+            { paddingBottom: layoutService.keyboardHeight }
+          ]}
+        >
+          <View
+            style={{
+              height: layoutService.insets.top,
+              backgroundColor: topInsetColor
+            }}
+          />
+          <View style={[SS.container, style && style]}>{children}</View>
+          <View
+            style={{
+              height: layoutService.keyboardIsVisible
+                ? 0
+                : layoutService.insets.bottom,
+              backgroundColor: bottomInsetColor
+            }}
+          />
+        </Animated.View>
+      </View>
     )
   }
 )

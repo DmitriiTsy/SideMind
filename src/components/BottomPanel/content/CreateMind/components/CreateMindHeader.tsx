@@ -1,29 +1,26 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
-import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
-import { EBottomPanelContent } from 'components/BottomPanel/types'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 export const CreateMindHeader = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
-  const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
-
-  const back = useCallback(() => {
-    bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
-  }, [bottomPanelVM])
 
   return (
     <View style={SS.container}>
-      <Pressable onPress={back}>
+      <Pressable style={SS.activeTextWrapper} onPress={createMindVM.goBack}>
         <Text style={SS.activeText}>{t.get('cancel')}</Text>
       </Pressable>
       <Text style={SS.text}>{t.get('mind info')}</Text>
-      <Pressable onPress={createMindVM.submit} disabled={createMindVM.pending}>
+      <Pressable
+        onPress={createMindVM.submit}
+        disabled={createMindVM.pending}
+        style={SS.activeTextWrapper}
+      >
         <Text style={createMindVM.hasError ? SS.inactiveText : SS.activeText}>
           {t.get('save')}
         </Text>
@@ -40,7 +37,9 @@ const SS = StyleSheet.create({
     borderTopRightRadius: 12,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24
+    paddingHorizontal: 24,
+    backgroundColor: '#303030',
+    marginBottom: 12
   },
   text: {
     fontWeight: '500',
@@ -48,6 +47,11 @@ const SS = StyleSheet.create({
     color: '#FFFFFF',
     lineHeight: 16,
     letterSpacing: -0.3
+  },
+  activeTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 36
   },
   activeText: {
     fontWeight: '700',

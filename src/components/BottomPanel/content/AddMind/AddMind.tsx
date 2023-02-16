@@ -19,25 +19,31 @@ import { GroupedAvatars } from 'components/SelectAvatars/components/GroupedAvata
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
+import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 export const AddMind = observer(() => {
   const appStore = useInject<IAppStore>(IAppStoreTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+
   const renderItem = ({ item }: ListRenderItemInfo<AvatarModel[]>) => {
     return <GroupedAvatars avatar={item} single />
   }
 
   const newMind = useCallback(() => {
+    createMindVM.init(undefined, true)
     bottomPanelVM.openPanel(EBottomPanelContent.CreateMind)
-  }, [bottomPanelVM])
+  }, [bottomPanelVM, createMindVM])
 
   return (
     <>
       <View style={SS.headerContainer}>
         <View style={{ width: 20 }} />
         <Text style={SS.title}>{t.get('pick additional')}</Text>
-        <Svg name={'Cross'} onPress={bottomPanelVM.closePanel} />
+        <Pressable style={SS.crossWrapper} onPress={bottomPanelVM.closePanel}>
+          <Svg name={'Cross'} />
+        </Pressable>
       </View>
       {appStore.commonAvatars.length === 0 ? (
         <SkeletonAvatars />
@@ -71,6 +77,12 @@ const SS = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 17
+  },
+  crossWrapper: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   title: {
     fontWeight: '700',

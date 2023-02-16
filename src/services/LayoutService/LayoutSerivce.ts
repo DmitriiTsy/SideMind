@@ -1,6 +1,7 @@
 import { observable, runInAction } from 'mobx'
 import {
   Animated,
+  Easing,
   Keyboard,
   KeyboardEvent,
   Platform,
@@ -64,6 +65,7 @@ export class LayoutService implements ILayoutService {
     runInAction(() => (this.keyboardIsVisible = true))
     Animated.timing(this.keyboardHeight, {
       toValue: e.endCoordinates.height,
+      easing: Easing.cubic,
       duration: e.duration || 0,
       useNativeDriver: false
     }).start()
@@ -72,6 +74,7 @@ export class LayoutService implements ILayoutService {
   _keyboardWillHide = (e: KeyboardEvent) => {
     Animated.timing(this.keyboardHeight, {
       toValue: 0,
+      easing: Easing.cubic,
       duration: e.duration || 0,
       useNativeDriver: false
     }).start(() => runInAction(() => (this.keyboardIsVisible = false)))

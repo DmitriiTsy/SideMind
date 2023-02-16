@@ -1,36 +1,90 @@
 import { observer } from 'mobx-react'
-import { ActivityIndicator, KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native'
-import React, { useEffect } from 'react'
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native'
+import React, { useRef } from 'react'
 
-import {
-  CardBody,
-  CreateMindHeader,
-  Profile
-} from 'components/BottomPanel/content/CreateMind/components'
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
+
+import {
+  CreateMindHeader,
+  CreateMindInputs,
+  CreateMindPickImage
+} from './components'
 
 export const CreateMind = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
 
-  useEffect(() => {
-    createMindVM.cleanAll()
-  })
+  const refScrollView = useRef<ScrollView>()
+
+  const onContentSizeChange = () => {
+    refScrollView?.current?.scrollToEnd({ animated: true })
+  }
 
   return (
     <View style={[SS.container]}>
       <CreateMindHeader />
-      <KeyboardAvoidingView behavior="padding">
-        <ScrollView automaticallyAdjustKeyboardInsets={true}>
-          <Profile />
-          <CardBody />
-          {createMindVM.pending && (
-            <View style={SS.loading}>
-              <ActivityIndicator size="large" color="#D3D3D3" />
-            </View>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
+      <ScrollView
+        ref={refScrollView}
+        automaticallyAdjustKeyboardInsets={true}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps={'handled'}
+        onContentSizeChange={onContentSizeChange}
+      >
+        <CreateMindPickImage />
+        <CreateMindInputs />
+      </ScrollView>
+      {/*<View*/}
+      {/*  style={{*/}
+      {/*    flexDirection: 'row',*/}
+      {/*    height: 56,*/}
+      {/*    borderTopLeftRadius: 12,*/}
+      {/*    borderTopRightRadius: 12,*/}
+      {/*    alignItems: 'center',*/}
+      {/*    justifyContent: 'space-between',*/}
+      {/*    paddingHorizontal: 24*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <Pressable>*/}
+      {/*    <Text*/}
+      {/*      style={{*/}
+      {/*        fontWeight: '700',*/}
+      {/*        fontSize: 16,*/}
+      {/*        color: '#559EF8',*/}
+      {/*        lineHeight: 16*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      Cancel*/}
+      {/*    </Text>*/}
+      {/*  </Pressable>*/}
+      {/*  <Text*/}
+      {/*    style={{*/}
+      {/*      fontWeight: '500',*/}
+      {/*      fontSize: 16,*/}
+      {/*      color: '#FFFFFF',*/}
+      {/*      lineHeight: 16,*/}
+      {/*      letterSpacing: -0.3*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    AI GENERATED AVATAR*/}
+      {/*  </Text>*/}
+      {/*  <Pressable>*/}
+      {/*    <Text>Done</Text>*/}
+      {/*  </Pressable>*/}
+      {/*</View>*/}
+      {/*<View>*/}
+      {/*  <Input*/}
+      {/*    vm={createMindVM.inputGenerateAvatar}*/}
+      {/*    style={{ marginTop: 21 }}*/}
+      {/*  />*/}
+      {/*</View>*/}
+      {/*<Pressable style={{ marginTop: 21 }} onPress={generateImage}>*/}
+      {/*  <Text>Generate avatar</Text>*/}
+      {/*</Pressable>*/}
+      {createMindVM.pending && (
+        <View style={SS.loading}>
+          <ActivityIndicator size="large" color="#D3D3D3" />
+        </View>
+      )}
     </View>
   )
 })
