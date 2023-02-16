@@ -134,7 +134,7 @@ export class AppStore implements IAppStore {
         if (el.id === editedAvatar.id) {
           return {
             ...editedAvatar,
-            uri
+            uri: uri ? uri : el.uri
           }
         }
         return el
