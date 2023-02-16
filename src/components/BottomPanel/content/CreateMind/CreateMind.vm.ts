@@ -52,6 +52,7 @@ export interface ICreateMindVM {
   submit(): void
   goBack(): void
   deleteMind(): void
+  delete(): void
 }
 
 @Injectable()
@@ -152,10 +153,18 @@ export class CreateMindVM implements ICreateMindVM {
 
   @action.bound
   deleteMind() {
+    this.delete()
     this.pending = true
     this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.MainFeed)
     this.pending = false
+  }
+
+  @action.bound
+  delete() {
+    const usersArray = this._appStore.usersAvatars
+    const index = usersArray.indexOf(this.editingAvatar)
+    usersArray.splice(index, 1)
   }
 
   @action.bound
