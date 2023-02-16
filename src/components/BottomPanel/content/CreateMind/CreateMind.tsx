@@ -32,7 +32,7 @@ export const CreateMind = observer(() => {
         onContentSizeChange={onContentSizeChange}
       >
         <CreateMindPickImage />
-        <CreateMindShare />
+        {createMindVM.editingAvatar && <CreateMindShare />}
         <CreateMindInputs />
       </ScrollView>
       {/*<View*/}
