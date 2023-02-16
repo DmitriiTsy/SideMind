@@ -1,9 +1,9 @@
 import React, { FC, useCallback } from 'react'
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
-import { Svg } from 'components/ui/Svg'
+import RNFastImage from 'react-native-fast-image'
 
 import { AvatarModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
@@ -21,29 +21,38 @@ interface IBotProps {
 }
 
 export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
-  const vm = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
+  const selectAvatarsVM = useInject<ISelectAvatarsVM>(ISelectAvatarsVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
 
-  const selected = vm.selected.find((el) => el === avatar.id)
-
   const set = useCallback(() => {
-    vm.select(avatar.id)
-  }, [vm, avatar.id])
+    selectAvatarsVM.setAvatars(avatar)
+    chatVM.setAvatar(avatar)
+    navigation.reset({
+      index: 1,
+      routes: [
+        { name: CommonScreenName.MainFeed },
+        { name: CommonScreenName.Chat }
+      ]
+    })
+  }, [selectAvatarsVM, avatar, chatVM, navigation])
 
-  const update = useCallback(() => {
-    const _avatar = appStore.updateUsersAvatars(avatar)
+  const update = useCallback(async () => {
+    const _avatar = await appStore.updateUsersAvatars(avatar)
     chatVM.setAvatar(_avatar || avatar)
-    bottomPanelVM.toggle()
+    bottomPanelVM.closePanel()
     navigation.navigate(CommonScreenName.Chat)
   }, [appStore, avatar, bottomPanelVM, chatVM, navigation])
 
   return (
     <Pressable onPress={single ? update : set} style={SS.container}>
-      <Image
-        source={{ uri: avatar.imagePath, cache: 'only-if-cached' }}
+      <RNFastImage
+        source={{
+          uri: avatar.uri,
+          cache: RNFastImage.cacheControl.cacheOnly
+        }}
         style={SS.image}
       />
 
@@ -61,9 +70,6 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
             {avatar.tagLine}
           </Text>
         </View>
-        {!single && (
-          <View style={SS.empty}>{selected && <Svg name={'Check'} />}</View>
-        )}
       </View>
     </Pressable>
   )

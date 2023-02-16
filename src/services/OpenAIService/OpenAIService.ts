@@ -18,7 +18,7 @@ export interface IOpenAIService {
 
   createCompletion(prompt?: string, isFirst?: boolean): Promise<string | null>
 
-  createCompletionMaster(prompt: string, isFirst?: boolean): Promise<string>
+  generatePrompt(prompt: string): Promise<string>
 
   setAvatar(avatar: AvatarModel): void
 }
@@ -29,7 +29,7 @@ export class OpenAIService implements IOpenAIService {
   private _openAIApi: OpenAIApi
   private _history: string
   private _avatar: AvatarModel
-  private _model: string
+  private _model: EModel
   private _countError = 0
 
   constructor(
@@ -46,10 +46,10 @@ export class OpenAIService implements IOpenAIService {
     this._model = EModel.davinci3
   }
 
-  async createCompletionMaster(prompt: string, isFirst?: boolean) {
+  async generatePrompt(prompt: string) {
     try {
       const res = await this._openAIApi.createCompletion({
-        model: 'text-davinci-003',
+        model: EModel.davinci3,
         prompt: prompt,
         temperature: 0.73,
         max_tokens: 721,
@@ -57,11 +57,7 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: 0,
         stop: ['###']
       })
-      console.log(res.data.choices[0].text.trim())
-      if (isFirst) {
-        return this._checkQuotes(res.data.choices[0].text.trim())
-      }
-      return res.data.choices[0].text.trim()
+      return this._checkQuotes(res.data.choices[0].text.trim())
     } catch (e) {
       this._firebaseService.setMessage(
         this._avatar.id,
@@ -90,17 +86,25 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: this._avatar.params.presence_penalty,
         stop: ['###']
       })
+
+      if (isFirst) {
+        res.data.choices[0].text = this._checkQuotes(
+          res.data.choices[0].text.trim()
+        )
+      }
+
       this._history = `${this._history} ${res.data.choices[0].text}`
 
       this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
-      if (isFirst) {
-        return this._checkQuotes(res.data.choices[0].text.trim())
-      }
-
       return res.data.choices[0].text.trim()
     } catch (e) {
-      if (e.response?.status === '503') {
+      console.log(e)
+      if (
+        e.response?.status.toString().startsWith('5') ||
+        e.response?.status == 429 ||
+        e.response?.status == 400
+      ) {
         return this._handle503(e)
       } else {
         this._firebaseService.setMessage(

@@ -8,6 +8,7 @@ export const IBottomPanelVMTid = Symbol.for('IBottomPanelVMTid')
 
 export interface IBottomPanelVM {
   content: JSX.Element | null
+  closing: boolean
 
   openPanel(content: EBottomPanelContent)
   closePanel()
@@ -17,11 +18,7 @@ export interface IBottomPanelVM {
 export class BottomPanelVM implements IBottomPanelVM {
   @observable opened = false
   @observable content = null
-
-  @action.bound
-  toggle() {
-    this.opened = !this.opened
-  }
+  @observable closing = false
 
   @action.bound
   openPanel(content: EBottomPanelContent) {
@@ -30,6 +27,6 @@ export class BottomPanelVM implements IBottomPanelVM {
 
   @action.bound
   closePanel() {
-    this.content = null
+    this.closing = true
   }
 }

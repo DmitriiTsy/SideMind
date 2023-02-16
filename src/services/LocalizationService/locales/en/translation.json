@@ -1,6 +1,6 @@
 {
   "sideMind": "SideMind",
-  "choose bots": "Choose 3 Minds",
+  "choose bots": "Choose a mind",
   "add more later": "You can add more later",
   "done": "Done",
   "start message": "Start message",
@@ -12,5 +12,20 @@
   "copy": "Copy",
   "save": "Save",
   "mind info": "Mind Info",
-  "new mind": "New Mind"
+  "new mind": "New Mind",
+  "name requirements": "Name must have at least 2 characters",
+  "tagline requirements": "Tagline must have at least 5 characters",
+  "bio requirements": "Bio must have at least 15 characters",
+  "edit avatar": "Edit Avatar",
+  "full name": "Name",
+  "tagline": "Tagline",
+  "bio": "Bio",
+  "placeholder full name": "Ex.: Bailey",
+  "placeholder tagline": "Ex.: I love tea, and beauty tips",
+  "placeholder bio": "Ex.: Bailey is a 27 yo beauty and fashion expert",
+  "take photo": "Take Photo",
+  "upload photo": "Upload Photo",
+  "generate avatar": "AI-Generated Avatar",
+  "generate avatar input label": "Use a prompt for AI-generated avatar",
+  "generate avatar placeholder": "Ex.: professional picture of old drunk salesman against bright coloured background"
 }

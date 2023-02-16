@@ -33,6 +33,7 @@ export const MainFeed = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
+
   const openPanel = useCallback(() => {
     appStore.updateAvatarsFromFirebase()
     bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
@@ -45,7 +46,7 @@ export const MainFeed = observer(() => {
           <Svg name={'Logo'} />
           <Text style={SS.title}>{t.get('sideMind')}</Text>
         </View>
-        <Pressable onPress={openPanel}>
+        <Pressable onPress={openPanel} style={SS.addnote}>
           <Svg name={'AddNote'} />
         </Pressable>
       </View>
@@ -53,9 +54,9 @@ export const MainFeed = observer(() => {
     [openPanel, t]
   )
 
-  const renderItem = ({ item, index }: ListRenderItemInfo<AvatarModel>) => (
-    <ChatPreview avatar={item} index={index} />
-  )
+  const renderItem = ({ item, index }: ListRenderItemInfo<AvatarModel>) => {
+    return <ChatPreview avatar={item} index={index} />
+  }
 
   const keyExtractor = (item, index) => index
 
@@ -94,11 +95,16 @@ const SS = StyleSheet.create({
     height: 44,
     backgroundColor: '#000000',
     justifyContent: 'flex-end',
-    marginRight: 14
+    paddingBottom: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333'
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: deviceWidth * 0.28
+  },
+  addnote: {
+    paddingRight: 14
   }
 })

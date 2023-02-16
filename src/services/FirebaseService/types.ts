@@ -10,11 +10,18 @@ export const LOG_TYPE = {
   [ESender.RESET]: 'Reset'
 }
 
+export enum EAvatarsCategory {
+  Starting = 'Starting',
+  Common = 'Common',
+  Custom = 'Custom'
+}
+
 export interface AvatarModel {
   name: string
   tagLine: string
   imagePath: string
-  category: string
+  uri?: string
+  category: EAvatarsCategory
   id: number | string
   prompt: string
   params: {
@@ -24,6 +31,7 @@ export interface AvatarModel {
     presence_penalty: number
     top_p: number
   }
+  bio?: string
   messages?: {
     displayed?: IMessage[]
     history?: string
@@ -32,4 +40,9 @@ export interface AvatarModel {
 
 export interface IFirebaseResponseBots {
   [key: string]: AvatarModel[]
+}
+
+export interface IFirebaseResponseMasterPrompt {
+  prompt: string
+  introduce: string
 }

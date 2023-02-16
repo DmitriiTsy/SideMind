@@ -1,7 +1,7 @@
 import { action, observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
-import { AvatarModel } from 'services/FirebaseService/types'
+import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
 import { ESender, IMessage } from 'components/Chat/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
@@ -16,18 +16,23 @@ export interface IAppStore {
 
   init(): void
 
-  setUsersAvatars(id: number[] | string[]): void
+  setUsersAvatars(avatar: AvatarModel): void
+
   updateUsersAvatars(avatar: AvatarModel): AvatarModel | null
+  updateUsersAvatars(
+    avatar: AvatarModel,
+    imagePath: string,
+    localPath: string
+  ): AvatarModel | null
+
+  editCustomAvatar(editedAvatar: AvatarModel, localPath?: string): Promise<void>
 
   setAvatarsFromStorage(): void
 
   setMessageToAvatar(avatarId: number | string, message: IMessage): void
   setHistoryToAvatar(avatarId: number | string, history: string): void
 
-  resetMessages(
-    avatarId: number | string | number[],
-    avatarCat?: string
-  ): Promise<AvatarModel>
+  resetMessages(avatarId: number | string | number[]): Promise<AvatarModel>
 
   updateAvatarsFromFirebase(): void
 }
@@ -62,41 +67,95 @@ export class AppStore implements IAppStore {
   }
 
   @action.bound
-  setUsersAvatars(id: number[] | string[]) {
+  setUsersAvatars(avatar: AvatarModel) {
     this._storageService.setUserLogin()
-    const _avatars: AvatarModel[] = []
-    this.commonAvatars.map((avatars) =>
-      avatars.map(
-        (avatar) =>
-          id.findIndex((el) => el === avatar.id) !== -1 && _avatars.push(avatar)
-      )
-    )
+
+    const _avatars: AvatarModel[] = [avatar]
     this.startingAvatars.map((bots) => bots.map((bot) => _avatars.unshift(bot)))
     this.usersAvatars = _avatars
+
     this._storageService.setUserAvatars(this.usersAvatars)
     this._firebaseService.setAvatars(this.usersAvatars)
   }
 
-  @action.bound
-  updateUsersAvatars(avatar: AvatarModel) {
+  async updateUsersAvatars(avatar: AvatarModel)
+  async updateUsersAvatars(
+    avatar: AvatarModel,
+    imagePath?: string,
+    localPath?: string
+  ) {
     const _avatar = this.usersAvatars.find((el) => el.id === avatar.id)
     if (!_avatar) {
-      this.usersAvatars = [avatar, ...this.usersAvatars]
-      this._storageService.setUserAvatars(this.usersAvatars)
-      this._firebaseService.updateAvatars(avatar.id)
+      if (typeof imagePath === 'string' && typeof localPath === 'string') {
+        avatar.uri = await this._firebaseService.createCustomAvatar(
+          avatar,
+          imagePath,
+          localPath
+        )
+      }
+
+      runInAction(() => {
+        this.usersAvatars.unshift(avatar)
+        this._storageService.setUserAvatars(this.usersAvatars)
+        this._firebaseService.updateAvatars(avatar.id)
+      })
+
       return null
     }
     return _avatar
   }
 
   @action.bound
-  setAvatarsFromStorage() {
-    this.usersAvatars = this._storageService.getUserAvatars()
+  async editCustomAvatar(
+    editedAvatar: AvatarModel,
+    localPath?: string
+  ): Promise<void> {
+    const _avatar = this.usersAvatars.find((el) => el.id === editedAvatar.id)
+
+    const oldAvatar: AvatarModel = {
+      name: _avatar.name,
+      tagLine: _avatar.tagLine,
+      imagePath: _avatar.imagePath,
+      category: _avatar.category,
+      id: _avatar.id,
+      prompt: _avatar.prompt,
+      params: _avatar.params,
+      bio: _avatar.bio
+    }
+
+    const uri = await this._firebaseService.editCustomAvatar(
+      oldAvatar,
+      editedAvatar,
+      localPath
+    )
+
+    runInAction(() => {
+      this.usersAvatars = this.usersAvatars.map((el) => {
+        if (el.id === editedAvatar.id) {
+          return {
+            ...editedAvatar,
+            uri: uri ? uri : el.uri
+          }
+        }
+        return el
+      })
+      this._storageService.setUserAvatars(this.usersAvatars)
+    })
   }
 
   @action.bound
-  async resetMessages(avatarId: number, avatarCat?: string) {
-    avatarCat !== 'Master' ? await this.updateAvatarsFromFirebase() : null
+  setAvatarsFromStorage() {
+    this.usersAvatars = this._storageService.getUserAvatars().map((el) => {
+      if (!el.uri) {
+        el.uri = el.imagePath
+      }
+      return el
+    })
+  }
+
+  @action.bound
+  async resetMessages(avatarId: number) {
+    await this.updateAvatarsFromFirebase()
 
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
@@ -147,9 +206,10 @@ export class AppStore implements IAppStore {
   }
 
   async updateAvatarsFromFirebase() {
-    const [commonAvatars, startingAvatars] = await Promise.all([
+    const [commonAvatars, startingAvatars, customAvatars] = await Promise.all([
       this._firebaseService.getCommonAvatars(),
-      this._firebaseService.getStartingAvatars()
+      this._firebaseService.getStartingAvatars(),
+      this._firebaseService.getCustomAvatars()
     ])
 
     runInAction(() => {
@@ -161,6 +221,21 @@ export class AppStore implements IAppStore {
         this.startingAvatars,
         startingAvatars
       )
+
+      if (customAvatars) {
+        this.usersAvatars = this.usersAvatars.map((el) => {
+          if (el.category === EAvatarsCategory.Custom) {
+            const _avatar = customAvatars.find((_el) => _el.id === el.id)
+
+            return {
+              ...el,
+              ..._avatar
+            }
+          }
+
+          return el
+        })
+      }
 
       this._mapUpdateUsersAvatarsFromFirebase()
     })

@@ -1,126 +1,255 @@
 import uuid from 'react-native-uuid'
-import { action, observable } from 'mobx'
+import { action, computed, observable } from 'mobx'
 
-import { AvatarModel } from 'services/FirebaseService/types'
+import { Alert, TextInput } from 'react-native'
+
+import { createRef } from 'react'
+
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-import { CommonScreenName } from 'constants/screen.types'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
-import { INavigationService, INavigationServiceTid } from 'services'
+import {
+  ILocalizationService,
+  ILocalizationServiceTid,
+  INavigationService,
+  INavigationServiceTid,
+  Translation
+} from 'services'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+import { CommonScreenName } from 'constants/screen.types'
+import { InputVM } from 'components/Input/Input.vm'
+import {
+  ISystemInfoService,
+  ISystemInfoServiceTid
+} from 'services/SystemInfoService'
+import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
+import { EBottomPanelContent } from 'components/BottomPanel/types'
 
-export const IContactCardVMTid = Symbol.for('IContactCardVMTid')
+export const ICreateMindVMTid = Symbol.for('ICreateMindVMTid')
 
-enum masterPrompt {
-  prompt = `I want you to act as a prompt generator. Firstly, I will give you a 
-  title like this: "Act as an English Pronunciation
-   Helper for Turkish People". Then you give me a prompt like this: 
-  \r\n
-  "I want you to act as an English pronunciation assistant 
-  for Turkish speaking people. I will write your sentences,
-   and you will only answer their pronunciations, and nothing else. 
-   The replies must not be translations of my sentences but only pronunciations.
-   Pronunciations should use Turkish Latin letters for phonetics. 
-   Do not write explanations on replies."
-  \r\n`
+interface IImage {
+  localePath: string
+  fileName: string
 }
 
-export interface IContactCardVM {
-  selected: any
-  enabled: boolean
-  Tagline: string
-  Bio: string
-  FullName: string
-  MasterPromptOpenAi: string
-  GeneratedPromptOpenAi: string
-  avatar: AvatarModel
+export interface ICreateMindVM {
   pending: boolean
+  image: IImage | null
 
-  toggle(type: string, value: string): void
-  clean(type: string): void
-  masterPromptHandler(): void
-}
+  inputName: InputVM
+  inputTagLine: InputVM
+  inputBio: InputVM
+  inputGenerateAvatar: InputVM
 
-enum placeholder {
-  FullName = 'Enter first name',
-  Tagline = 'Enter tagline',
-  Bio = 'Enter bio'
+  editingAvatar: AvatarModel | undefined
+
+  hasError: keyof Translation | boolean
+
+  init(avatar?: AvatarModel): void
+
+  submit(): void
+  goBack(): void
 }
 
 @Injectable()
-export class ContactCardVM implements IContactCardVM {
+export class CreateMindVM implements ICreateMindVM {
+  @observable pending = false
+  @observable image: IImage | null = null
+
+  inputName: InputVM
+  inputTagLine: InputVM
+  inputBio: InputVM
+  inputGenerateAvatar: InputVM
+
+  @observable editingAvatar: AvatarModel | undefined
+
   constructor(
     @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService,
     @Inject(IChatVMTid) private _ChatVM: IChatVM,
     @Inject(INavigationServiceTid)
     private _navigationService: INavigationService,
     @Inject(IBottomPanelVMTid) private _bottomPanelVM: IBottomPanelVM,
-    @Inject(IAppStoreTid) private _appStore: IAppStore
+    @Inject(IAppStoreTid) private _appStore: IAppStore,
+    @Inject(ILocalizationServiceTid) private _t: ILocalizationService,
+    @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
+    @Inject(ISystemInfoServiceTid)
+    private _systemInfoService: ISystemInfoService
   ) {}
-  @observable pending = false
-  avatar: AvatarModel
-
-  MasterPromptOpenAi: string
-  GeneratedPromptOpenAi: string
-  Tagline: string
-  Bio: string
-  FullName: string
-  selected: any
-  values: object
-  @observable enabled = true
 
   @action.bound
-  toggle(type: string, value: string) {
-    if (type === placeholder.FullName) {
-      this.FullName = value
-    } else if (type === placeholder.Tagline) {
-      this.Tagline = value
-    } else if (type === placeholder.Bio) {
-      this.Bio = value
+  init(avatar?: AvatarModel) {
+    this.editingAvatar = avatar
+    this.image = null
+
+    const refInputName = createRef<TextInput>()
+    const refInputTag = createRef<TextInput>()
+    const refInputBio = createRef<TextInput>()
+
+    this.inputName = new InputVM({
+      label: 'full name',
+      placeholder: 'placeholder full name',
+      minLength: 2,
+      errorText: 'name requirements',
+      autoFocus: !avatar
+        ? true
+        : avatar.category === EAvatarsCategory.Custom && true,
+      ref: refInputName,
+      onSubmitEditing: () => {
+        refInputName.current.blur()
+        refInputTag.current.focus()
+      },
+      defaultValue: avatar && avatar.name,
+      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
+    })
+    this.inputTagLine = new InputVM({
+      label: 'tagline',
+      placeholder: 'placeholder tagline',
+      minLength: 5,
+      errorText: 'tagline requirements',
+      ref: refInputTag,
+      onSubmitEditing: () => {
+        refInputTag.current.blur()
+        refInputBio.current.focus()
+      },
+      defaultValue: avatar && avatar.tagLine,
+      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
+    })
+    this.inputBio = new InputVM({
+      label: 'bio',
+      placeholder: 'placeholder bio',
+      minLength: 10,
+      errorText: 'bio requirements',
+      ref: refInputBio,
+      defaultValue: avatar && avatar.bio,
+      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
+    })
+    this.inputGenerateAvatar = new InputVM({
+      label: 'generate avatar input label',
+      placeholder: 'generate avatar placeholder'
+    })
+  }
+
+  @computed
+  get hasError() {
+    return (
+      this.inputName.hasError ||
+      this.inputTagLine.hasError ||
+      this.inputBio.hasError
+    )
+  }
+
+  @action.bound
+  goBack() {
+    if (this.editingAvatar) {
+      this._bottomPanelVM.closePanel()
+    } else {
+      this._bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
     }
   }
 
   @action.bound
-  clean(type: string) {
-    if (type === placeholder.FullName) {
-      this.FullName = ''
-    } else if (type === placeholder.Tagline) {
-      this.Tagline = ''
-    } else if (type === placeholder.Bio) {
-      this.Bio = ''
+  submit() {
+    const error = this.hasError
+
+    if (error) {
+      Alert.alert(this._t.get(error))
+    } else {
+      if (this.editingAvatar) {
+        this._editAvatar()
+      } else {
+        this._createAvatar()
+      }
     }
   }
 
-  @action.bound
-  async masterPromptHandler() {
+  async _editAvatar() {
     this.pending = true
-    this.MasterPromptOpenAi = `${masterPrompt.prompt} My first title is ${this.FullName} 
-    who's bio is ${this.Bio}`
-    this.GeneratedPromptOpenAi = `${await this._OpenAIService.createCompletionMaster(
-      this.MasterPromptOpenAi,
-      true
-    )} \r\n Now I want you to introduce yourself to a new friend in under 10 words:###`
-    this.avatar = {
-      name: this.FullName,
-      tagLine: this.Tagline,
-      imagePath: 'bots/Roxy_The_Relaxer.png',
-      category: 'Master',
+
+    const name = this.inputName.value
+    const bio = this.inputBio.value
+    const tagLine = this.inputTagLine.value
+    const imagePath = this.image
+      ? `Custom/${this._systemInfoService.deviceId}/${this.image.fileName}`
+      : this.editingAvatar.imagePath
+
+    const master = await this._firebaseService.getMasterPrompt()
+    master.prompt = master.prompt.replace('{generated name by user}', name)
+    master.prompt = master.prompt.replace('{generated bio by user}', bio)
+
+    const generatedPrompt = `${await this._OpenAIService.generatePrompt(
+      master.prompt
+    )}${master.introduce}`
+
+    const editedAvatar: AvatarModel = {
+      name,
+      tagLine,
+      imagePath,
+      category: this.editingAvatar.category,
+      id: this.editingAvatar.id,
+      prompt: generatedPrompt,
+      params: this.editingAvatar.params,
+      bio: bio
+    }
+
+    await this._appStore.editCustomAvatar(editedAvatar, this.image?.localePath)
+
+    this._ChatVM.setAvatar(
+      this._appStore.usersAvatars.find((el) => el.id === editedAvatar.id)
+    )
+    this._bottomPanelVM.closePanel()
+
+    this.pending = false
+  }
+
+  async _createAvatar() {
+    this.pending = true
+
+    const name = this.inputName.value
+    const bio = this.inputBio.value
+    const tagLine = this.inputTagLine.value
+    const image = this.image
+    const imagePath = image
+      ? `Custom/${this._systemInfoService.deviceId}/${image.fileName}`
+      : ''
+
+    const master = await this._firebaseService.getMasterPrompt()
+    master.prompt = master.prompt.replace('{generated name by user}', name)
+    master.prompt = master.prompt.replace('{generated bio by user}', bio)
+
+    const generatedPrompt = `${await this._OpenAIService.generatePrompt(
+      master.prompt
+    )}${master.introduce}`
+
+    const avatar = {
+      name,
+      tagLine,
+      imagePath,
+      category: EAvatarsCategory.Custom,
       id: uuid.v4() as string,
-      prompt: this.GeneratedPromptOpenAi,
+      prompt: generatedPrompt,
       params: {
         temperature: 0.73,
         frequency_penalty: 0,
         max_tokens: 721,
         presence_penalty: 0,
         top_p: 1
-      }
+      },
+      bio: bio
     }
-    console.log(this.avatar.id)
-    this.pending = false
-    this._appStore.updateUsersAvatars(this.avatar)
-    this._ChatVM.setAvatar(this.avatar)
+
+    await this._appStore.updateUsersAvatars(
+      avatar,
+      imagePath,
+      image ? image.localePath : ''
+    )
+    this._ChatVM.setAvatar(
+      this._appStore.usersAvatars.find((el) => el.id === avatar.id)
+    )
     this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.Chat)
+
+    this.pending = false
   }
 }
