@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActionSheetIOS, Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActionSheetIOS, Alert, Pressable, Share, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
@@ -12,6 +12,26 @@ export const CreateMindShare = observer(() => {
 
   const deleteMindHandler = () => {
     AvatarChooseHandler()
+  }
+
+  const shareHandler = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'Try this AI from SideMind App',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
   }
 
   const AvatarChooseHandler = () => {
@@ -42,7 +62,7 @@ export const CreateMindShare = observer(() => {
 
   return (
     <View style={SS.container}>
-      <Pressable style={SS.wrapperShare}>
+      <Pressable style={SS.wrapperShare} onPress={shareHandler}>
         <View>
           <Text style={SS.ShareText}>{t.get('share mind')}</Text>
         </View>
