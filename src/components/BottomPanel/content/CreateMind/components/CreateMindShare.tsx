@@ -10,12 +10,21 @@ export const CreateMindShare = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
 
+  const deleteMindHandler = () => {
+    createMindVM.deleteMind()
+  }
+
   return (
     <View style={SS.container}>
-      <Pressable>
-          <View>
-              <Text>{t.get('')}</Text>
-          </View>
+      <Pressable style={SS.wrapperShare}>
+        <View>
+          <Text style={SS.ShareText}>{t.get('share mind')}</Text>
+        </View>
+      </Pressable>
+      <Pressable style={SS.wrapperDelete} onPress={deleteMindHandler}>
+        <View>
+          <Text style={SS.DeleteText}>{t.get('delete mind')}</Text>
+        </View>
       </Pressable>
     </View>
   )
@@ -23,37 +32,36 @@ export const CreateMindShare = observer(() => {
 
 const SS = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     height: 80,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    paddingHorizontal: 24,
+    paddingVertical: 12,
     backgroundColor: '#303030',
-    marginBottom: 12,
+    marginBottom: 21,
     marginHorizontal: 18
   },
-  text: {
+  wrapperShare: {
+    borderBottomColor: '#444444',
+    borderBottomWidth: 0.5,
+    width: '100%',
+    paddingBottom: 12,
+    paddingHorizontal: 18
+  },
+  wrapperDelete: {
+    paddingHorizontal: 18
+  },
+  ShareText: {
     fontWeight: '500',
     fontSize: 16,
-    color: '#FFFFFF',
-    lineHeight: 16,
-    letterSpacing: -0.3
-  },
-  activeTextWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 36
-  },
-  activeText: {
-    fontWeight: '700',
-    fontSize: 16,
-    color: '#559EF8',
+    color: '#549EF7',
     lineHeight: 16
   },
-  inactiveText: {
-    color: '#484849',
-    fontWeight: '700',
-    fontSize: 16
+  DeleteText: {
+    fontWeight: '500',
+    fontSize: 16,
+    color: '#EB5545',
+    lineHeight: 16
   }
 })

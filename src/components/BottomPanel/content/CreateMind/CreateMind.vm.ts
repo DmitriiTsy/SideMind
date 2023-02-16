@@ -51,6 +51,7 @@ export interface ICreateMindVM {
 
   submit(): void
   goBack(): void
+  deleteMind(): void
 }
 
 @Injectable()
@@ -147,6 +148,14 @@ export class CreateMindVM implements ICreateMindVM {
     } else {
       this._bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
     }
+  }
+
+  @action.bound
+  deleteMind() {
+    this.pending = true
+    this._bottomPanelVM.closePanel()
+    this._navigationService.navigate(CommonScreenName.MainFeed)
+    this.pending = false
   }
 
   @action.bound
