@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActionSheetIOS, Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
@@ -11,7 +11,33 @@ export const CreateMindShare = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
 
   const deleteMindHandler = () => {
-    createMindVM.deleteMind()
+    AvatarChooseHandler()
+  }
+
+  const AvatarChooseHandler = () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: [
+          t.get('are you sure'),
+          t.get('yes delete mind'),
+          // t.get('generate avatar'),
+          t.get('cancel')
+        ],
+        disabledButtonIndices: [0],
+        cancelButtonIndex: 2,
+        tintColor: '#EB5545',
+        cancelButtonTintColor: '#549EF7',
+        userInterfaceStyle: 'dark'
+      },
+      async (buttonIndex) => {
+        if (buttonIndex === 0) {
+          createMindVM.deleteMind()
+        }
+        if (buttonIndex === 1) {
+          createMindVM.deleteMind()
+        }
+      }
+    )
   }
 
   return (
