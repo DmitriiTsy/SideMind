@@ -8,7 +8,8 @@ import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 import {
   CreateMindHeader,
   CreateMindInputs,
-  CreateMindPickImage
+  CreateMindPickImage,
+  CreateMindShare
 } from './components'
 
 export const CreateMind = observer(() => {
@@ -31,6 +32,7 @@ export const CreateMind = observer(() => {
         onContentSizeChange={onContentSizeChange}
       >
         <CreateMindPickImage />
+        <CreateMindShare />
         <CreateMindInputs />
       </ScrollView>
       {/*<View*/}
