@@ -76,7 +76,10 @@ const SS = StyleSheet.create({
     paddingHorizontal: 18
   },
   wrapperDelete: {
-    paddingHorizontal: 18
+    paddingHorizontal: 18,
+    paddingTop: 12,
+    width: '100%',
+    height: '100%'
   },
   ShareText: {
     fontWeight: '500',
