@@ -53,7 +53,6 @@ export const ChatInput = () => {
           onContentSizeChange={onContentSizeChange}
           style={[SS.input, { height: inputHeight }]}
           keyboardAppearance={'dark'}
-          // numberOfLines={5}
         />
       </View>
       <Svg
