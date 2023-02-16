@@ -7,7 +7,10 @@ import {
   SvgEnterActive,
   SvgCross,
   SvgReset,
-  SvgCopy
+  SvgCopy,
+  SvgAvatarEmpty,
+  SvgCleanTextInput,
+  SvgNewMind
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
@@ -19,5 +22,8 @@ export const SVG_MAP = {
   EnterActive: SvgEnterActive,
   Cross: SvgCross,
   Reset: SvgReset,
-  Copy: SvgCopy
+  Copy: SvgCopy,
+  AvatarEmpty: SvgAvatarEmpty,
+  CleanTextInput: SvgCleanTextInput,
+  newMind: SvgNewMind
 }

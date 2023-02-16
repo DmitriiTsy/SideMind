@@ -6,7 +6,7 @@ import analytics from '@react-native-firebase/analytics'
 import auth from '@react-native-firebase/auth'
 import uuid from 'react-native-uuid'
 
-import { Image } from 'react-native'
+import RNFastImage from 'react-native-fast-image'
 
 import { Inject, Injectable } from 'IoC'
 
@@ -17,6 +17,7 @@ import {
 import {
   AvatarModel,
   IFirebaseResponseBots,
+  IFirebaseResponseMasterPrompt,
   IFirebaseResponseUsers,
   LOG_TYPE
 } from 'services/FirebaseService/types'
@@ -31,17 +32,38 @@ export interface IFirebaseService {
 
   getStartingAvatars(cache?: boolean): Promise<AvatarModel[][]>
 
+  getCustomAvatars(): Promise<AvatarModel[] | null>
+
   setAvatars(avatars: AvatarModel[]): void
 
-  updateAvatars(avatarId: number): void
+  updateAvatars(avatarId: number | string): void
 
-  setMessage(avatarId: number, message: IMessage, isError?: boolean): void
+  setMessage(
+    avatarId: number | string,
+    message: IMessage,
+    isError?: boolean
+  ): void
+
+  getMasterPrompt(): Promise<IFirebaseResponseMasterPrompt>
+
+  createCustomAvatar(
+    avatar: AvatarModel,
+    imagePath: string,
+    localPath: string
+  ): Promise<string>
+
+  editCustomAvatar(
+    oldAvatar: AvatarModel,
+    editedAvatar: AvatarModel,
+    localPath?: string
+  ): Promise<string>
 }
 
 @Injectable()
 export class FirebaseService implements IFirebaseService {
   private _usersCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseUsers>
   private _avatarsCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
+  private _masterPrompt: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseMasterPrompt>
 
   constructor(
     @Inject(ISystemInfoServiceTid)
@@ -49,6 +71,7 @@ export class FirebaseService implements IFirebaseService {
   ) {
     this._usersCollection = firestore().collection('usersList')
     this._avatarsCollection = firestore().collection('botsList')
+    this._masterPrompt = firestore().collection('prompts')
   }
 
   async init() {
@@ -84,32 +107,40 @@ export class FirebaseService implements IFirebaseService {
     return this.mapAvatars(data, cache)
   }
 
+  async getCustomAvatars() {
+    const data = (await this._avatarsCollection.doc('Custom').get()).data()
+
+    for (const el of Object.keys(data)) {
+      if (el === this._systemInfoService.deviceId) {
+        return data[this._systemInfoService.deviceId]
+      }
+    }
+
+    return null
+  }
+
+  async getMasterPrompt() {
+    return (await this._masterPrompt.doc('master').get()).data()
+  }
+
   async mapAvatars(data: IFirebaseResponseBots, cache?: boolean) {
     const botsList: AvatarModel[][] = []
-    const prefetchImages = []
 
     for (const el of Object.entries(data)) {
       if (cache) {
-        const cb = (url: string) => prefetchImages.push(Image.prefetch(url))
-
-        botsList.push(await this.cacheImages(el, cb))
+        botsList.push(await this.cacheImages(el))
       } else {
         botsList.push(el[1])
       }
     }
 
-    await Promise.all(prefetchImages)
-
     return botsList
   }
 
-  async cacheImages(
-    avatars: [string, AvatarModel[]],
-    prefetchCb: (url: string) => void
-  ) {
+  async cacheImages(avatars: [string, AvatarModel[]]) {
     for (const avatar of Object.values(avatars[1])) {
-      avatar.imagePath = await storage().ref(avatar.imagePath).getDownloadURL()
-      prefetchCb(avatar.imagePath)
+      avatar.uri = await storage().ref(avatar.imagePath).getDownloadURL()
+      RNFastImage.preload([{ uri: avatar.uri }])
     }
     return avatars[1]
   }
@@ -122,7 +153,7 @@ export class FirebaseService implements IFirebaseService {
 
   async logMessage(
     messageId: string,
-    botId: number,
+    botId: number | string,
     message: IMessage,
     isError: boolean
   ) {
@@ -135,7 +166,11 @@ export class FirebaseService implements IFirebaseService {
     })
   }
 
-  async setMessage(avatarId: number, message: IMessage, isError?: boolean) {
+  async setMessage(
+    avatarId: number | string,
+    message: IMessage,
+    isError?: boolean
+  ) {
     const id = uuid.v4() + `--${message.sender}`
     await Promise.all([
       this._usersCollection.doc(this._systemInfoService.deviceId).update({
@@ -160,9 +195,80 @@ export class FirebaseService implements IFirebaseService {
       .set(formatted)
   }
 
-  async updateAvatars(avatarId: number) {
+  async updateAvatars(avatarId: number | string) {
     await this._usersCollection
       .doc(this._systemInfoService.deviceId)
       .update({ [avatarId]: [] })
+  }
+
+  async createCustomAvatar(
+    avatar: AvatarModel,
+    imagePath: string,
+    localPath: string
+  ) {
+    try {
+      if (localPath) {
+        await this._uploadFile(imagePath, localPath)
+
+        imagePath = await storage().ref(imagePath).getDownloadURL()
+        RNFastImage.preload([{ uri: imagePath }])
+      }
+
+      await Promise.all([
+        await this._avatarsCollection.doc('Custom').update({
+          [this._systemInfoService.deviceId]:
+            firestore.FieldValue.arrayUnion(avatar)
+        })
+      ])
+
+      return imagePath
+    } catch (e) {
+      console.log('create custom Avatar', e)
+      return ''
+    }
+  }
+
+  async editCustomAvatar(
+    oldAvatar: AvatarModel,
+    editedAvatar: AvatarModel,
+    localPath?: string
+  ) {
+    const docCustom = this._avatarsCollection.doc('Custom')
+    const { deviceId } = this._systemInfoService
+
+    await Promise.all([
+      docCustom.update({
+        [deviceId]: firestore.FieldValue.arrayRemove(oldAvatar)
+      }),
+      docCustom.update({
+        [deviceId]: firestore.FieldValue.arrayUnion(editedAvatar)
+      })
+    ])
+
+    if (localPath) {
+      await this._uploadFile(editedAvatar.imagePath, localPath)
+
+      const uri = await storage().ref(editedAvatar.imagePath).getDownloadURL()
+      RNFastImage.preload([{ uri }])
+
+      return uri
+    }
+
+    return ''
+  }
+
+  _uploadFile(imagePath: string, localPath: string) {
+    try {
+      const ref = storage().ref(imagePath)
+
+      const task = ref.putFile(localPath)
+
+      return task.then((e) => {
+        return !(e.state === 'error' || e.state === 'cancelled')
+      })
+    } catch (e) {
+      console.log('uploadFile', e)
+      return false
+    }
   }
 }

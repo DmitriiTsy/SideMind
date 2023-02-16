@@ -11,7 +11,13 @@ import {
   IBottomPanelVM,
   IBottomPanelVMTid
 } from 'components/BottomPanel'
+
 import { BlurVM, IBlurVM, IBlurVMTid } from 'components/Blur'
+import {
+  CreateMindVM,
+  ICreateMindVM,
+  ICreateMindVMTid
+} from 'components/BottomPanel/content'
 
 export class ComponentsModule implements IoCModule {
   public Configure(ioc: Container) {
@@ -23,6 +29,10 @@ export class ComponentsModule implements IoCModule {
     ioc
       .bind<IBottomPanelVM>(IBottomPanelVMTid)
       .to(BottomPanelVM)
+      .inSingletonScope()
+    ioc
+      .bind<ICreateMindVM>(ICreateMindVMTid)
+      .to(CreateMindVM)
       .inSingletonScope()
     ioc.bind<IBlurVM>(IBlurVMTid).to(BlurVM).inSingletonScope()
   }

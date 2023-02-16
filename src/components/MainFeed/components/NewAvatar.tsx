@@ -8,6 +8,7 @@ import { Svg } from 'components/ui/Svg'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { EBottomPanelContent } from 'components/BottomPanel/types'
 
 export const NewAvatar = () => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
@@ -16,7 +17,7 @@ export const NewAvatar = () => {
 
   const addNewAvatar = useCallback(() => {
     appStore.updateAvatarsFromFirebase()
-    bottomPanelVM.toggle()
+    bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
   }, [appStore, bottomPanelVM])
 
   return (
