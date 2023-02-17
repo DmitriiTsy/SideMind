@@ -70,7 +70,8 @@ const SS = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
     lineHeight: 18,
-    textAlignVertical: 'center'
+    textAlignVertical: 'center',
+    maxHeight: 500
   },
   containerOnChange: {
     alignItems: 'flex-end'
