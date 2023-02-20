@@ -43,6 +43,7 @@ export const App = () => {
     <NavigationContainer
       ref={navigationContainerRef}
       onReady={() => BootSplash.hide({ fade: true })}
+      linking={appVM.deeplink.linking}
     >
       <StatusBar translucent={true} barStyle={'light-content'} />
       <Stack.Navigator

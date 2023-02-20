@@ -51,7 +51,7 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
       <RNFastImage
         source={{
           uri: avatar.uri,
-          cache: RNFastImage.cacheControl.cacheOnly
+          // cache: RNFastImage.cacheControl.cacheOnly
         }}
         style={SS.image}
       />

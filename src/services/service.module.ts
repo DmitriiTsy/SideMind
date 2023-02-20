@@ -37,6 +37,12 @@ import {
 } from 'services/PushNotificationsService'
 
 import {
+  DeepLinkingService,
+  IDeepLinkingService,
+  IDeepLinkingServiceTid
+} from 'services/DeepLinkingService'
+
+import {
   IStorageService,
   IStorageServiceTid,
   StorageService
@@ -75,6 +81,10 @@ export class ServiceModule implements IoCModule {
     ioc
       .bind<IPushNotificationsService>(IPushNotificationsServiceTid)
       .to(PushNotificationsService)
+      .inSingletonScope()
+    ioc
+      .bind<IDeepLinkingService>(IDeepLinkingServiceTid)
+      .to(DeepLinkingService)
       .inSingletonScope()
   }
 }

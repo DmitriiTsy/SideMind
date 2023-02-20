@@ -1,5 +1,13 @@
 import React from 'react'
-import { ActionSheetIOS, Alert, Pressable, Share, StyleSheet, Text, View } from 'react-native'
+import {
+  ActionSheetIOS,
+  Alert,
+  Pressable,
+  Share,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
@@ -17,9 +25,8 @@ export const CreateMindShare = observer(() => {
   const shareHandler = async () => {
     try {
       const result = await Share.share({
-        message:
-          'Try this AI from SideMind App',
-      });
+        url: 'sidemind://mainFeed'
+      })
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
           // shared with activity type of result.activityType
@@ -30,7 +37,7 @@ export const CreateMindShare = observer(() => {
         // dismissed
       }
     } catch (error: any) {
-      Alert.alert(error.message);
+      Alert.alert(error.message)
     }
   }
 

@@ -16,10 +16,16 @@ import {
   IPushNotificationsService,
   IPushNotificationsServiceTid
 } from 'services/PushNotificationsService/PushNotificationsService'
+import {
+  IDeepLinkingService,
+  IDeepLinkingServiceTid
+} from 'services/DeepLinkingService'
 
 export const IAppVMTid = Symbol.for('IAppVMTid')
 
 export interface IAppVM {
+  readonly deeplink: IDeepLinkingService
+
   init(): void
 
   initNavigation(
@@ -37,7 +43,9 @@ export class AppVM implements IAppVM {
     @Inject(IAppStoreTid) private _appStore: IAppStore,
     @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
     @Inject(IPushNotificationsServiceTid)
-    private _pushNotificationService: IPushNotificationsService
+    private _pushNotificationService: IPushNotificationsService,
+    @Inject(IDeepLinkingServiceTid)
+    public readonly deeplink: IDeepLinkingService
   ) {}
 
   async init() {
