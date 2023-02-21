@@ -98,12 +98,12 @@ export class FirebaseService implements IFirebaseService {
   }
 
   async getCommonAvatars(cache?: boolean) {
-    const data = (await this._avatarsCollection.doc('Common').get()).data()
+    const data = (await this._avatarsCollection.doc('Common_v2').get()).data()
     return this.mapAvatars(data, cache)
   }
 
   async getStartingAvatars(cache?: boolean) {
-    const data = (await this._avatarsCollection.doc('Starting').get()).data()
+    const data = (await this._avatarsCollection.doc('Starting_v2').get()).data()
     return this.mapAvatars(data, cache)
   }
 
@@ -128,7 +128,14 @@ export class FirebaseService implements IFirebaseService {
 
     for (const el of Object.entries(data)) {
       if (cache) {
-        botsList.push(await this.cacheImages(el))
+        // botsList.push(await this.cacheImages(el))
+        const avatars = []
+        for (const avatar of Object.values(el[1])) {
+          avatar.uri = avatar.imagePath
+          RNFastImage.preload([{ uri: avatar.uri }])
+          avatars.push(avatar)
+        }
+        botsList.push(avatars)
       } else {
         botsList.push(el[1])
       }
