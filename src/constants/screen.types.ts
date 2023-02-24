@@ -9,7 +9,7 @@ export interface CommonScreenParamsMap {
   SelectAvatars: undefined
   Boot: undefined
   MainFeed: undefined
-  Chat: undefined
+  Chat: undefined | { dID: string; bID: string }
 }
 
 export type ScreenName = keyof typeof CommonScreenName

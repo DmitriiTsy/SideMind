@@ -13,27 +13,50 @@ import { observer } from 'mobx-react'
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
+import {
+  ISystemInfoService,
+  ISystemInfoServiceTid
+} from 'services/SystemInfoService'
 
 export const CreateMindShare = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+  const systemInfo = useInject<ISystemInfoService>(ISystemInfoServiceTid)
 
   const deleteMindHandler = () => {
-    AvatarChooseHandler()
+    // AvatarChooseHandler()
   }
+
+  // const shareOptions = {
+  //   title: 'Share via',
+  //   message: 'some message',
+  //   url: `https://sidemind-aa533.web.app/?dID=${systemInfo.deviceId}&bID=${createMindVM.editingAvatar.id}`,
+  //   social: RNShare.Social.FACEBOOK
+  // }
 
   const shareHandler = async () => {
     try {
+      // RNShare.shareSingle(shareOptions)
+      //   .then((res) => {
+      //     console.log(res)
+      //   })
+      //   .catch((err) => {
+      //     err && console.log(err)
+      //   })
+
+      const avatar = createMindVM.editingAvatar
       const result = await Share.share({
-        url: 'sidemind://mainFeed'
+        url: `https://sidemind.app/?dID=${systemInfo.deviceId}&bID=${avatar.id}`
       })
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
+          console.log(result.activityType)
           // shared with activity type of result.activityType
         } else {
           // shared
         }
       } else if (result.action === Share.dismissedAction) {
+        console.log(result)
         // dismissed
       }
     } catch (error: any) {

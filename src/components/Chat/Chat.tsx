@@ -7,6 +7,8 @@ import RNFastImage from 'react-native-fast-image'
 
 import { useCallback } from 'react'
 
+import { useFocusEffect } from '@react-navigation/native'
+
 import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
@@ -25,6 +27,15 @@ export const Chat = observer(() => {
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+
+  useFocusEffect(
+    useCallback(() => {
+      if (navigation.unsafeParams?.dID) {
+        const { dID, bID } = navigation.unsafeParams
+        chatVM.getSharedAvatar(dID, bID)
+      }
+    }, [chatVM, navigation.unsafeParams])
+  )
 
   const goBack = () => {
     navigation.goBack()
@@ -51,7 +62,7 @@ export const Chat = observer(() => {
           <Svg name={'PointerLeft'} />
         </Pressable>
         <Pressable onPress={editMindHandler} style={SS.containerAvatarText}>
-          {chatVM.avatar.uri ? (
+          {chatVM.avatar?.uri ? (
             <RNFastImage
               source={{
                 uri: chatVM.avatar.uri
@@ -61,7 +72,7 @@ export const Chat = observer(() => {
           ) : (
             <Svg name={'AvatarEmpty'} size={36} style={{ marginRight: 7 }} />
           )}
-          <Text style={SS.title}>{chatVM.avatar.name}</Text>
+          <Text style={SS.title}>{chatVM.avatar?.name}</Text>
         </Pressable>
       </View>
       <Pressable

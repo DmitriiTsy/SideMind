@@ -7,7 +7,7 @@ import {
   PartialState
 } from '@react-navigation/native'
 
-import { action, computed, observable } from 'mobx'
+import { action, computed, observable, runInAction } from 'mobx'
 
 import { Injectable } from 'IoC'
 
@@ -19,6 +19,7 @@ export interface INavigationService<RouteName extends ScreenName = any> {
   canGoBack: boolean
   currentRoute?: Route<string>
   params: ScreenParamTypes[RouteName]
+  unsafeParams: ScreenParamTypes[ScreenName]
 
   navigate<RouteName extends ScreenName>(
     name: RouteName,
@@ -32,12 +33,18 @@ export interface INavigationService<RouteName extends ScreenName = any> {
   emitNavigationStateChange(): void
 
   reset(state: PartialState<NavigationState> | NavigationState): void
+
+  subscribeUnsafeParams(): void
+  unsubscribeUnsafeParams(): void
 }
 
 @Injectable()
 export class NavigationService implements INavigationService {
   @observable.ref currentRoute?: Route<string>
-  private _navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
+  @observable _navigationRef: RefObject<
+    NavigationContainerRef<ScreenParamTypes>
+  >
+  @observable _unsafeParams: ScreenParamTypes[ScreenName]
 
   @computed
   get canGoBack() {
@@ -49,11 +56,17 @@ export class NavigationService implements INavigationService {
     return this._navigationRef?.current?.getCurrentRoute()?.params || {}
   }
 
+  @computed
+  get unsafeParams() {
+    return this._unsafeParams
+  }
+
   @action.bound
   navigate<RouteName extends ScreenName>(
     name: RouteName,
     params?: ScreenParamTypes[RouteName]
   ) {
+    console.log(name, params)
     this._navigationRef?.current?.navigate({ name, params })
   }
 
@@ -77,5 +90,17 @@ export class NavigationService implements INavigationService {
       this._navigationRef?.current?.goBack()
       return
     }
+  }
+
+  subscribeUnsafeParams() {
+    this._navigationRef.current.addListener('__unsafe_action__', (e) =>
+      runInAction(() => (this._unsafeParams = e.data.action.payload?.params))
+    )
+  }
+
+  unsubscribeUnsafeParams() {
+    this._navigationRef.current.removeListener('__unsafe_action__', (e) =>
+      runInAction(() => (this._unsafeParams = e.data.action.payload?.params))
+    )
   }
 }

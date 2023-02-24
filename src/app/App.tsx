@@ -39,10 +39,14 @@ export const App = () => {
     appVM.initNavigation(navigationContainerRef)
   })
 
+  const onReady = () => {
+    BootSplash.hide({ fade: true })
+  }
+
   return (
     <NavigationContainer
       ref={navigationContainerRef}
-      onReady={() => BootSplash.hide({ fade: true })}
+      onReady={onReady}
       linking={appVM.deeplink.linking}
     >
       <StatusBar translucent={true} barStyle={'light-content'} />

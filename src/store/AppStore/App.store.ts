@@ -35,6 +35,11 @@ export interface IAppStore {
   resetMessages(avatarId: number | string | number[]): Promise<AvatarModel>
 
   updateAvatarsFromFirebase(): void
+
+  getSharedAvatar(
+    deviceId: string,
+    avatarId: string
+  ): Promise<AvatarModel | null>
 }
 
 @Injectable()
@@ -295,5 +300,24 @@ export class AppStore implements IAppStore {
       }
     })
     this._storageService.setUserAvatars(this.usersAvatars)
+  }
+
+  async getSharedAvatar(deviceId: string, avatarId: string) {
+    const avatar = await this._firebaseService.getSharedAvatar(
+      deviceId,
+      avatarId
+    )
+
+    if (avatar) {
+      const avatarExist = this.usersAvatars.find((el) => el.id === avatar.id)
+      if (avatarExist) {
+        return avatarExist
+      }
+
+      this.usersAvatars.unshift(avatar)
+      return avatar
+    }
+
+    return null
   }
 }

@@ -57,6 +57,11 @@ export interface IFirebaseService {
     editedAvatar: AvatarModel,
     localPath?: string
   ): Promise<string>
+
+  getSharedAvatar(
+    deviceId: string,
+    avatarId: string
+  ): Promise<AvatarModel | null>
 }
 
 @Injectable()
@@ -277,5 +282,25 @@ export class FirebaseService implements IFirebaseService {
       console.log('uploadFile', e)
       return false
     }
+  }
+
+  async getSharedAvatar(deviceId: string, avatarId: string) {
+    const data = (await this._avatarsCollection.doc('Custom').get()).data()
+
+    for (const el of Object.keys(data)) {
+      if (el === deviceId) {
+        const avatar = data[deviceId].find((el) => el.id === avatarId)
+
+        if (avatar.imagePath) {
+          avatar.uri = await storage().ref(avatar.imagePath).getDownloadURL()
+
+          RNFastImage.preload([{ uri: avatar.uri }])
+        }
+
+        return avatar
+      }
+    }
+
+    return null
   }
 }

@@ -30,6 +30,14 @@ export const Boot = () => {
       }
     }, 1000)
   })
+
+  useEffect(() => {
+    navigation.subscribeUnsafeParams()
+
+    return function () {
+      navigation.unsubscribeUnsafeParams()
+    }
+  }, [])
   return (
     <View style={SS.container}>
       <Svg name={'Logo'} size={40} />
