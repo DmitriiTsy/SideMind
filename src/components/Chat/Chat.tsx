@@ -30,15 +30,15 @@ export const Chat = observer(() => {
 
   useFocusEffect(
     useCallback(() => {
-      if (navigation.unsafeParams?.dID) {
-        const { dID, bID } = navigation.unsafeParams
+      if (navigation.params?.dID) {
+        const { dID, bID } = navigation.params
         chatVM.getSharedAvatar(dID, bID)
       }
-    }, [chatVM, navigation.unsafeParams])
+    }, [chatVM, navigation.params])
   )
 
   const goBack = () => {
-    navigation.goBack()
+    navigation.popToTop()
   }
 
   const resetAvailable = useMemo(

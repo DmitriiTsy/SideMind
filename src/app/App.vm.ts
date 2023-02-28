@@ -1,6 +1,8 @@
 import { RefObject } from 'react'
 import { NavigationContainerRef } from '@react-navigation/native'
 
+import * as BootSplash from 'react-native-bootsplash'
+
 import { Inject, Injectable } from 'IoC'
 import {
   ILayoutService,
@@ -31,6 +33,10 @@ export interface IAppVM {
   initNavigation(
     navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
   ): void
+
+  emitNavigationStateChange(): void
+
+  onReady(): void
 }
 
 @Injectable()
@@ -62,5 +68,13 @@ export class AppVM implements IAppVM {
     navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
   ) {
     this._navigationService.init(navigationRef)
+  }
+
+  emitNavigationStateChange = () => {
+    this._navigationService.emitNavigationStateChange()
+  }
+
+  onReady() {
+    BootSplash.hide({ fade: true, duration: 500 })
   }
 }

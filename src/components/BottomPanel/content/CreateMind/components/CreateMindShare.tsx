@@ -27,37 +27,19 @@ export const CreateMindShare = observer(() => {
     // AvatarChooseHandler()
   }
 
-  // const shareOptions = {
-  //   title: 'Share via',
-  //   message: 'some message',
-  //   url: `https://sidemind-aa533.web.app/?dID=${systemInfo.deviceId}&bID=${createMindVM.editingAvatar.id}`,
-  //   social: RNShare.Social.FACEBOOK
-  // }
-
   const shareHandler = async () => {
     try {
-      // RNShare.shareSingle(shareOptions)
-      //   .then((res) => {
-      //     console.log(res)
-      //   })
-      //   .catch((err) => {
-      //     err && console.log(err)
-      //   })
-
       const avatar = createMindVM.editingAvatar
       const result = await Share.share({
-        url: `https://sidemind.app/?dID=${systemInfo.deviceId}&bID=${avatar.id}`
+        url: `https://sidemind.app/?dID=${systemInfo.deviceId}&bID=${avatar.id}&name=${avatar.name}&image=${avatar.uri}`
       })
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
           console.log(result.activityType)
-          // shared with activity type of result.activityType
         } else {
-          // shared
         }
       } else if (result.action === Share.dismissedAction) {
         console.log(result)
-        // dismissed
       }
     } catch (error: any) {
       Alert.alert(error.message)

@@ -4,10 +4,11 @@ import { RefObject } from 'react'
 import {
   NavigationContainerRef,
   NavigationState,
-  PartialState
+  PartialState,
+  StackActions
 } from '@react-navigation/native'
 
-import { action, computed, observable, runInAction } from 'mobx'
+import { action, computed, observable } from 'mobx'
 
 import { Injectable } from 'IoC'
 
@@ -18,13 +19,15 @@ export const INavigationServiceTid = Symbol.for('INavigationServiceTid')
 export interface INavigationService<RouteName extends ScreenName = any> {
   canGoBack: boolean
   currentRoute?: Route<string>
+
   params: ScreenParamTypes[RouteName]
-  unsafeParams: ScreenParamTypes[ScreenName]
 
   navigate<RouteName extends ScreenName>(
     name: RouteName,
     params?: ScreenParamTypes[RouteName]
   ): void
+
+  popToTop(): void
 
   goBack(): void
 
@@ -32,33 +35,29 @@ export interface INavigationService<RouteName extends ScreenName = any> {
 
   emitNavigationStateChange(): void
 
-  reset(state: PartialState<NavigationState> | NavigationState): void
+  isReady(): boolean
 
-  subscribeUnsafeParams(): void
-  unsubscribeUnsafeParams(): void
+  setParamsFromUrl(url: string): void
+
+  reset(state: PartialState<NavigationState> | NavigationState): void
 }
 
 @Injectable()
 export class NavigationService implements INavigationService {
   @observable.ref currentRoute?: Route<string>
-  @observable _navigationRef: RefObject<
+  @observable private _navigationRef: RefObject<
     NavigationContainerRef<ScreenParamTypes>
   >
-  @observable _unsafeParams: ScreenParamTypes[ScreenName]
+  @observable _params: ScreenParamTypes[ScreenName]
+
+  @computed
+  get params() {
+    return this._params
+  }
 
   @computed
   get canGoBack() {
     return this._navigationRef?.current?.canGoBack() || false
-  }
-
-  @computed
-  get params() {
-    return this._navigationRef?.current?.getCurrentRoute()?.params || {}
-  }
-
-  @computed
-  get unsafeParams() {
-    return this._unsafeParams
   }
 
   @action.bound
@@ -71,6 +70,11 @@ export class NavigationService implements INavigationService {
   }
 
   @action.bound
+  popToTop() {
+    this._navigationRef.current.dispatch(StackActions.popToTop)
+  }
+
+  @action.bound
   init(navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>) {
     this._navigationRef = navigationRef
     this.emitNavigationStateChange()
@@ -79,6 +83,20 @@ export class NavigationService implements INavigationService {
   @action.bound
   emitNavigationStateChange() {
     this.currentRoute = this._navigationRef?.current?.getCurrentRoute()
+    this._params = this._navigationRef?.current?.getCurrentRoute()
+      .params as ScreenParamTypes[ScreenName]
+  }
+
+  setParamsFromUrl(url: string) {
+    if (url) {
+      const params = url.replace('sidemind://chat/', '').split('/')
+      if (params) {
+        this._navigationRef?.current?.setParams({
+          dID: params[0],
+          bID: params[1]
+        })
+      }
+    }
   }
 
   reset(state: PartialState<NavigationState> | NavigationState) {
@@ -92,15 +110,7 @@ export class NavigationService implements INavigationService {
     }
   }
 
-  subscribeUnsafeParams() {
-    this._navigationRef.current.addListener('__unsafe_action__', (e) =>
-      runInAction(() => (this._unsafeParams = e.data.action.payload?.params))
-    )
-  }
-
-  unsubscribeUnsafeParams() {
-    this._navigationRef.current.removeListener('__unsafe_action__', (e) =>
-      runInAction(() => (this._unsafeParams = e.data.action.payload?.params))
-    )
+  isReady() {
+    return this._navigationRef?.current?.isReady()
   }
 }
