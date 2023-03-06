@@ -46,13 +46,13 @@ export interface ICreateMindVM {
   editingAvatar: AvatarModel | undefined
 
   hasError: keyof Translation | boolean
+  ownerError: keyof Translation | boolean
 
   init(avatar?: AvatarModel): void
 
   submit(): void
   goBack(): void
   deleteMind(): void
-  delete(): void
 }
 
 @Injectable()
@@ -69,7 +69,7 @@ export class CreateMindVM implements ICreateMindVM {
 
   constructor(
     @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService,
-    @Inject(IChatVMTid) private _ChatVM: IChatVM,
+    @Inject(IChatVMTid) private _chatVM: IChatVM,
     @Inject(INavigationServiceTid)
     private _navigationService: INavigationService,
     @Inject(IBottomPanelVMTid) private _bottomPanelVM: IBottomPanelVM,
@@ -89,25 +89,35 @@ export class CreateMindVM implements ICreateMindVM {
     const refInputTag = createRef<TextInput>()
     const refInputBio = createRef<TextInput>()
 
+    const editable = avatar
+      ? avatar.category === EAvatarsCategory.Custom &&
+        avatar.creatorId === this._systemInfoService.deviceId
+      : true
+
+    const isDefaultAvatar =
+      avatar && avatar.category !== EAvatarsCategory.Custom
+
     this.inputName = new InputVM({
       label: 'full name',
-      placeholder: 'placeholder full name',
+      placeholder: isDefaultAvatar
+        ? avatar.name
+        : this._t.get('placeholder full name'),
       minLength: 2,
       errorText: 'name requirements',
-      autoFocus: !avatar
-        ? true
-        : avatar.category === EAvatarsCategory.Custom && true,
+      autoFocus: !avatar ? true : editable,
       ref: refInputName,
       onSubmitEditing: () => {
         refInputName.current.blur()
         refInputTag.current.focus()
       },
-      defaultValue: avatar && avatar.name,
-      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
+      defaultValue: avatar && !isDefaultAvatar && avatar.name,
+      editable
     })
     this.inputTagLine = new InputVM({
       label: 'tagline',
-      placeholder: 'placeholder tagline',
+      placeholder: isDefaultAvatar
+        ? avatar.tagLine
+        : this._t.get('placeholder tagline'),
       minLength: 5,
       errorText: 'tagline requirements',
       ref: refInputTag,
@@ -115,17 +125,19 @@ export class CreateMindVM implements ICreateMindVM {
         refInputTag.current.blur()
         refInputBio.current.focus()
       },
-      defaultValue: avatar && avatar.tagLine,
-      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
+      defaultValue: avatar && !isDefaultAvatar && avatar.tagLine,
+      editable
     })
     this.inputBio = new InputVM({
       label: 'bio',
-      placeholder: 'placeholder bio',
+      placeholder: isDefaultAvatar
+        ? avatar.bio
+        : this._t.get('placeholder bio'),
       minLength: 10,
       errorText: 'bio requirements',
       ref: refInputBio,
-      defaultValue: avatar && avatar.bio,
-      editable: avatar ? avatar.category === EAvatarsCategory.Custom : true
+      defaultValue: avatar && !isDefaultAvatar && avatar.bio,
+      editable
     })
     this.inputGenerateAvatar = new InputVM({
       label: 'generate avatar input label',
@@ -136,10 +148,19 @@ export class CreateMindVM implements ICreateMindVM {
   @computed
   get hasError() {
     return (
+      this.ownerError ||
       this.inputName.hasError ||
       this.inputTagLine.hasError ||
       this.inputBio.hasError
     )
+  }
+
+  @computed
+  get ownerError() {
+    return this.editingAvatar &&
+      this.editingAvatar.creatorId !== this._systemInfoService.deviceId
+      ? 'cant edit someones avatar'
+      : false
   }
 
   @action.bound
@@ -152,19 +173,17 @@ export class CreateMindVM implements ICreateMindVM {
   }
 
   @action.bound
-  deleteMind() {
-    this.delete()
+  async deleteMind() {
     this.pending = true
+
+    await this._firebaseService.deleteCustomAvatar(this.editingAvatar.id)
+    this._chatVM.removeAvatar()
+    this._appStore.removeCustomAvatar(this.editingAvatar.id)
+
     this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.MainFeed)
-    this.pending = false
-  }
 
-  @action.bound
-  delete() {
-    const usersArray = this._appStore.usersAvatars
-    const index = usersArray.indexOf(this.editingAvatar)
-    usersArray.splice(index, 1)
+    this.pending = false
   }
 
   @action.bound
@@ -172,7 +191,7 @@ export class CreateMindVM implements ICreateMindVM {
     const error = this.hasError
 
     if (error) {
-      Alert.alert(this._t.get(error))
+      Alert.alert(this._t.get(error), '', [], { userInterfaceStyle: 'dark' })
     } else {
       if (this.editingAvatar) {
         this._editAvatar()
@@ -208,12 +227,13 @@ export class CreateMindVM implements ICreateMindVM {
       id: this.editingAvatar.id,
       prompt: generatedPrompt,
       params: this.editingAvatar.params,
-      bio: bio
+      bio: bio,
+      creatorId: this.editingAvatar.creatorId
     }
 
     await this._appStore.editCustomAvatar(editedAvatar, this.image?.localePath)
 
-    this._ChatVM.setAvatar(
+    this._chatVM.setAvatar(
       this._appStore.usersAvatars.find((el) => el.id === editedAvatar.id)
     )
     this._bottomPanelVM.closePanel()
@@ -254,7 +274,8 @@ export class CreateMindVM implements ICreateMindVM {
         presence_penalty: 0,
         top_p: 1
       },
-      bio: bio
+      bio: bio,
+      creatorId: this._systemInfoService.deviceId
     }
 
     await this._appStore.updateUsersAvatars(
@@ -262,7 +283,7 @@ export class CreateMindVM implements ICreateMindVM {
       imagePath,
       image ? image.localePath : ''
     )
-    this._ChatVM.setAvatar(
+    this._chatVM.setAvatar(
       this._appStore.usersAvatars.find((el) => el.id === avatar.id)
     )
     this._bottomPanelVM.closePanel()

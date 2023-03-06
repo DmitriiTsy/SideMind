@@ -1,37 +1,21 @@
-import React from 'react'
-import {
-  ActionSheetIOS,
-  Alert,
-  Pressable,
-  Share,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native'
+import React, { useMemo } from 'react'
+import { Alert, Pressable, Share, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
-import {
-  ISystemInfoService,
-  ISystemInfoServiceTid
-} from 'services/SystemInfoService'
+import { nop } from 'utils/nop'
 
 export const CreateMindShare = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
-  const systemInfo = useInject<ISystemInfoService>(ISystemInfoServiceTid)
-
-  const deleteMindHandler = () => {
-    // AvatarChooseHandler()
-  }
 
   const shareHandler = async () => {
     try {
       const avatar = createMindVM.editingAvatar
       const result = await Share.share({
-        url: `https://sidemind.app/?dID=${systemInfo.deviceId}&bID=${avatar.id}&name=${avatar.name}&image=${avatar.uri}`
+        url: `https://sidemind.app/?bID=${avatar.id}&name=${avatar.name}&image=${avatar.uri}`
       })
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -46,43 +30,43 @@ export const CreateMindShare = observer(() => {
     }
   }
 
-  const AvatarChooseHandler = () => {
-    ActionSheetIOS.showActionSheetWithOptions(
-      {
-        options: [
-          t.get('are you sure'),
-          t.get('yes delete mind'),
-          // t.get('generate avatar'),
-          t.get('cancel')
-        ],
-        disabledButtonIndices: [0],
-        cancelButtonIndex: 2,
-        tintColor: '#EB5545',
-        cancelButtonTintColor: '#549EF7',
-        userInterfaceStyle: 'dark'
-      },
-      async (buttonIndex) => {
-        if (buttonIndex === 0) {
-          createMindVM.deleteMind()
+  const deleteAvatar = () => {
+    Alert.alert(
+      t.get('delete mind'),
+      t.get('are you sure'),
+      [
+        {
+          text: t.get('yes delete mind'),
+          onPress: () => createMindVM.deleteMind(),
+          style: 'destructive'
+        },
+        {
+          text: t.get('cancel'),
+          onPress: nop,
+          style: 'cancel'
         }
-        if (buttonIndex === 1) {
-          createMindVM.deleteMind()
-        }
-      }
+      ],
+      { userInterfaceStyle: 'dark' }
     )
   }
+
+  const disableDelete = useMemo(
+    () => !createMindVM.editingAvatar || !!createMindVM.ownerError,
+    [createMindVM.editingAvatar, createMindVM.ownerError]
+  )
 
   return (
     <View style={SS.container}>
       <Pressable style={SS.wrapperShare} onPress={shareHandler}>
-        <View>
-          <Text style={SS.ShareText}>{t.get('share mind')}</Text>
-        </View>
+        <Text style={SS.ShareText}>{t.get('share mind')}</Text>
       </Pressable>
-      <Pressable style={SS.wrapperDelete} onPress={deleteMindHandler}>
-        <View>
-          <Text style={SS.DeleteText}>{t.get('delete mind')}</Text>
-        </View>
+
+      <Pressable
+        style={SS.wrapperDelete}
+        disabled={disableDelete}
+        onPress={deleteAvatar}
+      >
+        <Text style={SS.DeleteText}>{t.get('delete mind')}</Text>
       </Pressable>
     </View>
   )

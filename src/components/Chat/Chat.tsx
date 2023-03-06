@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
@@ -13,7 +13,12 @@ import { ScreenContainer } from 'components/ScreenContainer'
 import { Svg } from 'components/ui/Svg'
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
-import { INavigationService, INavigationServiceTid } from 'services'
+import {
+  ILocalizationService,
+  ILocalizationServiceTid,
+  INavigationService,
+  INavigationServiceTid
+} from 'services'
 import { Resetting } from 'components/Chat/components/Resetting'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
@@ -27,14 +32,25 @@ export const Chat = observer(() => {
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+  const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   useFocusEffect(
     useCallback(() => {
-      if (navigation.params?.dID) {
-        const { dID, bID } = navigation.params
-        chatVM.getSharedAvatar(dID, bID)
+      if (navigation.params?.bID) {
+        const { bID } = navigation.params
+        chatVM.getSharedAvatar(bID)
       }
     }, [chatVM, navigation.params])
+  )
+
+  useFocusEffect(
+    useCallback(() => {
+      if (chatVM.avatar?.deleted) {
+        Alert.alert(t.get('no longer available'), undefined, undefined, {
+          userInterfaceStyle: 'dark'
+        })
+      }
+    }, [chatVM.avatar?.deleted, t])
   )
 
   const goBack = () => {

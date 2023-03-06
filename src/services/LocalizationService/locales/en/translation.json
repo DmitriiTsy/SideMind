@@ -31,5 +31,7 @@
   "generate avatar input label": "Use a prompt for AI-generated avatar",
   "generate avatar placeholder": "Ex.: professional picture of old drunk salesman against bright coloured background",
   "share mind": "Share Mind",
-  "delete mind": "Delete Mind"
+  "delete mind": "Delete Mind",
+  "cant edit someones avatar": "Sorry, you can't edit someone's avatar",
+  "no longer available": "Sorry, i'm no longer available."
 }

@@ -15,7 +15,6 @@ import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 import { EAvatarsCategory } from 'services/FirebaseService/types'
-import { nop } from 'utils/nop'
 
 export const CreateMindPickImage = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
@@ -73,7 +72,10 @@ export const CreateMindPickImage = observer(() => {
 
   return (
     <View style={SS.container}>
-      <Pressable onPress={isCustomAvatar ? AvatarChooseHandler : nop}>
+      <Pressable
+        onPress={AvatarChooseHandler}
+        disabled={!isCustomAvatar || !!createMindVM.ownerError}
+      >
         {createMindVM.image || createMindVM.editingAvatar?.uri ? (
           <RNFastImage
             style={SS.image}
@@ -92,7 +94,8 @@ export const CreateMindPickImage = observer(() => {
       </Pressable>
       <Pressable
         style={SS.textsWrapper}
-        onPress={isCustomAvatar ? AvatarChooseHandler : nop}
+        onPress={AvatarChooseHandler}
+        disabled={!isCustomAvatar || !!createMindVM.ownerError}
       >
         <Text style={SS.texts}>{t.get('edit avatar')}</Text>
       </Pressable>

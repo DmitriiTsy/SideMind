@@ -29,6 +29,7 @@ export const Boot = () => {
           routes: [{ name: CommonScreenName.MainFeed }]
         })
       } else {
+        storage.setCustomAvatarsInCustomList()
         navigation.navigate(CommonScreenName.SelectAvatars)
       }
     }, 1000)

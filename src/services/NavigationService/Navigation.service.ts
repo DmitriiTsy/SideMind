@@ -65,7 +65,6 @@ export class NavigationService implements INavigationService {
     name: RouteName,
     params?: ScreenParamTypes[RouteName]
   ) {
-    console.log(name, params)
     this._navigationRef?.current?.navigate({ name, params })
   }
 
