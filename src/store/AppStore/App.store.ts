@@ -1,5 +1,7 @@
 import { action, observable, runInAction } from 'mobx'
 
+import { flatten } from 'lodash'
+
 import { Inject, Injectable } from 'IoC'
 import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
@@ -40,7 +42,11 @@ export interface IAppStore {
 
   updateAvatarsFromFirebase(): void
 
-  getSharedAvatar(avatarId: string): Promise<AvatarModel | null>
+  getSharedAvatar(
+    avatarId: string,
+    general: boolean,
+    starting: boolean
+  ): Promise<AvatarModel | null>
 
   removeCustomAvatar(avatarId: string | number): void
 }
@@ -326,8 +332,20 @@ export class AppStore implements IAppStore {
     this._storageService.setUserAvatars(this.usersAvatars)
   }
 
-  async getSharedAvatar(avatarId: string) {
-    const avatar = await this._firebaseService.getSharedAvatar(avatarId)
+  async getSharedAvatar(avatarId: string, general: boolean, starting: boolean) {
+    let avatar
+
+    if (!general) {
+      avatar = await this._firebaseService.getSharedAvatar(avatarId)
+    } else if (starting) {
+      avatar = flatten(this.startingAvatars).find(
+        (el) => el.id.toString() === avatarId
+      )
+    } else {
+      avatar = flatten(this.commonAvatars).find(
+        (el) => el.id.toString() === avatarId
+      )
+    }
 
     if (avatar) {
       const avatarExist = this.usersAvatars.find((el) => el.id === avatar.id)

@@ -43,6 +43,12 @@ import {
 } from 'services/DeepLinkingService'
 
 import {
+  ITinyUrlService,
+  ITinyUrlServiceTId,
+  TinyUrlService
+} from 'services/TinyUrlService/TinyUrlService'
+
+import {
   IStorageService,
   IStorageServiceTid,
   StorageService
@@ -85,6 +91,10 @@ export class ServiceModule implements IoCModule {
     ioc
       .bind<IDeepLinkingService>(IDeepLinkingServiceTid)
       .to(DeepLinkingService)
+      .inSingletonScope()
+    ioc
+      .bind<ITinyUrlService>(ITinyUrlServiceTId)
+      .to(TinyUrlService)
       .inSingletonScope()
   }
 }

@@ -5,8 +5,6 @@ import React, { useRef } from 'react'
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
-import { EAvatarsCategory } from 'services/FirebaseService/types'
-
 import {
   CreateMindHeader,
   CreateMindInputs,
@@ -34,10 +32,10 @@ export const CreateMind = observer(() => {
         onContentSizeChange={onContentSizeChange}
       >
         <CreateMindPickImage />
-        {createMindVM.editingAvatar &&
-          createMindVM.editingAvatar.category === EAvatarsCategory.Custom && (
-            <CreateMindShare />
-          )}
+        {/*{createMindVM.editingAvatar &&*/}
+        {/*  createMindVM.editingAvatar.category === EAvatarsCategory.Custom && (*/}
+        <CreateMindShare />
+        {/*)}*/}
         <CreateMindInputs />
       </ScrollView>
       {/*<View*/}

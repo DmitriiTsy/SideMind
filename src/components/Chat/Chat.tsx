@@ -37,8 +37,8 @@ export const Chat = observer(() => {
   useFocusEffect(
     useCallback(() => {
       if (navigation.params?.bID) {
-        const { bID } = navigation.params
-        chatVM.getSharedAvatar(bID)
+        const { bID, general, starting } = navigation.params
+        chatVM.getSharedAvatar(bID, general, starting)
       }
     }, [chatVM, navigation.params])
   )

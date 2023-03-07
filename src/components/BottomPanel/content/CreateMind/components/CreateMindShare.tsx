@@ -6,16 +6,34 @@ import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 import { nop } from 'utils/nop'
+import {
+  ITinyUrlService,
+  ITinyUrlServiceTId
+} from 'services/TinyUrlService/TinyUrlService'
+import { EAvatarsCategory } from 'services/FirebaseService/types'
 
 export const CreateMindShare = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
+  const tinyUrlService = useInject<ITinyUrlService>(ITinyUrlServiceTId)
 
   const shareHandler = async () => {
     try {
       const avatar = createMindVM.editingAvatar
+
+      const tinyUrl = await tinyUrlService.getTinyUrl(
+        avatar.id,
+        avatar.name,
+        avatar.uri,
+        avatar.category !== EAvatarsCategory.Custom,
+        avatar.category === EAvatarsCategory.Starting
+      )
+
+      console.log(avatar.category)
+
       const result = await Share.share({
-        url: `https://sidemind.app/?bID=${avatar.id}&name=${avatar.name}&image=${avatar.uri}`
+        message: 'Try this AI from SideMind App',
+        url: tinyUrl
       })
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -57,45 +75,43 @@ export const CreateMindShare = observer(() => {
 
   return (
     <View style={SS.container}>
-      <Pressable style={SS.wrapperShare} onPress={shareHandler}>
+      <Pressable style={[SS.wrapper, SS.share]} onPress={shareHandler}>
         <Text style={SS.ShareText}>{t.get('share mind')}</Text>
       </Pressable>
 
-      <Pressable
-        style={SS.wrapperDelete}
-        disabled={disableDelete}
-        onPress={deleteAvatar}
-      >
-        <Text style={SS.DeleteText}>{t.get('delete mind')}</Text>
-      </Pressable>
+      {!!!createMindVM.ownerError && (
+        <Pressable
+          style={[SS.wrapper, SS.delete]}
+          disabled={disableDelete}
+          onPress={deleteAvatar}
+        >
+          <Text style={SS.DeleteText}>{t.get('delete mind')}</Text>
+        </Pressable>
+      )}
     </View>
   )
 })
 
 const SS = StyleSheet.create({
   container: {
-    flexDirection: 'column',
-    height: 80,
-    borderRadius: 12,
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    backgroundColor: '#303030',
-    marginBottom: 21,
-    marginHorizontal: 18
+    marginBottom: 21
   },
-  wrapperShare: {
+  wrapper: {
+    height: 35,
     borderBottomColor: '#444444',
-    borderBottomWidth: 0.5,
-    width: '100%',
-    paddingBottom: 12,
-    paddingHorizontal: 18
-  },
-  wrapperDelete: {
     paddingHorizontal: 18,
-    paddingTop: 12,
-    width: '100%',
-    height: '100%'
+    backgroundColor: '#303030',
+    marginHorizontal: 18,
+    justifyContent: 'center'
+  },
+  share: {
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomWidth: 0.5
+  },
+  delete: {
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12
   },
   ShareText: {
     fontWeight: '500',

@@ -29,9 +29,11 @@ export class DeepLinkingService implements IDeepLinkingService {
       screens: {
         // [CommonScreenName.MainFeed]: 'main-feed',
         [CommonScreenName.Chat]: {
-          path: 'chat/:dID/:bID',
+          path: 'chat/:bID/:general/:starting',
           parse: {
-            dID: (dID) => dID
+            bID: (bID) => bID,
+            general: (general) => /^true$/i.test(general),
+            starting: (starting) => /^true$/i.test(starting)
           }
         }
       }

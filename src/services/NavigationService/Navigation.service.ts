@@ -91,8 +91,9 @@ export class NavigationService implements INavigationService {
       const params = url.replace('sidemind://chat/', '').split('/')
       if (params) {
         this._navigationRef?.current?.setParams({
-          dID: params[0],
-          bID: params[1]
+          bID: params[1],
+          general: /^true$/i.test(params[2]),
+          starting: /^true$/i.test(params[3])
         })
       }
     }

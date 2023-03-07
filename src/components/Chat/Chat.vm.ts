@@ -21,7 +21,7 @@ export interface IChatVM {
   getFirstMessage(): void
   resetMessages(): void
 
-  getSharedAvatar(avatarId: string): void
+  getSharedAvatar(avatarId: string, general: boolean, starting: boolean): void
 
   removeAvatar(): void
 }
@@ -126,8 +126,12 @@ export class ChatVM implements IChatVM {
     return await this._openAIService.createCompletion()
   }
 
-  async getSharedAvatar(avatarId: string) {
-    const avatar = await this._appStore.getSharedAvatar(avatarId)
+  async getSharedAvatar(avatarId: string, general: boolean, starting: boolean) {
+    const avatar = await this._appStore.getSharedAvatar(
+      avatarId,
+      general,
+      starting
+    )
 
     if (avatar) {
       this.setAvatar(avatar)
