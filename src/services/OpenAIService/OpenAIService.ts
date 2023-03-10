@@ -5,6 +5,7 @@ import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { AvatarModel } from 'services/FirebaseService/types'
 import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import DeviceInfo from 'react-native-device-info'
 
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
@@ -48,32 +49,42 @@ export class OpenAIService implements IOpenAIService {
   }
 
   async generatePrompt(prompt: string) {
-    console.log(prompt)
     try {
-      const res = await this._openAIApi.createChatCompletion({
-        model: EModel.davinci3turbo,
-        messages: [
-          {role: "user", 
-          content: `${prompt}`
-        },],
-      })
-
-      console.log(res)
-      return this._checkQuotes(res.data.choices[0].message.content)
+      if (DeviceInfo.getVersion() === "1.3.3") {
+        const res = await this._openAIApi.createChatCompletion({
+          model: EModel.davinci3turbo,
+          messages: [
+            {role: "user", 
+            content: `${prompt}`
+          },],
+        })
+        return this._checkQuotes(res.data.choices[0].message.content)
+      } else {
+      const res = await this._openAIApi.createCompletion({
+        model: EModel.davinci3,
+        prompt: prompt,
+        temperature: 0.73,
+        max_tokens: 721,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        stop: ['###']
+        })
+      return this._checkQuotes(res.data.choices[0].text.trim())
+    }
     } catch (e) {
-
       this._firebaseService.setMessage(
         this._avatar.id,
         { sender: ESender.BOT, text: `Error occurred ${e}`, date: new Date() },
         true
       )
-  
+        console.log(e)
       return 'Some error occurred, now chat is unavailable'
     }
   }
 
   async createCompletion(prompt?: string, isFirst?: boolean) {
-    console.log(prompt)
+    console.log('Works')
+    console.log(DeviceInfo.getVersion() === "1.3.3" ? "true" : "false")
     if (prompt) {
       this._history = `${this._history} \n\n###: ${prompt}. \n\n`
     }
@@ -88,8 +99,7 @@ export class OpenAIService implements IOpenAIService {
           content: `${this._history}`
         }],
       })
-      console.log(res.data.choices[0].message.content)
-      console.log(res)
+
       if (isFirst) {
         res.data.choices[0].message.content = this._checkQuotes(
           res.data.choices[0].message.content.trim()
