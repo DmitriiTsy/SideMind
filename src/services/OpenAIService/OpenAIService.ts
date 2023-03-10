@@ -10,15 +10,16 @@ export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 enum EModel {
   davinci2 = 'text-davinci-002',
-  davinci3 = 'text-davinci-003'
+  davinci3 = 'text-davinci-003',
+  davinci3turbo = "gpt-3.5-turbo"
 }
 
 export interface IOpenAIService {
   init(): void
 
-  createCompletion(prompt?: string, isFirst?: boolean): Promise<string | null>
+  createCompletion(arg0?: any, isFirst?: boolean): Promise<string | null>
 
-  generatePrompt(prompt: string): Promise<string>
+  generatePrompt(arg0?: string): Promise<string>
 
   setAvatar(avatar: AvatarModel): void
 }
@@ -43,33 +44,36 @@ export class OpenAIService implements IOpenAIService {
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
-    this._model = EModel.davinci3
+    this._model = EModel.davinci3turbo
   }
 
   async generatePrompt(prompt: string) {
+    console.log(prompt)
     try {
-      const res = await this._openAIApi.createCompletion({
-        model: EModel.davinci3,
-        prompt: prompt,
-        temperature: 0.73,
-        max_tokens: 721,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-        stop: ['###']
+      const res = await this._openAIApi.createChatCompletion({
+        model: EModel.davinci3turbo,
+        messages: [
+          {role: "user", 
+          content: `${prompt}`
+        },],
       })
-      return this._checkQuotes(res.data.choices[0].text.trim())
+
+      console.log(res)
+      return this._checkQuotes(res.data.choices[0].message.content)
     } catch (e) {
+
       this._firebaseService.setMessage(
         this._avatar.id,
         { sender: ESender.BOT, text: `Error occurred ${e}`, date: new Date() },
         true
       )
-      console.log(e)
+  
       return 'Some error occurred, now chat is unavailable'
     }
   }
 
   async createCompletion(prompt?: string, isFirst?: boolean) {
+    console.log(prompt)
     if (prompt) {
       this._history = `${this._history} \n\n###: ${prompt}. \n\n`
     }
@@ -77,29 +81,28 @@ export class OpenAIService implements IOpenAIService {
     this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
     try {
-      const res = await this._openAIApi.createCompletion({
+      const res = await this._openAIApi.createChatCompletion({
         model: this._model,
-        prompt: this._history,
-        temperature: this._avatar.params.temperature,
-        max_tokens: this._avatar.params.max_tokens,
-        frequency_penalty: this._avatar.params.frequency_penalty,
-        presence_penalty: this._avatar.params.presence_penalty,
-        stop: ['###']
+        messages: [
+          {role: "user", 
+          content: `${this._history}`
+        }],
       })
-
+      console.log(res.data.choices[0].message.content)
+      console.log(res)
       if (isFirst) {
-        res.data.choices[0].text = this._checkQuotes(
-          res.data.choices[0].text.trim()
+        res.data.choices[0].message.content = this._checkQuotes(
+          res.data.choices[0].message.content.trim()
         )
       }
 
-      this._history = `${this._history} ${res.data.choices[0].text}`
+      this._history = `${this._history} ${res.data.choices[0].message.content}`
 
       this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
-      return res.data.choices[0].text.trim()
+      return res.data.choices[0].message.content.trim()
     } catch (e) {
-      console.log(e)
+
       if (
         e.response?.status.toString().startsWith('5') ||
         e.response?.status == 429 ||
@@ -116,7 +119,7 @@ export class OpenAIService implements IOpenAIService {
           },
           true
         )
-        console.log(e)
+   
         return 'Something came up, can you get back to me in a few minutes.'
       }
     }
@@ -135,7 +138,7 @@ export class OpenAIService implements IOpenAIService {
       return null
     } else {
       this._countError = 0
-      this._model = EModel.davinci3
+      this._model = EModel.davinci3turbo
 
       this._firebaseService.setMessage(
         this._avatar.id,
