@@ -47,7 +47,7 @@ export class OpenAIService implements IOpenAIService {
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
-    this._model = String(DeviceInfo.getVersion()) === "1.3.3" ? EModel.davinci3turbo : EModel.davinci3
+    this._model = String(DeviceInfo.getVersion()) === "1.3.2" ? EModel.davinci3turbo : EModel.davinci3
   }
 
   async generatePrompt(prompt: string) {
@@ -61,7 +61,6 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: 0,
         stop: ['###']
         })
-        console.log(res)
       return this._checkQuotes(res.data.choices[0].text.trim())
     } catch (e) {
       this._firebaseService.setMessage(
@@ -86,16 +85,16 @@ export class OpenAIService implements IOpenAIService {
     this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
     try {
-      console.log(empty || String(DeviceInfo.getVersion()) === "1.3.3")
-      if (empty || String(DeviceInfo.getVersion()) === "1.3.3") {
+      console.log(empty || String(DeviceInfo.getVersion()) === "1.3.2")
+      if (empty || String(DeviceInfo.getVersion()) === "1.3.2") {
       const res = await this._openAIApi.createChatCompletion({
-        model: this._model,
+        model: EModel.davinci3turbo,
         messages: [
           {role: "user", 
           content: `${this._history}`
         }],
       })
-      console.log(res)
+      console.log(res.data.model)
       if (isFirst) {
         res.data.choices[0].message.content = this._checkQuotes(
           res.data.choices[0].message.content.trim()
@@ -117,7 +116,7 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: this._avatar.params.presence_penalty,
         stop: ['###']
       })
-      console.log(res)
+      console.log(res.data.model)
       if (isFirst) {
         res.data.choices[0].text = this._checkQuotes(
           res.data.choices[0].text.trim()
