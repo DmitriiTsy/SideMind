@@ -6,7 +6,6 @@ import { AvatarModel } from 'services/FirebaseService/types'
 import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import DeviceInfo from 'react-native-device-info'
-
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 enum EModel {
@@ -23,6 +22,8 @@ export interface IOpenAIService {
   generatePrompt(arg0?: string): Promise<string>
 
   setAvatar(avatar: AvatarModel): void
+
+  resetting: boolean
 }
 
 @Injectable()
@@ -37,29 +38,20 @@ export class OpenAIService implements IOpenAIService {
   constructor(
     @Inject(IFirebaseServiceTid)
     private readonly _firebaseService: IFirebaseService,
-    @Inject(IAppStoreTid) private readonly _appStore: IAppStore
+    @Inject(IAppStoreTid) private readonly _appStore: IAppStore,
   ) {}
+  resetting: boolean
 
   init() {
     this._config = new Configuration({
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
-    this._model = EModel.davinci3turbo
+    this._model = String(DeviceInfo.getVersion()) === "1.3.3" ? EModel.davinci3turbo : EModel.davinci3
   }
 
   async generatePrompt(prompt: string) {
     try {
-      if (DeviceInfo.getVersion() === "1.3.3") {
-        const res = await this._openAIApi.createChatCompletion({
-          model: EModel.davinci3turbo,
-          messages: [
-            {role: "user", 
-            content: `${prompt}`
-          },],
-        })
-        return this._checkQuotes(res.data.choices[0].message.content)
-      } else {
       const res = await this._openAIApi.createCompletion({
         model: EModel.davinci3,
         prompt: prompt,
@@ -69,8 +61,8 @@ export class OpenAIService implements IOpenAIService {
         presence_penalty: 0,
         stop: ['###']
         })
+        console.log(res)
       return this._checkQuotes(res.data.choices[0].text.trim())
-    }
     } catch (e) {
       this._firebaseService.setMessage(
         this._avatar.id,
@@ -83,8 +75,10 @@ export class OpenAIService implements IOpenAIService {
   }
 
   async createCompletion(prompt?: string, isFirst?: boolean) {
-    console.log('Works')
-    console.log(DeviceInfo.getVersion() === "1.3.3" ? "true" : "false")
+    let empty = false
+    if (this._history.length === 0) {
+      empty = true
+    }
     if (prompt) {
       this._history = `${this._history} \n\n###: ${prompt}. \n\n`
     }
@@ -92,6 +86,8 @@ export class OpenAIService implements IOpenAIService {
     this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
     try {
+      console.log(empty || String(DeviceInfo.getVersion()) === "1.3.3")
+      if (empty || String(DeviceInfo.getVersion()) === "1.3.3") {
       const res = await this._openAIApi.createChatCompletion({
         model: this._model,
         messages: [
@@ -99,7 +95,7 @@ export class OpenAIService implements IOpenAIService {
           content: `${this._history}`
         }],
       })
-
+      console.log(res)
       if (isFirst) {
         res.data.choices[0].message.content = this._checkQuotes(
           res.data.choices[0].message.content.trim()
@@ -111,6 +107,29 @@ export class OpenAIService implements IOpenAIService {
       this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
       return res.data.choices[0].message.content.trim()
+    } else {
+      const res = await this._openAIApi.createCompletion({
+        model: this._model,
+        prompt: this._history,
+        temperature: this._avatar.params.temperature,
+        max_tokens: this._avatar.params.max_tokens,
+        frequency_penalty: this._avatar.params.frequency_penalty,
+        presence_penalty: this._avatar.params.presence_penalty,
+        stop: ['###']
+      })
+      console.log(res)
+      if (isFirst) {
+        res.data.choices[0].text = this._checkQuotes(
+          res.data.choices[0].text.trim()
+        )
+      }
+
+      this._history = `${this._history} ${res.data.choices[0].text}`
+
+      this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
+
+      return res.data.choices[0].text.trim()
+    }
     } catch (e) {
 
       if (
