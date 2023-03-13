@@ -30,7 +30,10 @@ export const Boot = () => {
         })
       } else {
         storage.setCustomAvatarsInCustomList()
-        navigation.navigate(CommonScreenName.SelectAvatars)
+        navigation.reset({
+          index: 0,
+          routes: [{ name: CommonScreenName.SelectAvatars }]
+        })
       }
     }, 1000)
   })

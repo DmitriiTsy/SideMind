@@ -32,59 +32,11 @@ export const CreateMind = observer(() => {
         onContentSizeChange={onContentSizeChange}
       >
         <CreateMindPickImage />
-        {/*{createMindVM.editingAvatar &&*/}
-        {/*  createMindVM.editingAvatar.category === EAvatarsCategory.Custom && (*/}
-        <CreateMindShare />
-        {/*)}*/}
+
+        {createMindVM.editingAvatar && <CreateMindShare />}
+
         <CreateMindInputs />
       </ScrollView>
-      {/*<View*/}
-      {/*  style={{*/}
-      {/*    flexDirection: 'row',*/}
-      {/*    height: 56,*/}
-      {/*    borderTopLeftRadius: 12,*/}
-      {/*    borderTopRightRadius: 12,*/}
-      {/*    alignItems: 'center',*/}
-      {/*    justifyContent: 'space-between',*/}
-      {/*    paddingHorizontal: 24*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <Pressable>*/}
-      {/*    <Text*/}
-      {/*      style={{*/}
-      {/*        fontWeight: '700',*/}
-      {/*        fontSize: 16,*/}
-      {/*        color: '#559EF8',*/}
-      {/*        lineHeight: 16*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      Cancel*/}
-      {/*    </Text>*/}
-      {/*  </Pressable>*/}
-      {/*  <Text*/}
-      {/*    style={{*/}
-      {/*      fontWeight: '500',*/}
-      {/*      fontSize: 16,*/}
-      {/*      color: '#FFFFFF',*/}
-      {/*      lineHeight: 16,*/}
-      {/*      letterSpacing: -0.3*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    AI GENERATED AVATAR*/}
-      {/*  </Text>*/}
-      {/*  <Pressable>*/}
-      {/*    <Text>Done</Text>*/}
-      {/*  </Pressable>*/}
-      {/*</View>*/}
-      {/*<View>*/}
-      {/*  <Input*/}
-      {/*    vm={createMindVM.inputGenerateAvatar}*/}
-      {/*    style={{ marginTop: 21 }}*/}
-      {/*  />*/}
-      {/*</View>*/}
-      {/*<Pressable style={{ marginTop: 21 }} onPress={generateImage}>*/}
-      {/*  <Text>Generate avatar</Text>*/}
-      {/*</Pressable>*/}
       {createMindVM.pending && (
         <View style={SS.loading}>
           <ActivityIndicator size="large" color="#D3D3D3" />

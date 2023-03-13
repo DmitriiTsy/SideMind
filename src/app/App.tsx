@@ -35,7 +35,7 @@ export const App = () => {
   useEffect(() => {
     appVM.init()
     appVM.initNavigation(navigationContainerRef)
-  })
+  }, [])
 
   return (
     <NavigationContainer

@@ -25,6 +25,8 @@ import { EBottomPanelContent } from 'components/BottomPanel/types'
 
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
+import { useSharedAvatar } from 'components/Chat/utils/useSharedAvatar'
+
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
@@ -34,14 +36,7 @@ export const Chat = observer(() => {
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
-  useFocusEffect(
-    useCallback(() => {
-      if (navigation.params?.bID) {
-        const { bID, general, starting } = navigation.params
-        chatVM.getSharedAvatar(bID, general, starting)
-      }
-    }, [chatVM, navigation.params])
-  )
+  useSharedAvatar()
 
   useFocusEffect(
     useCallback(() => {

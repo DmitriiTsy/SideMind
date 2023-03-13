@@ -49,6 +49,8 @@ export interface IAppStore {
   ): Promise<AvatarModel | null>
 
   removeCustomAvatar(avatarId: string | number): void
+
+  setStartingAvatars(): void
 }
 
 @Injectable()
@@ -363,5 +365,11 @@ export class AppStore implements IAppStore {
   @action.bound
   removeCustomAvatar(avatarId: string | number) {
     this.usersAvatars = this.usersAvatars.filter((el) => el.id !== avatarId)
+  }
+
+  @action.bound
+  setStartingAvatars() {
+    this.usersAvatars = [...this.usersAvatars, ...flatten(this.startingAvatars)]
+    this._storageService.setUserAvatars(this.usersAvatars)
   }
 }

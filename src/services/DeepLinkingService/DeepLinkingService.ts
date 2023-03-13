@@ -3,6 +3,7 @@ import { LinkingOptions } from '@react-navigation/native/lib/typescript/src/type
 import { Linking } from 'react-native'
 
 import {
+  CommonActions,
   getActionFromState,
   NavigationState,
   PartialState
@@ -11,8 +12,7 @@ import {
 import { CommonScreenName, CommonScreenParamsMap } from 'constants/screen.types'
 import { Inject, Injectable } from 'IoC'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
-import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { INavigationService, INavigationServiceTid } from 'services'
+import { globalConfig } from 'utils/config'
 
 export const IDeepLinkingServiceTid = Symbol.for('DeepLinkingServiceTid')
 
@@ -23,11 +23,15 @@ export interface IDeepLinkingService {
 @Injectable()
 export class DeepLinkingService implements IDeepLinkingService {
   _navigationLinking: LinkingOptions<CommonScreenParamsMap> = {
-    prefixes: ['sidemind://', 'https://sidemind-aa533.web.app'],
+    prefixes: [
+      'sidemind://',
+      globalConfig.SIDEMIND_URL,
+      globalConfig.DYNAMIC_LINK_BASE_URL
+    ],
     config: {
       initialRouteName: CommonScreenName.MainFeed,
       screens: {
-        // [CommonScreenName.MainFeed]: 'main-feed',
+        [CommonScreenName.MainFeed]: 'main-feed',
         [CommonScreenName.Chat]: {
           path: 'chat/:bID/:general/:starting',
           parse: {
@@ -45,10 +49,13 @@ export class DeepLinkingService implements IDeepLinkingService {
         : undefined
 
       if (CommonScreenName.Chat === payload.name) {
-        return {
-          type: 'NAVIGATE' as any,
-          payload
-        }
+        return CommonActions.reset({
+          index: 1,
+          routes: [
+            { name: CommonScreenName.MainFeed },
+            { name: CommonScreenName.Chat, params: payload.params }
+          ]
+        })
       }
 
       return getActionFromState(state, options)
@@ -56,10 +63,7 @@ export class DeepLinkingService implements IDeepLinkingService {
   }
 
   constructor(
-    @Inject(IBottomPanelVMTid) private readonly _bottomPanelVM: IBottomPanelVM,
-    @Inject(IAppStoreTid) private readonly _appStore: IAppStore,
-    @Inject(INavigationServiceTid)
-    private readonly _navigationService: INavigationService
+    @Inject(IBottomPanelVMTid) private readonly _bottomPanelVM: IBottomPanelVM
   ) {}
 
   get linking(): LinkingOptions<CommonScreenParamsMap> {
@@ -71,16 +75,11 @@ export class DeepLinkingService implements IDeepLinkingService {
   }
 
   private _getInitialURL = async () => {
-    this._appStore.setAvatarsFromStorage()
-
     const initialURL = await Linking.getInitialURL()
 
-    const interval = setInterval(() => {
-      if (this._navigationService.isReady()) {
-        this._navigationService.setParamsFromUrl(initialURL)
-        clearInterval(interval)
-      }
-    }, 100)
+    if (initialURL?.startsWith(globalConfig.DYNAMIC_LINK_BASE_URL)) {
+      return this._handleDynamicLink(initialURL)
+    }
 
     return initialURL
   }
@@ -88,11 +87,26 @@ export class DeepLinkingService implements IDeepLinkingService {
   private _subscribe = (listener: (url: string) => void) => {
     const onReceiveURL = ({ url }: { url: string }) => {
       this._bottomPanelVM.closePanel()
+
+      if (url.startsWith(globalConfig.DYNAMIC_LINK_BASE_URL)) {
+        return listener(this._handleDynamicLink(url))
+      }
+
       return listener(url)
     }
 
     const emitter = Linking.addEventListener('url', onReceiveURL)
 
     return () => emitter.remove()
+  }
+
+  private _handleDynamicLink = (link: string) => {
+    let formattedLink = link.replace(
+      `${globalConfig.DYNAMIC_LINK_BASE_URL}/?link=`,
+      ''
+    )
+    const index = formattedLink.indexOf('&')
+    formattedLink = formattedLink.slice(0, index)
+    return formattedLink
   }
 }

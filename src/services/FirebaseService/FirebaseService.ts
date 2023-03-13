@@ -116,13 +116,16 @@ export class FirebaseService implements IFirebaseService {
   }
 
   async getCustomAvatars(usingAvatars: AvatarModel[]) {
-    const avatarIds = usingAvatars.map((el) => el.id.toString())
+    if (usingAvatars.length > 0) {
+      const avatarIds = usingAvatars.map((el) => el.id.toString())
 
-    const res = await this._customAvatarsCollection
-      .where('id', 'in', avatarIds)
-      .get()
+      const res = await this._customAvatarsCollection
+        .where('id', 'in', avatarIds)
+        .get()
 
-    return res.docs.map((doc) => doc.data())
+      return res.docs.map((doc) => doc.data())
+    }
+    return []
   }
 
   async getMasterPrompt() {

@@ -19,6 +19,7 @@ export const CreateMindShare = observer(() => {
 
   const shareHandler = async () => {
     try {
+      createMindVM.pending = true
       const avatar = createMindVM.editingAvatar
 
       const tinyUrl = await tinyUrlService.getTinyUrl(
@@ -28,8 +29,7 @@ export const CreateMindShare = observer(() => {
         avatar.category !== EAvatarsCategory.Custom,
         avatar.category === EAvatarsCategory.Starting
       )
-
-      console.log(avatar.category)
+      createMindVM.pending = false
 
       const result = await Share.share({
         message: 'Try this AI from SideMind App',
@@ -75,7 +75,14 @@ export const CreateMindShare = observer(() => {
 
   return (
     <View style={SS.container}>
-      <Pressable style={[SS.wrapper, SS.share]} onPress={shareHandler}>
+      <Pressable
+        style={[
+          SS.wrapper,
+          SS.share,
+          !!createMindVM.ownerError && SS.bottomRadius
+        ]}
+        onPress={shareHandler}
+      >
         <Text style={SS.ShareText}>{t.get('share mind')}</Text>
       </Pressable>
 
@@ -124,5 +131,10 @@ const SS = StyleSheet.create({
     fontSize: 16,
     color: '#EB5545',
     lineHeight: 16
+  },
+  bottomRadius: {
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+    borderBottomWidth: 0
   }
 })
