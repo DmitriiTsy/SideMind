@@ -13,6 +13,7 @@ import { CommonScreenName, CommonScreenParamsMap } from 'constants/screen.types'
 import { Inject, Injectable } from 'IoC'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 import { globalConfig } from 'utils/config'
+import { INavigationService, INavigationServiceTid } from 'services'
 
 export const IDeepLinkingServiceTid = Symbol.for('DeepLinkingServiceTid')
 
@@ -63,7 +64,9 @@ export class DeepLinkingService implements IDeepLinkingService {
   }
 
   constructor(
-    @Inject(IBottomPanelVMTid) private readonly _bottomPanelVM: IBottomPanelVM
+    @Inject(IBottomPanelVMTid) private readonly _bottomPanelVM: IBottomPanelVM,
+    @Inject(INavigationServiceTid)
+    private readonly _navigationService: INavigationService
   ) {}
 
   get linking(): LinkingOptions<CommonScreenParamsMap> {
@@ -78,7 +81,16 @@ export class DeepLinkingService implements IDeepLinkingService {
     const initialURL = await Linking.getInitialURL()
 
     if (initialURL?.startsWith(globalConfig.DYNAMIC_LINK_BASE_URL)) {
-      return this._handleDynamicLink(initialURL)
+      const link = this._handleDynamicLink(initialURL)
+
+      const interval = setInterval(() => {
+        if (this._navigationService.isReady()) {
+          this._navigationService.setParamsFromUrl(link)
+          clearInterval(interval)
+        }
+      }, 100)
+
+      return link
     }
 
     return initialURL

@@ -32,7 +32,6 @@ export const CreateMindShare = observer(() => {
       createMindVM.pending = false
 
       const result = await Share.share({
-        message: 'Try this AI from SideMind App',
         url: tinyUrl
       })
       if (result.action === Share.sharedAction) {

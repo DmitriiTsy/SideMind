@@ -20,7 +20,7 @@ export interface IAppStore {
   startingAvatars: AvatarModel[][]
   commonAvatars: AvatarModel[][]
 
-  init(): void
+  init(): Promise<void>
 
   setUsersAvatars(avatar: AvatarModel): void
 
@@ -69,9 +69,9 @@ export class AppStore implements IAppStore {
     private readonly _systemInfoService: ISystemInfoService
   ) {}
 
-  init() {
-    this._getCommonAvatars()
-    this._getStartingAvatars()
+  async init() {
+    await this._getCommonAvatars()
+    await this._getStartingAvatars()
   }
 
   async _getCommonAvatars() {

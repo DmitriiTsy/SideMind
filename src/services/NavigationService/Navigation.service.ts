@@ -37,6 +37,8 @@ export interface INavigationService<RouteName extends ScreenName = any> {
 
   isReady(): boolean
 
+  setParamsFromUrl(url: string): void
+
   reset(state: PartialState<NavigationState> | NavigationState): void
 }
 
@@ -82,6 +84,19 @@ export class NavigationService implements INavigationService {
     this.currentRoute = this._navigationRef?.current?.getCurrentRoute()
     this._params = this._navigationRef?.current?.getCurrentRoute()
       .params as ScreenParamTypes[ScreenName]
+  }
+
+  setParamsFromUrl(url: string) {
+    if (url) {
+      const params = url.replace('https://sidemind.app/chat/', '').split('/')
+      if (params) {
+        this._navigationRef?.current?.setParams({
+          bID: params[0],
+          general: /^true$/i.test(params[1]),
+          starting: /^true$/i.test(params[2])
+        })
+      }
+    }
   }
 
   reset(state: PartialState<NavigationState> | NavigationState) {
