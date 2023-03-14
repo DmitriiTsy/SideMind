@@ -2,6 +2,8 @@ import { Configuration, OpenAIApi } from 'openai'
 
 import { Inject, Injectable } from 'IoC'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+
+import {ISystemInfoService, ISystemInfoServiceTid} from 'services/SystemInfoService'
 import { AvatarModel } from 'services/FirebaseService/types'
 import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
@@ -39,6 +41,7 @@ export class OpenAIService implements IOpenAIService {
     @Inject(IFirebaseServiceTid)
     private readonly _firebaseService: IFirebaseService,
     @Inject(IAppStoreTid) private readonly _appStore: IAppStore,
+    @Inject(ISystemInfoServiceTid) private readonly _systemInfo: ISystemInfoService
   ) {}
   resetting: boolean
 
@@ -47,7 +50,7 @@ export class OpenAIService implements IOpenAIService {
       apiKey: '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'
     })
     this._openAIApi = new OpenAIApi(this._config)
-    this._model = String(DeviceInfo.getVersion()) === "1.3.2" ? EModel.davinci3turbo : EModel.davinci3
+    this._model = String(this._systemInfo.versionString) === "1.3.3" ? EModel.davinci3turbo : EModel.davinci3
   }
 
   async generatePrompt(prompt: string) {
@@ -85,8 +88,8 @@ export class OpenAIService implements IOpenAIService {
     this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
     try {
-      console.log(empty || String(DeviceInfo.getVersion()) === "1.3.2")
-      if (empty || String(DeviceInfo.getVersion()) === "1.3.2") {
+      console.log(empty)
+      if (empty) {
       const res = await this._openAIApi.createChatCompletion({
         model: EModel.davinci3turbo,
         messages: [
