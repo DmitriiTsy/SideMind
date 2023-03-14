@@ -27,7 +27,6 @@ export class TinyUrlService implements ITinyUrlService {
     const { TINY_URL, TINY_URL_API_KEY, SIDEMIND_URL, TINY_URL_API } =
       globalConfig
 
-    console.log()
     const res = await axios.post(
       `${TINY_URL_API}/create`,
       {

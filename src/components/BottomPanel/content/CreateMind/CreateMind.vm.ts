@@ -1,7 +1,7 @@
 import uuid from 'react-native-uuid'
 import { action, computed, observable } from 'mobx'
 
-import { Alert, TextInput } from 'react-native'
+import { Alert, Keyboard, TextInput } from 'react-native'
 
 import { createRef } from 'react'
 
@@ -174,6 +174,7 @@ export class CreateMindVM implements ICreateMindVM {
 
   @action.bound
   async deleteMind() {
+    Keyboard.dismiss()
     this.pending = true
 
     await this._firebaseService.deleteCustomAvatar(this.editingAvatar.id)

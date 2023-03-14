@@ -92,13 +92,15 @@ export const CreateMindPickImage = observer(() => {
           <Svg name={'AvatarEmpty'} />
         )}
       </Pressable>
-      <Pressable
-        style={SS.textsWrapper}
-        onPress={AvatarChooseHandler}
-        disabled={!isCustomAvatar || !!createMindVM.ownerError}
-      >
-        <Text style={SS.texts}>{t.get('edit avatar')}</Text>
-      </Pressable>
+      {!createMindVM.ownerError && (
+        <Pressable
+          style={SS.textsWrapper}
+          onPress={AvatarChooseHandler}
+          disabled={!isCustomAvatar || !!createMindVM.ownerError}
+        >
+          <Text style={SS.texts}>{t.get('edit avatar')}</Text>
+        </Pressable>
+      )}
     </View>
   )
 })
@@ -112,7 +114,7 @@ const SS = StyleSheet.create({
     paddingHorizontal: 14
   },
   textsWrapper: {
-    padding: 16,
+    paddingTop: 16,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center'

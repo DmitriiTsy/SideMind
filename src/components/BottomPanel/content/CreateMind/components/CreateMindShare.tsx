@@ -100,6 +100,7 @@ export const CreateMindShare = observer(() => {
 
 const SS = StyleSheet.create({
   container: {
+    marginTop: 18,
     marginBottom: 21
   },
   wrapper: {

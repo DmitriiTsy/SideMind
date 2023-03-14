@@ -365,6 +365,7 @@ export class AppStore implements IAppStore {
   @action.bound
   removeCustomAvatar(avatarId: string | number) {
     this.usersAvatars = this.usersAvatars.filter((el) => el.id !== avatarId)
+    this._storageService.setUserAvatars(this.usersAvatars)
   }
 
   @action.bound

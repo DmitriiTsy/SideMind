@@ -5,6 +5,8 @@ import React, { useRef } from 'react'
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
+import { ScreenContainer } from 'components/ScreenContainer'
+
 import {
   CreateMindHeader,
   CreateMindInputs,
@@ -18,15 +20,20 @@ export const CreateMind = observer(() => {
   const refScrollView = useRef<ScrollView>()
 
   const onContentSizeChange = () => {
-    refScrollView?.current?.scrollToEnd({ animated: true })
+    refScrollView?.current?.scrollToEnd()
   }
 
   return (
-    <View style={[SS.container]}>
+    <ScreenContainer
+      topInsetColor={'#1C1C1E'}
+      bottomInsetColor={'#1C1C1E'}
+      topInset={false}
+      bottomInset={false}
+      style={SS.container}
+    >
       <CreateMindHeader />
       <ScrollView
         ref={refScrollView}
-        automaticallyAdjustKeyboardInsets={true}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps={'handled'}
         onContentSizeChange={onContentSizeChange}
@@ -42,7 +49,7 @@ export const CreateMind = observer(() => {
           <ActivityIndicator size="large" color="#D3D3D3" />
         </View>
       )}
-    </View>
+    </ScreenContainer>
   )
 })
 
@@ -50,7 +57,7 @@ const SS = StyleSheet.create({
   container: {
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-    flex: 1
+    backgroundColor: '#1C1C1E'
   },
   loading: {
     position: 'absolute',
