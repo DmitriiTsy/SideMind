@@ -5,10 +5,13 @@ import React, { useRef } from 'react'
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
+import { ScreenContainer } from 'components/ScreenContainer'
+
 import {
   CreateMindHeader,
   CreateMindInputs,
-  CreateMindPickImage
+  CreateMindPickImage,
+  CreateMindShare
 } from './components'
 
 export const CreateMind = observer(() => {
@@ -17,75 +20,36 @@ export const CreateMind = observer(() => {
   const refScrollView = useRef<ScrollView>()
 
   const onContentSizeChange = () => {
-    refScrollView?.current?.scrollToEnd({ animated: true })
+    refScrollView?.current?.scrollToEnd()
   }
 
   return (
-    <View style={[SS.container]}>
+    <ScreenContainer
+      topInsetColor={'#1C1C1E'}
+      bottomInsetColor={'#1C1C1E'}
+      topInset={false}
+      bottomInset={false}
+      style={SS.container}
+    >
       <CreateMindHeader />
       <ScrollView
         ref={refScrollView}
-        automaticallyAdjustKeyboardInsets={true}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps={'handled'}
         onContentSizeChange={onContentSizeChange}
       >
         <CreateMindPickImage />
+
+        {createMindVM.editingAvatar && <CreateMindShare />}
+
         <CreateMindInputs />
       </ScrollView>
-      {/*<View*/}
-      {/*  style={{*/}
-      {/*    flexDirection: 'row',*/}
-      {/*    height: 56,*/}
-      {/*    borderTopLeftRadius: 12,*/}
-      {/*    borderTopRightRadius: 12,*/}
-      {/*    alignItems: 'center',*/}
-      {/*    justifyContent: 'space-between',*/}
-      {/*    paddingHorizontal: 24*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <Pressable>*/}
-      {/*    <Text*/}
-      {/*      style={{*/}
-      {/*        fontWeight: '700',*/}
-      {/*        fontSize: 16,*/}
-      {/*        color: '#559EF8',*/}
-      {/*        lineHeight: 16*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      Cancel*/}
-      {/*    </Text>*/}
-      {/*  </Pressable>*/}
-      {/*  <Text*/}
-      {/*    style={{*/}
-      {/*      fontWeight: '500',*/}
-      {/*      fontSize: 16,*/}
-      {/*      color: '#FFFFFF',*/}
-      {/*      lineHeight: 16,*/}
-      {/*      letterSpacing: -0.3*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    AI GENERATED AVATAR*/}
-      {/*  </Text>*/}
-      {/*  <Pressable>*/}
-      {/*    <Text>Done</Text>*/}
-      {/*  </Pressable>*/}
-      {/*</View>*/}
-      {/*<View>*/}
-      {/*  <Input*/}
-      {/*    vm={createMindVM.inputGenerateAvatar}*/}
-      {/*    style={{ marginTop: 21 }}*/}
-      {/*  />*/}
-      {/*</View>*/}
-      {/*<Pressable style={{ marginTop: 21 }} onPress={generateImage}>*/}
-      {/*  <Text>Generate avatar</Text>*/}
-      {/*</Pressable>*/}
       {createMindVM.pending && (
         <View style={SS.loading}>
           <ActivityIndicator size="large" color="#D3D3D3" />
         </View>
       )}
-    </View>
+    </ScreenContainer>
   )
 })
 
@@ -93,7 +57,7 @@ const SS = StyleSheet.create({
   container: {
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-    flex: 1
+    backgroundColor: '#1C1C1E'
   },
   loading: {
     position: 'absolute',

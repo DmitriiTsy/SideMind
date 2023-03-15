@@ -31,7 +31,7 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
     selectAvatarsVM.setAvatars(avatar)
     chatVM.setAvatar(avatar)
     navigation.reset({
-      index: 1,
+      index: 0,
       routes: [
         { name: CommonScreenName.MainFeed },
         { name: CommonScreenName.Chat }
@@ -50,7 +50,7 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
     <Pressable onPress={single ? update : set} style={SS.container}>
       <RNFastImage
         source={{
-          uri: avatar.uri,
+          uri: avatar.uri
           // cache: RNFastImage.cacheControl.cacheOnly
         }}
         style={SS.image}

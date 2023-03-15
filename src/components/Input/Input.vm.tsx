@@ -6,7 +6,7 @@ import { TextInput } from 'react-native'
 import { Translation } from 'services'
 
 interface IInputVMProps {
-  placeholder?: keyof Translation
+  placeholder?: string
   label?: keyof Translation
   minLength?: number
   maxLength?: number
@@ -22,7 +22,7 @@ interface IInputVMProps {
 
 export interface IInputVM {
   value: string
-  placeholder: keyof Translation
+  placeholder: string
   label: keyof Translation
   minLength: number
   maxLength: number
@@ -44,7 +44,7 @@ export interface IInputVM {
 
 export class InputVM implements IInputVM {
   @observable value = ''
-  placeholder: keyof Translation
+  placeholder: string
   label: keyof Translation
   minLength: number
   maxLength: number

@@ -6,4 +6,6 @@ export interface IScreenContainerProps {
   bottomInsetColor: string
   children: ReactNode
   style?: StyleProp<ViewStyle>
+  topInset?: boolean
+  bottomInset?: boolean
 }

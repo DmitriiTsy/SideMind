@@ -32,7 +32,7 @@ export interface IFirebaseService {
 
   getStartingAvatars(cache?: boolean): Promise<AvatarModel[][]>
 
-  getCustomAvatars(): Promise<AvatarModel[] | null>
+  getCustomAvatars(usingAvatars: AvatarModel[]): Promise<AvatarModel[] | null>
 
   setAvatars(avatars: AvatarModel[]): void
 
@@ -57,6 +57,12 @@ export interface IFirebaseService {
     editedAvatar: AvatarModel,
     localPath?: string
   ): Promise<string>
+
+  getSharedAvatar(avatarId: string): Promise<AvatarModel | null>
+
+  moveCustomAvatarsToNewList(customAvatars: AvatarModel[]): Promise<void>
+
+  deleteCustomAvatar(avatarId: string | number): Promise<void>
 }
 
 @Injectable()
@@ -64,6 +70,7 @@ export class FirebaseService implements IFirebaseService {
   private _usersCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseUsers>
   private _avatarsCollection: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseBots>
   private _masterPrompt: FirebaseFirestoreTypes.CollectionReference<IFirebaseResponseMasterPrompt>
+  private _customAvatarsCollection: FirebaseFirestoreTypes.CollectionReference<AvatarModel>
 
   constructor(
     @Inject(ISystemInfoServiceTid)
@@ -72,11 +79,12 @@ export class FirebaseService implements IFirebaseService {
     this._usersCollection = firestore().collection('usersList')
     this._avatarsCollection = firestore().collection('botsList')
     this._masterPrompt = firestore().collection('prompts')
+    this._customAvatarsCollection = firestore().collection('customBotsList')
   }
 
   async init() {
-    await auth().signInAnonymously()
     await this._systemInfoService.init()
+    await auth().signInAnonymously()
 
     try {
       await this.checkExistUser()
@@ -107,16 +115,17 @@ export class FirebaseService implements IFirebaseService {
     return this.mapAvatars(data, cache)
   }
 
-  async getCustomAvatars() {
-    const data = (await this._avatarsCollection.doc('Custom').get()).data()
+  async getCustomAvatars(usingAvatars: AvatarModel[]) {
+    if (usingAvatars.length > 0) {
+      const avatarIds = usingAvatars.map((el) => el.id.toString())
 
-    for (const el of Object.keys(data)) {
-      if (el === this._systemInfoService.deviceId) {
-        return data[this._systemInfoService.deviceId]
-      }
+      const res = await this._customAvatarsCollection
+        .where('id', 'in', avatarIds)
+        .get()
+
+      return res.docs.map((doc) => doc.data())
     }
-
-    return null
+    return []
   }
 
   async getMasterPrompt() {
@@ -222,10 +231,9 @@ export class FirebaseService implements IFirebaseService {
       }
 
       await Promise.all([
-        await this._avatarsCollection.doc('Custom').update({
-          [this._systemInfoService.deviceId]:
-            firestore.FieldValue.arrayUnion(avatar)
-        })
+        await this._customAvatarsCollection
+          .doc(avatar.id.toString())
+          .set(avatar)
       ])
 
       return imagePath
@@ -240,17 +248,9 @@ export class FirebaseService implements IFirebaseService {
     editedAvatar: AvatarModel,
     localPath?: string
   ) {
-    const docCustom = this._avatarsCollection.doc('Custom')
-    const { deviceId } = this._systemInfoService
-
-    await Promise.all([
-      docCustom.update({
-        [deviceId]: firestore.FieldValue.arrayRemove(oldAvatar)
-      }),
-      docCustom.update({
-        [deviceId]: firestore.FieldValue.arrayUnion(editedAvatar)
-      })
-    ])
+    await this._customAvatarsCollection
+      .doc(oldAvatar.id.toString())
+      .set(editedAvatar)
 
     if (localPath) {
       await this._uploadFile(editedAvatar.imagePath, localPath)
@@ -277,5 +277,52 @@ export class FirebaseService implements IFirebaseService {
       console.log('uploadFile', e)
       return false
     }
+  }
+
+  async moveCustomAvatarsToNewList(customAvatars: AvatarModel[]) {
+    customAvatars.map((el) => {
+      const _avatar: AvatarModel = {
+        name: el.name,
+        tagLine: el.tagLine,
+        bio: el.bio,
+        id: el.id,
+        uri: el.uri,
+        imagePath: el.imagePath,
+        creatorId: this._systemInfoService.deviceId,
+        category: el.category,
+        prompt: el.prompt,
+        params: el.params
+      }
+
+      this._customAvatarsCollection.doc(el.id.toString()).set(_avatar)
+    })
+  }
+
+  async getSharedAvatar(avatarId: string) {
+    try {
+      const data = (
+        await this._customAvatarsCollection.doc(avatarId).get()
+      ).data()
+
+      if (data) {
+        if (data.imagePath) {
+          data.uri = await storage().ref(data.imagePath).getDownloadURL()
+
+          RNFastImage.preload([{ uri: data.uri }])
+        }
+
+        return data
+      }
+
+      return null
+    } catch (e) {
+      return null
+    }
+  }
+
+  async deleteCustomAvatar(avatarId: string | number) {
+    try {
+      await this._customAvatarsCollection.doc(avatarId.toString()).delete()
+    } catch (e) {}
   }
 }
