@@ -54,7 +54,13 @@ export class ChatVM implements IChatVM {
     this.messages = [humanMessage, ...this.messages]
     this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
 
-    let res = await this._openAIService.createCompletion(message)
+    let res
+
+    if (this.avatar.isAvatarUseModel3) {
+      res = await this._openAIService.createCompletion(message)
+    } else {
+      res = await this._openAIService.createChatCompletion(message)
+    }
 
     while (!res) {
       res = await this._resend()
@@ -95,7 +101,7 @@ export class ChatVM implements IChatVM {
 
     this.pending = true
 
-    let res = await this._openAIService?.createCompletion(
+    let res = await this._openAIService?.createChatCompletion(
       this.avatar.prompt,
       true
     )
@@ -123,7 +129,10 @@ export class ChatVM implements IChatVM {
     this.pending = false
     setTimeout(() => runInAction(() => (this.pending = true)), 500)
 
-    return await this._openAIService.createCompletion()
+    if (this.avatar.isAvatarUseModel3) {
+      return await this._openAIService.createCompletion()
+    }
+    return await this._openAIService.createChatCompletion()
   }
 
   async getSharedAvatar(avatarId: string, general: boolean, starting: boolean) {

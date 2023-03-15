@@ -170,6 +170,24 @@ export class AppStore implements IAppStore {
       return el
     })
 
+    //additional field in avatars obj for supporting chat with old model open ai
+    //release v1.3.4
+    if (!this._storageService.getAddedFieldsForOldAvatars()) {
+      this.usersAvatars = this.usersAvatars.map((el) => {
+        if (el.messages?.displayed?.length > 0) {
+          return {
+            ...el,
+            isAvatarUseModel3: true
+          }
+        }
+        return el
+      })
+      this._storageService.setAddedFieldsForOldAvatars()
+      this._storageService.setUserAvatars(this.usersAvatars)
+    }
+
+    //move custom avatars in new Collection in firestore
+    //release v1.3.4
     if (!this._storageService.getCustomAvatarsInCustomList()) {
       const _customAvatars: AvatarModel[] = []
       this.usersAvatars.map((el) => {
@@ -191,6 +209,7 @@ export class AppStore implements IAppStore {
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
         el.messages = { displayed: [], history: '' }
+        el.isAvatarUseModel3 = undefined
       }
       return el
     })

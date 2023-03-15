@@ -43,6 +43,7 @@ export interface AvatarModel {
     history?: string
   }
   deleted?: boolean
+  isAvatarUseModel3?: boolean
 }
 
 export interface IFirebaseResponseBots {

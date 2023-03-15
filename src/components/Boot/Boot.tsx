@@ -30,6 +30,7 @@ export const Boot = () => {
         })
       } else {
         storage.setCustomAvatarsInCustomList()
+        storage.setAddedFieldsForOldAvatars()
         navigation.reset({
           index: 0,
           routes: [{ name: CommonScreenName.SelectAvatars }]

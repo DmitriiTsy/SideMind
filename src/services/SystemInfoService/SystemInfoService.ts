@@ -20,9 +20,6 @@ export class SystemInfoService implements ISystemInfoService {
   async init() {
     this.deviceId = await getUniqueId()
     this.isTablet = isTablet()
-  }
-
-  async version() {
     this.versionString = getVersion()
   }
 }

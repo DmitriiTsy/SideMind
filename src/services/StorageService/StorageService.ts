@@ -16,8 +16,16 @@ export interface IStorageService {
   getUserAvatars(): AvatarModel[] | null
   setFCMToken(token: string): void
   getFCMToken(): string
+
+  //avatars moved in new Collection in firestore
+  //release 1.3.4
   getCustomAvatarsInCustomList(): boolean
   setCustomAvatarsInCustomList(): void
+
+  //additional field in avatars obj for supporting chat with old model open ai
+  //release 1.3.4
+  getAddedFieldsForOldAvatars(): boolean
+  setAddedFieldsForOldAvatars(): void
 }
 
 @Injectable()
@@ -61,5 +69,13 @@ export class StorageService implements IStorageService {
 
   setCustomAvatarsInCustomList() {
     this.storage.setBool('CustomAvatarsInCustomList', true)
+  }
+
+  getAddedFieldsForOldAvatars() {
+    return this.storage.getBool('getAddedFieldsForOldAvatars')
+  }
+
+  setAddedFieldsForOldAvatars() {
+    this.storage.setBool('getAddedFieldsForOldAvatars', true)
   }
 }
