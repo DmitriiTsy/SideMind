@@ -14,14 +14,16 @@ export interface IChatVM {
   avatar: AvatarModel
   pending: boolean
   resetting: boolean
-  editable: boolean
 
   changeResetState(value: boolean): void
   sendMessage(message: string): void
   setAvatar(avatar: AvatarModel): void
   getFirstMessage(): void
   resetMessages(): void
-  changeEditable(value: boolean): void
+
+  getSharedAvatar(avatarId: string, general: boolean, starting: boolean): void
+
+  removeAvatar(): void
 }
 
 @Injectable()
@@ -36,10 +38,11 @@ export class ChatVM implements IChatVM {
     @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
     @Inject(IAppStoreTid) private _appStore: IAppStore
   ) {}
-  editable: boolean
 
   @action.bound
   async sendMessage(message: string) {
+    if (this.avatar?.deleted) return
+
     this.pending = true
 
     const humanMessage = {
@@ -88,6 +91,8 @@ export class ChatVM implements IChatVM {
 
   @action.bound
   async getFirstMessage() {
+    if (this.avatar?.deleted) return
+
     this.pending = true
 
     let res = await this._openAIService?.createCompletion(
@@ -114,15 +119,27 @@ export class ChatVM implements IChatVM {
   }
 
   @action.bound
-  changeEditable(value: boolean) {
-    this.editable = value
-  }
-
-  @action.bound
   async _resend() {
     this.pending = false
     setTimeout(() => runInAction(() => (this.pending = true)), 500)
 
     return await this._openAIService.createCompletion()
+  }
+
+  async getSharedAvatar(avatarId: string, general: boolean, starting: boolean) {
+    const avatar = await this._appStore.getSharedAvatar(
+      avatarId,
+      general,
+      starting
+    )
+
+    if (avatar) {
+      this.setAvatar(avatar)
+    }
+  }
+
+  @action.bound
+  removeAvatar() {
+    this.avatar = undefined
   }
 }

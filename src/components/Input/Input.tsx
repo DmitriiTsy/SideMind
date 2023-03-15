@@ -57,7 +57,7 @@ export const Input: FC<IInputProps> = observer(({ vm, style }) => {
       <Text style={SS.texts}>{t.get(label)}</Text>
       <View style={[SS.textInputWrapper]}>
         <TextInput
-          placeholder={t.get(placeholder)}
+          placeholder={placeholder}
           placeholderTextColor="#989898"
           multiline={true}
           ref={ref && ref}

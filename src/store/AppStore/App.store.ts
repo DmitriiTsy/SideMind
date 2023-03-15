@@ -1,10 +1,16 @@
 import { action, observable, runInAction } from 'mobx'
 
+import { flatten } from 'lodash'
+
 import { Inject, Injectable } from 'IoC'
 import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
 import { ESender, IMessage } from 'components/Chat/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
+import {
+  ISystemInfoService,
+  ISystemInfoServiceTid
+} from 'services/SystemInfoService'
 
 export const IAppStoreTid = Symbol.for('IAppStoreTid')
 
@@ -14,7 +20,7 @@ export interface IAppStore {
   startingAvatars: AvatarModel[][]
   commonAvatars: AvatarModel[][]
 
-  init(): void
+  init(): Promise<void>
 
   setUsersAvatars(avatar: AvatarModel): void
 
@@ -35,6 +41,16 @@ export interface IAppStore {
   resetMessages(avatarId: number | string | number[]): Promise<AvatarModel>
 
   updateAvatarsFromFirebase(): void
+
+  getSharedAvatar(
+    avatarId: string,
+    general: boolean,
+    starting: boolean
+  ): Promise<AvatarModel | null>
+
+  removeCustomAvatar(avatarId: string | number): void
+
+  setStartingAvatars(): void
 }
 
 @Injectable()
@@ -48,12 +64,14 @@ export class AppStore implements IAppStore {
     @Inject(IStorageServiceTid)
     private readonly _storageService: IStorageService,
     @Inject(IFirebaseServiceTid)
-    private readonly _firebaseService: IFirebaseService
+    private readonly _firebaseService: IFirebaseService,
+    @Inject(ISystemInfoServiceTid)
+    private readonly _systemInfoService: ISystemInfoService
   ) {}
 
-  init() {
-    this._getCommonAvatars()
-    this._getStartingAvatars()
+  async init() {
+    await this._getCommonAvatars()
+    await this._getStartingAvatars()
   }
 
   async _getCommonAvatars() {
@@ -151,6 +169,19 @@ export class AppStore implements IAppStore {
       }
       return el
     })
+
+    if (!this._storageService.getCustomAvatarsInCustomList()) {
+      const _customAvatars: AvatarModel[] = []
+      this.usersAvatars.map((el) => {
+        if (el.category === EAvatarsCategory.Custom) {
+          _customAvatars.push(el)
+        }
+      })
+      setTimeout(() => {
+        this._firebaseService.moveCustomAvatarsToNewList(_customAvatars)
+        this._storageService.setCustomAvatarsInCustomList()
+      }, 100)
+    }
   }
 
   @action.bound
@@ -206,10 +237,14 @@ export class AppStore implements IAppStore {
   }
 
   async updateAvatarsFromFirebase() {
+    const usingCustomAvatars = this.usersAvatars.filter(
+      (el) => el.category === EAvatarsCategory.Custom
+    )
+
     const [commonAvatars, startingAvatars, customAvatars] = await Promise.all([
       this._firebaseService.getCommonAvatars(),
       this._firebaseService.getStartingAvatars(),
-      this._firebaseService.getCustomAvatars()
+      this._firebaseService.getCustomAvatars(usingCustomAvatars)
     ])
 
     runInAction(() => {
@@ -226,6 +261,8 @@ export class AppStore implements IAppStore {
         this.usersAvatars = this.usersAvatars.map((el) => {
           if (el.category === EAvatarsCategory.Custom) {
             const _avatar = customAvatars.find((_el) => _el.id === el.id)
+
+            if (!_avatar) return { ...el, deleted: true }
 
             return {
               ...el,
@@ -294,6 +331,46 @@ export class AppStore implements IAppStore {
         }
       }
     })
+    this._storageService.setUserAvatars(this.usersAvatars)
+  }
+
+  async getSharedAvatar(avatarId: string, general: boolean, starting: boolean) {
+    let avatar
+
+    if (!general) {
+      avatar = await this._firebaseService.getSharedAvatar(avatarId)
+    } else if (starting) {
+      avatar = flatten(this.startingAvatars).find(
+        (el) => el.id.toString() === avatarId
+      )
+    } else {
+      avatar = flatten(this.commonAvatars).find(
+        (el) => el.id.toString() === avatarId
+      )
+    }
+
+    if (avatar) {
+      const avatarExist = this.usersAvatars.find((el) => el.id === avatar.id)
+      if (avatarExist) {
+        return avatarExist
+      }
+
+      this.usersAvatars.unshift(avatar)
+      return avatar
+    }
+
+    return null
+  }
+
+  @action.bound
+  removeCustomAvatar(avatarId: string | number) {
+    this.usersAvatars = this.usersAvatars.filter((el) => el.id !== avatarId)
+    this._storageService.setUserAvatars(this.usersAvatars)
+  }
+
+  @action.bound
+  setStartingAvatars() {
+    this.usersAvatars = [...this.usersAvatars, ...flatten(this.startingAvatars)]
     this._storageService.setUserAvatars(this.usersAvatars)
   }
 }

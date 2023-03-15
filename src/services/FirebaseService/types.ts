@@ -12,8 +12,13 @@ export const LOG_TYPE = {
 
 export enum EAvatarsCategory {
   Starting = 'Starting',
-  Common = 'Common',
-  Custom = 'Custom'
+  SelfImprovement = 'Self-Improvement',
+  Custom = 'Custom',
+  Productivity = 'Productivity',
+  Hobbies = 'Hobbies',
+  Relationships = 'Relationships',
+  Entertainment = 'Entertainment',
+  Historical = 'Historical'
 }
 
 export interface AvatarModel {
@@ -31,11 +36,13 @@ export interface AvatarModel {
     presence_penalty: number
     top_p: number
   }
-  bio?: string
+  creatorId?: number | string
+  bio: string
   messages?: {
     displayed?: IMessage[]
     history?: string
   }
+  deleted?: boolean
 }
 
 export interface IFirebaseResponseBots {

@@ -24,12 +24,20 @@ export const Boot = () => {
       const value = storage.getUserLogin()
       if (value) {
         appStore.setAvatarsFromStorage()
-        navigation.navigate(CommonScreenName.MainFeed)
+        navigation.reset({
+          index: 0,
+          routes: [{ name: CommonScreenName.MainFeed }]
+        })
       } else {
-        navigation.navigate(CommonScreenName.SelectAvatars)
+        storage.setCustomAvatarsInCustomList()
+        navigation.reset({
+          index: 0,
+          routes: [{ name: CommonScreenName.SelectAvatars }]
+        })
       }
     }, 1000)
   })
+
   return (
     <View style={SS.container}>
       <Svg name={'Logo'} size={40} />

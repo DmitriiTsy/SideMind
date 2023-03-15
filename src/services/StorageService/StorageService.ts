@@ -16,6 +16,8 @@ export interface IStorageService {
   getUserAvatars(): AvatarModel[] | null
   setFCMToken(token: string): void
   getFCMToken(): string
+  getCustomAvatarsInCustomList(): boolean
+  setCustomAvatarsInCustomList(): void
 }
 
 @Injectable()
@@ -51,5 +53,13 @@ export class StorageService implements IStorageService {
 
   getFCMToken(): string {
     return this.storage.getString('FCMToken')
+  }
+
+  getCustomAvatarsInCustomList(): boolean {
+    return this.storage.getBool('CustomAvatarsInCustomList')
+  }
+
+  setCustomAvatarsInCustomList() {
+    this.storage.setBool('CustomAvatarsInCustomList', true)
   }
 }

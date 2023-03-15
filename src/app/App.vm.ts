@@ -1,6 +1,8 @@
 import { RefObject } from 'react'
 import { NavigationContainerRef } from '@react-navigation/native'
 
+import * as BootSplash from 'react-native-bootsplash'
+
 import { Inject, Injectable } from 'IoC'
 import {
   ILayoutService,
@@ -16,15 +18,25 @@ import {
   IPushNotificationsService,
   IPushNotificationsServiceTid
 } from 'services/PushNotificationsService/PushNotificationsService'
+import {
+  IDeepLinkingService,
+  IDeepLinkingServiceTid
+} from 'services/DeepLinkingService'
 
 export const IAppVMTid = Symbol.for('IAppVMTid')
 
 export interface IAppVM {
+  readonly deeplink: IDeepLinkingService
+
   init(): void
 
   initNavigation(
     navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
   ): void
+
+  emitNavigationStateChange(): void
+
+  onReady(): void
 }
 
 @Injectable()
@@ -37,7 +49,9 @@ export class AppVM implements IAppVM {
     @Inject(IAppStoreTid) private _appStore: IAppStore,
     @Inject(IFirebaseServiceTid) private _firebaseService: IFirebaseService,
     @Inject(IPushNotificationsServiceTid)
-    private _pushNotificationService: IPushNotificationsService
+    private _pushNotificationService: IPushNotificationsService,
+    @Inject(IDeepLinkingServiceTid)
+    public readonly deeplink: IDeepLinkingService
   ) {}
 
   async init() {
@@ -54,5 +68,13 @@ export class AppVM implements IAppVM {
     navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
   ) {
     this._navigationService.init(navigationRef)
+  }
+
+  emitNavigationStateChange = () => {
+    this._navigationService.emitNavigationStateChange()
+  }
+
+  onReady() {
+    BootSplash.hide({ fade: true, duration: 500 })
   }
 }

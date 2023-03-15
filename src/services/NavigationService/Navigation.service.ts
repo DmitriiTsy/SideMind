@@ -4,7 +4,8 @@ import { RefObject } from 'react'
 import {
   NavigationContainerRef,
   NavigationState,
-  PartialState
+  PartialState,
+  StackActions
 } from '@react-navigation/native'
 
 import { action, computed, observable } from 'mobx'
@@ -18,6 +19,7 @@ export const INavigationServiceTid = Symbol.for('INavigationServiceTid')
 export interface INavigationService<RouteName extends ScreenName = any> {
   canGoBack: boolean
   currentRoute?: Route<string>
+
   params: ScreenParamTypes[RouteName]
 
   navigate<RouteName extends ScreenName>(
@@ -25,11 +27,17 @@ export interface INavigationService<RouteName extends ScreenName = any> {
     params?: ScreenParamTypes[RouteName]
   ): void
 
+  popToTop(): void
+
   goBack(): void
 
   init(navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>): void
 
   emitNavigationStateChange(): void
+
+  isReady(): boolean
+
+  setParamsFromUrl(url: string): void
 
   reset(state: PartialState<NavigationState> | NavigationState): void
 }
@@ -37,16 +45,19 @@ export interface INavigationService<RouteName extends ScreenName = any> {
 @Injectable()
 export class NavigationService implements INavigationService {
   @observable.ref currentRoute?: Route<string>
-  private _navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>
+  @observable private _navigationRef: RefObject<
+    NavigationContainerRef<ScreenParamTypes>
+  >
+  @observable _params: ScreenParamTypes[ScreenName]
+
+  @computed
+  get params() {
+    return this._params
+  }
 
   @computed
   get canGoBack() {
     return this._navigationRef?.current?.canGoBack() || false
-  }
-
-  @computed
-  get params() {
-    return this._navigationRef?.current?.getCurrentRoute()?.params || {}
   }
 
   @action.bound
@@ -58,6 +69,11 @@ export class NavigationService implements INavigationService {
   }
 
   @action.bound
+  popToTop() {
+    this._navigationRef.current.dispatch(StackActions.popToTop)
+  }
+
+  @action.bound
   init(navigationRef: RefObject<NavigationContainerRef<ScreenParamTypes>>) {
     this._navigationRef = navigationRef
     this.emitNavigationStateChange()
@@ -66,6 +82,21 @@ export class NavigationService implements INavigationService {
   @action.bound
   emitNavigationStateChange() {
     this.currentRoute = this._navigationRef?.current?.getCurrentRoute()
+    this._params = this._navigationRef?.current?.getCurrentRoute()
+      .params as ScreenParamTypes[ScreenName]
+  }
+
+  setParamsFromUrl(url: string) {
+    if (url) {
+      const params = url.replace('https://sidemind.app/chat/', '').split('/')
+      if (params) {
+        this._navigationRef?.current?.setParams({
+          bID: params[0],
+          general: /^true$/i.test(params[1]),
+          starting: /^true$/i.test(params[2])
+        })
+      }
+    }
   }
 
   reset(state: PartialState<NavigationState> | NavigationState) {
@@ -77,5 +108,9 @@ export class NavigationService implements INavigationService {
       this._navigationRef?.current?.goBack()
       return
     }
+  }
+
+  isReady() {
+    return this._navigationRef?.current?.isReady()
   }
 }
