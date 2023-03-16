@@ -2,7 +2,7 @@ import { action, observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-import { AvatarModel } from 'services/FirebaseService/types'
+import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { ESender, IMessage } from 'components/Chat/types'
@@ -102,20 +102,21 @@ export class ChatVM implements IChatVM {
     this.pending = true
 
     let res = await this._openAIService?.createChatCompletion(
-      this.avatar.prompt,
-      true
+      this.avatar.category === EAvatarsCategory.Custom
+        ? this.avatar.prompt
+        : this.avatar.turbo_init
     )
 
     while (!res) {
       res = await this._resend()
     }
 
-    this.pending = false
     runInAction(() => {
       const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
 
       this.messages = [botMessage]
       this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+      this.pending = false
     })
   }
 
@@ -126,8 +127,14 @@ export class ChatVM implements IChatVM {
 
   @action.bound
   async _resend() {
-    this.pending = false
-    setTimeout(() => runInAction(() => (this.pending = true)), 500)
+    runInAction(() => (this.pending = false))
+
+    await new Promise((resolve) =>
+      setTimeout(() => {
+        runInAction(() => (this.pending = true))
+        resolve(0)
+      }, 500)
+    )
 
     if (this.avatar.isAvatarUseModel3) {
       return await this._openAIService.createCompletion()

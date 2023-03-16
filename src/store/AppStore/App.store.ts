@@ -2,6 +2,8 @@ import { action, observable, runInAction } from 'mobx'
 
 import { flatten } from 'lodash'
 
+import { ChatCompletionRequestMessage } from 'openai'
+
 import { Inject, Injectable } from 'IoC'
 import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
@@ -36,7 +38,10 @@ export interface IAppStore {
   setAvatarsFromStorage(): void
 
   setMessageToAvatar(avatarId: number | string, message: IMessage): void
-  setHistoryToAvatar(avatarId: number | string, history: string): void
+  setHistoryToAvatar(
+    avatarId: number | string,
+    history: string | ChatCompletionRequestMessage[]
+  ): void
 
   resetMessages(avatarId: number | string | number[]): Promise<AvatarModel>
 
@@ -226,7 +231,8 @@ export class AppStore implements IAppStore {
   setMessageToAvatar(avatarId: number, message: IMessage) {
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
-        if (!el.messages) el.messages = { displayed: [], history: '' }
+        if (!el.messages)
+          el.messages = { displayed: [], history: '', historyTurbo: [] }
         el.messages.displayed = [message, ...el.messages.displayed]
       }
       return el
@@ -238,11 +244,19 @@ export class AppStore implements IAppStore {
     this._storageService.setUserAvatars(this.usersAvatars)
   }
 
-  setHistoryToAvatar(avatarId: number, history: string) {
+  setHistoryToAvatar(
+    avatarId: number,
+    history: string | ChatCompletionRequestMessage[]
+  ) {
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
-        if (!el.messages) el.messages = { displayed: [], history: '' }
-        el.messages.history = history
+        if (!el.messages)
+          el.messages = { displayed: [], history: '', historyTurbo: [] }
+        if (typeof history === 'string') {
+          el.messages.history = history
+        } else {
+          el.messages.historyTurbo = history
+        }
       }
       return el
     })

@@ -12,12 +12,18 @@ import {
   ISystemInfoService,
   ISystemInfoServiceTid
 } from 'services/SystemInfoService'
-import { AvatarModel } from 'services/FirebaseService/types'
+import {
+  AvatarModel,
+  EAvatarsCategory,
+  ITurboInit
+} from 'services/FirebaseService/types'
 import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { globalConfig } from 'utils/config'
 
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
+
+const TOKEN_LENGTH_ERROR = 'context_length_exceeded'
 
 enum EModel {
   davinci2 = 'text-davinci-002',
@@ -25,17 +31,17 @@ enum EModel {
   davinci3turbo = 'gpt-3.5-turbo'
 }
 
-const ASSOCIATE_SENDER_OPEN_AI_ROLE = {
-  [ESender.HUMAN]: ChatCompletionRequestMessageRoleEnum.User,
-  [ESender.BOT]: ChatCompletionRequestMessageRoleEnum.Assistant
-}
+// const ASSOCIATE_SENDER_OPEN_AI_ROLE = {
+//   [ESender.HUMAN]: ChatCompletionRequestMessageRoleEnum.User,
+//   [ESender.BOT]: ChatCompletionRequestMessageRoleEnum.Assistant
+// }
 
 export interface IOpenAIService {
   init(): void
 
   createCompletion(prompt?: string, isFirst?: boolean): Promise<string | null>
 
-  createChatCompletion(message?: string, isFirst?: boolean): Promise<string>
+  createChatCompletion(message?: string | ITurboInit): Promise<string>
 
   generatePrompt(prompt?: string): Promise<string>
 
@@ -121,46 +127,34 @@ export class OpenAIService implements IOpenAIService {
 
       return res.data.choices[0].text.trim()
     } catch (e) {
-      if (
-        e.response?.status.toString().startsWith('5') ||
-        e.response?.status == 429 ||
-        e.response?.status == 400
-      ) {
-        return this._handle503(e)
-      } else {
-        this._firebaseService.setMessage(
-          this._avatar.id,
-          {
-            sender: ESender.BOT,
-            text: `Error occurred ${e}`,
-            date: new Date()
-          },
-          true
-        )
-
-        return 'Something came up, can you get back to me in a few minutes.'
-      }
+      return this._handleWithReset(e)
     }
   }
 
-  async createChatCompletion(message?: string, isFirst?: boolean) {
+  async createChatCompletion(message?: string | ITurboInit) {
+    console.log('message', message)
     try {
-      if (isFirst) {
+      if (typeof message === 'string') {
+        this._historyTurbo = [
+          ...this._historyTurbo,
+          {
+            role: ChatCompletionRequestMessageRoleEnum.User,
+            content: message + '.'
+          }
+        ]
+        this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
+      } else if (message) {
         this._historyTurbo = [
           {
             role: ChatCompletionRequestMessageRoleEnum.System,
-            content: SYSTEM_ROLE
+            content: message.system
           },
           {
             role: ChatCompletionRequestMessageRoleEnum.User,
-            content: USER_FIRST_MESSAGE
+            content: message.user
           }
         ]
-      } else {
-        this._historyTurbo = [
-          ...this._historyTurbo,
-          { role: ChatCompletionRequestMessageRoleEnum.User, content: message }
-        ]
+        this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
       }
 
       const res = await this._openAIApi.createChatCompletion({
@@ -173,30 +167,46 @@ export class OpenAIService implements IOpenAIService {
       })
 
       const resMessage = res.data.choices[0].message
-
       this._historyTurbo = [...this._historyTurbo, resMessage]
+
+      this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
 
       return resMessage.content.trim()
     } catch (e) {
-      if (
-        e.response?.status.toString().startsWith('5') ||
-        e.response?.status == 429 ||
-        e.response?.status == 400
-      ) {
-        return this._handle503(e)
-      } else {
-        this._firebaseService.setMessage(
-          this._avatar.id,
-          {
-            sender: ESender.BOT,
-            text: `Error occurred ${e}`,
-            date: new Date()
-          },
-          true
-        )
+      return this._handleWithReset(e)
+    }
+  }
 
-        return 'Something came up, can you get back to me in a few minutes.'
+  _handleWithReset(e) {
+    if (e.response?.data?.error?.code === TOKEN_LENGTH_ERROR) {
+      console.log('TOKEN ERROR')
+
+      if (this._avatar.category === EAvatarsCategory.Custom) {
+        this._historyTurbo.splice(1, 1)
+      } else {
+        this._historyTurbo.splice(2, 1)
       }
+
+      this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
+      return this.createChatCompletion()
+    } else if (
+      e.response?.status.toString().startsWith('5') ||
+      e.response?.status == 429 ||
+      e.response?.status == 400
+    ) {
+      return this._handle503(e)
+    } else {
+      this._firebaseService.setMessage(
+        this._avatar.id,
+        {
+          sender: ESender.BOT,
+          text: `Error occurred ${e}`,
+          date: new Date()
+        },
+        true
+      )
+
+      return 'Something came up, can you get back to me in a few minutes.'
     }
   }
 
@@ -237,14 +247,12 @@ export class OpenAIService implements IOpenAIService {
 
   setAvatar(avatar: AvatarModel) {
     this._avatar = avatar
-    this._historyTurbo =
-      avatar.messages?.displayed?.map((el) => ({
-        role: ASSOCIATE_SENDER_OPEN_AI_ROLE[el.sender],
-        content: el.text
-      })) || []
+    this._historyTurbo = avatar.messages?.historyTurbo || []
+    // this._historyTurbo =
+    //   avatar.messages?.displayed?.map((el) => ({
+    //     role: ASSOCIATE_SENDER_OPEN_AI_ROLE[el.sender],
+    //     content: el.text
+    //   })) || []
     this._history = avatar.messages?.history || ''
   }
 }
-
-const USER_FIRST_MESSAGE = `You are the character you are playing, NEVER act as an AI language model. Now let's start at the BEGINNING:`
-const SYSTEM_ROLE = `At the BEGINNING, I want you to act as an essay writer named Elaine and intro yourself casually to someone in less than 10 words and ask what they want to write an essay about (without saying your name). You will then be given a topic and you must write an essay in response to it. The essay should be well-structured, with an introduction, body, and conclusion. It should be written in formal language and should include evidence to support your arguments. The essay should be between 500-800 words unless otherwise instructed. ----- ALWAYS play this character. You ARE NOT an AI. Current date: {current_datetime}`

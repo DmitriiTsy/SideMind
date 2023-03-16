@@ -1,3 +1,5 @@
+import { ChatCompletionRequestMessage } from 'openai'
+
 import { ESender, IMessage } from 'components/Chat/types'
 
 export interface IFirebaseResponseUsers {
@@ -21,6 +23,7 @@ export enum EAvatarsCategory {
   Historical = 'Historical'
 }
 
+//todo make CustomAvatarModel and DefaultAvatarModel inherit from BaseAvatarModel
 export interface AvatarModel {
   name: string
   tagLine: string
@@ -29,6 +32,7 @@ export interface AvatarModel {
   category: EAvatarsCategory
   id: number | string
   prompt: string
+  turbo_init?: ITurboInit //default avatars
   params: {
     temperature: number
     frequency_penalty: number
@@ -36,11 +40,12 @@ export interface AvatarModel {
     presence_penalty: number
     top_p: number
   }
-  creatorId?: number | string
+  creatorId?: number | string //custom avatars
   bio: string
   messages?: {
     displayed?: IMessage[]
     history?: string
+    historyTurbo?: ChatCompletionRequestMessage[]
   }
   deleted?: boolean
   isAvatarUseModel3?: boolean
@@ -53,4 +58,9 @@ export interface IFirebaseResponseBots {
 export interface IFirebaseResponseMasterPrompt {
   prompt: string
   introduce: string
+}
+
+export interface ITurboInit {
+  system: string
+  user: string
 }

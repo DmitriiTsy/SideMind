@@ -9,6 +9,8 @@ import {
   PartialState
 } from '@react-navigation/native'
 
+import dynamicLinks from '@react-native-firebase/dynamic-links'
+
 import { CommonScreenName, CommonScreenParamsMap } from 'constants/screen.types'
 import { Inject, Injectable } from 'IoC'
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
@@ -79,6 +81,7 @@ export class DeepLinkingService implements IDeepLinkingService {
 
   private _getInitialURL = async () => {
     const initialURL = await Linking.getInitialURL()
+    const dynamic = await dynamicLinks().getInitialLink()
 
     if (initialURL?.startsWith(globalConfig.DYNAMIC_LINK_BASE_URL)) {
       const link = this._handleDynamicLink(initialURL)
@@ -91,9 +94,16 @@ export class DeepLinkingService implements IDeepLinkingService {
       }, 100)
 
       return link
+    } else if (dynamic?.url) {
+      const interval = setInterval(() => {
+        if (this._navigationService.isReady()) {
+          this._navigationService.setParamsFromUrl(dynamic.url)
+          clearInterval(interval)
+        }
+      }, 100)
     }
 
-    return initialURL
+    return initialURL || dynamic?.url || null
   }
 
   private _subscribe = (listener: (url: string) => void) => {
