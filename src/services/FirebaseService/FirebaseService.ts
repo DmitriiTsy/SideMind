@@ -22,6 +22,7 @@ import {
   LOG_TYPE
 } from 'services/FirebaseService/types'
 import { IMessage } from 'components/Chat/types'
+import { EModel } from 'services/OpenAIService'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 
@@ -41,7 +42,8 @@ export interface IFirebaseService {
   setMessage(
     avatarId: number | string,
     message: IMessage,
-    isError?: boolean
+    isError?: boolean,
+    model?: EModel
   ): void
 
   getMasterPrompt(): Promise<IFirebaseResponseMasterPrompt>
@@ -171,21 +173,24 @@ export class FirebaseService implements IFirebaseService {
     messageId: string,
     botId: number | string,
     message: IMessage,
-    isError: boolean
+    isError: boolean,
+    model: EModel
   ) {
     const _typeLog = isError ? 'Error_OpenAI' : LOG_TYPE[message.sender]
     await analytics().logEvent(_typeLog, {
       messageId,
       deviceId: this._systemInfoService.deviceId,
       botId,
-      date: `${message.date}`
+      date: `${message.date}`,
+      model
     })
   }
 
   async setMessage(
     avatarId: number | string,
     message: IMessage,
-    isError?: boolean
+    isError?: boolean,
+    model?: EModel
   ) {
     const id = uuid.v4() + `--${message.sender}`
     await Promise.all([
@@ -197,7 +202,7 @@ export class FirebaseService implements IFirebaseService {
           date: new Date()
         })
       }),
-      this.logMessage(id, avatarId, message, isError)
+      this.logMessage(id, avatarId, message, isError, model)
     ])
   }
 

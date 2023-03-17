@@ -25,16 +25,11 @@ export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 const TOKEN_LENGTH_ERROR = 'context_length_exceeded'
 
-enum EModel {
+export enum EModel {
   davinci2 = 'text-davinci-002',
   davinci3 = 'text-davinci-003',
   davinci3turbo = 'gpt-3.5-turbo'
 }
-
-// const ASSOCIATE_SENDER_OPEN_AI_ROLE = {
-//   [ESender.HUMAN]: ChatCompletionRequestMessageRoleEnum.User,
-//   [ESender.BOT]: ChatCompletionRequestMessageRoleEnum.Assistant
-// }
 
 export interface IOpenAIService {
   init(): void
@@ -132,7 +127,6 @@ export class OpenAIService implements IOpenAIService {
   }
 
   async createChatCompletion(message?: string | ITurboInit) {
-    console.log('message', message)
     try {
       if (typeof message === 'string') {
         this._historyTurbo = [
@@ -223,7 +217,7 @@ export class OpenAIService implements IOpenAIService {
       return null
     } else {
       this._countError = 0
-      this._model = EModel.davinci3turbo
+      this._model = EModel.davinci3
 
       this._firebaseService.setMessage(
         this._avatar.id,
@@ -248,11 +242,6 @@ export class OpenAIService implements IOpenAIService {
   setAvatar(avatar: AvatarModel) {
     this._avatar = avatar
     this._historyTurbo = avatar.messages?.historyTurbo || []
-    // this._historyTurbo =
-    //   avatar.messages?.displayed?.map((el) => ({
-    //     role: ASSOCIATE_SENDER_OPEN_AI_ROLE[el.sender],
-    //     content: el.text
-    //   })) || []
     this._history = avatar.messages?.history || ''
   }
 }

@@ -13,6 +13,7 @@ import {
   ISystemInfoService,
   ISystemInfoServiceTid
 } from 'services/SystemInfoService'
+import { EModel } from 'services/OpenAIService'
 
 export const IAppStoreTid = Symbol.for('IAppStoreTid')
 
@@ -229,18 +230,20 @@ export class AppStore implements IAppStore {
   }
 
   setMessageToAvatar(avatarId: number, message: IMessage) {
+    let model: EModel
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
         if (!el.messages)
           el.messages = { displayed: [], history: '', historyTurbo: [] }
         el.messages.displayed = [message, ...el.messages.displayed]
+        model = el.isAvatarUseModel3 ? EModel.davinci3 : EModel.davinci3turbo
       }
       return el
     })
 
     this._sortToFirst(avatarId)
 
-    this._firebaseService.setMessage(avatarId, message)
+    this._firebaseService.setMessage(avatarId, message, undefined, model)
     this._storageService.setUserAvatars(this.usersAvatars)
   }
 
