@@ -1,24 +1,49 @@
-import { Configuration, OpenAIApi } from 'openai'
+import {
+  ChatCompletionRequestMessage,
+  ChatCompletionRequestMessageRoleEnum,
+  Configuration,
+  OpenAIApi
+} from 'openai'
 
 import { Inject, Injectable } from 'IoC'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
-import { AvatarModel } from 'services/FirebaseService/types'
+
+import {
+  ISystemInfoService,
+  ISystemInfoServiceTid
+} from 'services/SystemInfoService'
+import {
+  AvatarModel,
+  EAvatarsCategory,
+  ITurboInit
+} from 'services/FirebaseService/types'
 import { ESender } from 'components/Chat/types'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
+import { globalConfig } from 'utils/config'
 
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
+const TOKEN_LENGTH_ERROR = 'context_length_exceeded'
+
 enum EModel {
   davinci2 = 'text-davinci-002',
-  davinci3 = 'text-davinci-003'
+  davinci3 = 'text-davinci-003',
+  davinci3turbo = 'gpt-3.5-turbo'
 }
+
+// const ASSOCIATE_SENDER_OPEN_AI_ROLE = {
+//   [ESender.HUMAN]: ChatCompletionRequestMessageRoleEnum.User,
+//   [ESender.BOT]: ChatCompletionRequestMessageRoleEnum.Assistant
+// }
 
 export interface IOpenAIService {
   init(): void
 
   createCompletion(prompt?: string, isFirst?: boolean): Promise<string | null>
 
-  generatePrompt(prompt: string): Promise<string>
+  createChatCompletion(message?: string | ITurboInit): Promise<string>
+
+  generatePrompt(prompt?: string): Promise<string>
 
   setAvatar(avatar: AvatarModel): void
 }
@@ -28,6 +53,7 @@ export class OpenAIService implements IOpenAIService {
   private _config: Configuration
   private _openAIApi: OpenAIApi
   private _history: string
+  private _historyTurbo: ChatCompletionRequestMessage[]
   private _avatar: AvatarModel
   private _model: EModel
   private _countError = 0
@@ -35,12 +61,14 @@ export class OpenAIService implements IOpenAIService {
   constructor(
     @Inject(IFirebaseServiceTid)
     private readonly _firebaseService: IFirebaseService,
-    @Inject(IAppStoreTid) private readonly _appStore: IAppStore
+    @Inject(IAppStoreTid) private readonly _appStore: IAppStore,
+    @Inject(ISystemInfoServiceTid)
+    private readonly _systemInfo: ISystemInfoService
   ) {}
 
   init() {
     this._config = new Configuration({
-      apiKey: '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'
+      apiKey: globalConfig.OPEN_AI_KEY
     })
     this._openAIApi = new OpenAIApi(this._config)
     this._model = EModel.davinci3
@@ -99,26 +127,86 @@ export class OpenAIService implements IOpenAIService {
 
       return res.data.choices[0].text.trim()
     } catch (e) {
-      console.log(e)
-      if (
-        e.response?.status.toString().startsWith('5') ||
-        e.response?.status == 429 ||
-        e.response?.status == 400
-      ) {
-        return this._handle503(e)
-      } else {
-        this._firebaseService.setMessage(
-          this._avatar.id,
+      return this._handleWithReset(e)
+    }
+  }
+
+  async createChatCompletion(message?: string | ITurboInit) {
+    console.log('message', message)
+    try {
+      if (typeof message === 'string') {
+        this._historyTurbo = [
+          ...this._historyTurbo,
           {
-            sender: ESender.BOT,
-            text: `Error occurred ${e}`,
-            date: new Date()
+            role: ChatCompletionRequestMessageRoleEnum.User,
+            content: message + '.'
+          }
+        ]
+        this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
+      } else if (message) {
+        this._historyTurbo = [
+          {
+            role: ChatCompletionRequestMessageRoleEnum.System,
+            content: message.system
           },
-          true
-        )
-        console.log(e)
-        return 'Something came up, can you get back to me in a few minutes.'
+          {
+            role: ChatCompletionRequestMessageRoleEnum.User,
+            content: message.user
+          }
+        ]
+        this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
       }
+
+      const res = await this._openAIApi.createChatCompletion({
+        model: EModel.davinci3turbo,
+        messages: this._historyTurbo,
+        temperature: this._avatar.params.temperature,
+        max_tokens: this._avatar.params.max_tokens,
+        frequency_penalty: this._avatar.params.frequency_penalty,
+        presence_penalty: this._avatar.params.presence_penalty
+      })
+
+      const resMessage = res.data.choices[0].message
+      this._historyTurbo = [...this._historyTurbo, resMessage]
+
+      this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
+
+      return resMessage.content.trim()
+    } catch (e) {
+      return this._handleWithReset(e)
+    }
+  }
+
+  _handleWithReset(e) {
+    if (e.response?.data?.error?.code === TOKEN_LENGTH_ERROR) {
+      console.log('TOKEN ERROR')
+
+      if (this._avatar.category === EAvatarsCategory.Custom) {
+        this._historyTurbo.splice(1, 1)
+      } else {
+        this._historyTurbo.splice(2, 1)
+      }
+
+      this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
+      return this.createChatCompletion()
+    } else if (
+      e.response?.status.toString().startsWith('5') ||
+      e.response?.status == 429 ||
+      e.response?.status == 400
+    ) {
+      return this._handle503(e)
+    } else {
+      this._firebaseService.setMessage(
+        this._avatar.id,
+        {
+          sender: ESender.BOT,
+          text: `Error occurred ${e}`,
+          date: new Date()
+        },
+        true
+      )
+
+      return 'Something came up, can you get back to me in a few minutes.'
     }
   }
 
@@ -135,7 +223,7 @@ export class OpenAIService implements IOpenAIService {
       return null
     } else {
       this._countError = 0
-      this._model = EModel.davinci3
+      this._model = EModel.davinci3turbo
 
       this._firebaseService.setMessage(
         this._avatar.id,
@@ -159,6 +247,12 @@ export class OpenAIService implements IOpenAIService {
 
   setAvatar(avatar: AvatarModel) {
     this._avatar = avatar
+    this._historyTurbo = avatar.messages?.historyTurbo || []
+    // this._historyTurbo =
+    //   avatar.messages?.displayed?.map((el) => ({
+    //     role: ASSOCIATE_SENDER_OPEN_AI_ROLE[el.sender],
+    //     content: el.text
+    //   })) || []
     this._history = avatar.messages?.history || ''
   }
 }

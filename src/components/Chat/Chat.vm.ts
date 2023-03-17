@@ -2,7 +2,7 @@ import { action, observable, runInAction } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-import { AvatarModel } from 'services/FirebaseService/types'
+import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 import { ESender, IMessage } from 'components/Chat/types'
@@ -54,7 +54,13 @@ export class ChatVM implements IChatVM {
     this.messages = [humanMessage, ...this.messages]
     this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
 
-    let res = await this._openAIService.createCompletion(message)
+    let res
+
+    if (this.avatar.isAvatarUseModel3) {
+      res = await this._openAIService.createCompletion(message)
+    } else {
+      res = await this._openAIService.createChatCompletion(message)
+    }
 
     while (!res) {
       res = await this._resend()
@@ -95,21 +101,22 @@ export class ChatVM implements IChatVM {
 
     this.pending = true
 
-    let res = await this._openAIService?.createCompletion(
-      this.avatar.prompt,
-      true
+    let res = await this._openAIService?.createChatCompletion(
+      this.avatar.category === EAvatarsCategory.Custom
+        ? this.avatar.prompt
+        : this.avatar.turbo_init
     )
 
     while (!res) {
       res = await this._resend()
     }
 
-    this.pending = false
     runInAction(() => {
       const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
 
       this.messages = [botMessage]
       this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+      this.pending = false
     })
   }
 
@@ -120,10 +127,19 @@ export class ChatVM implements IChatVM {
 
   @action.bound
   async _resend() {
-    this.pending = false
-    setTimeout(() => runInAction(() => (this.pending = true)), 500)
+    runInAction(() => (this.pending = false))
 
-    return await this._openAIService.createCompletion()
+    await new Promise((resolve) =>
+      setTimeout(() => {
+        runInAction(() => (this.pending = true))
+        resolve(0)
+      }, 500)
+    )
+
+    if (this.avatar.isAvatarUseModel3) {
+      return await this._openAIService.createCompletion()
+    }
+    return await this._openAIService.createChatCompletion()
   }
 
   async getSharedAvatar(avatarId: string, general: boolean, starting: boolean) {

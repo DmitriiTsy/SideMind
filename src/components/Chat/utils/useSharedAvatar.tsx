@@ -19,6 +19,7 @@ export const useSharedAvatar = () => {
       if (!storage.getUserLogin()) {
         storage.setUserLogin()
         storage.setCustomAvatarsInCustomList()
+        storage.setAddedFieldsForOldAvatars()
         appStore.setStartingAvatars()
       }
 
