@@ -1,6 +1,6 @@
 import { action, observable, runInAction } from 'mobx'
 
-import { flatten } from 'lodash'
+import { flatten, merge } from 'lodash'
 
 import { ChatCompletionRequestMessage } from 'openai'
 
@@ -297,10 +297,7 @@ export class AppStore implements IAppStore {
 
             if (!_avatar) return { ...el, deleted: true }
 
-            return {
-              ...el,
-              ..._avatar
-            }
+            return merge({}, el, _avatar)
           }
 
           return el
@@ -324,44 +321,32 @@ export class AppStore implements IAppStore {
           ...avatar,
           name: _avatar.name,
           tagLine: _avatar.tagLine,
-          prompt: _avatar.prompt
+          prompt: _avatar.prompt,
+          turbo_init: _avatar.turbo_init
         }
       })
     )
   }
 
+  //update all except custom
   @action.bound
   _mapUpdateUsersAvatarsFromFirebase() {
-    const commonAvatarsList: AvatarModel[] = []
-    const startingAvatarsList: AvatarModel[] = []
-
-    this.commonAvatars.map((avatarsGroup) =>
-      avatarsGroup.map((avatar) => commonAvatarsList.push(avatar))
-    )
-    this.startingAvatars.map((avatarsGroup) =>
-      avatarsGroup.map((avatar) => startingAvatarsList.push(avatar))
-    )
+    const commonAvatarsList: AvatarModel[] = flatten(this.commonAvatars)
+    const startingAvatarsList: AvatarModel[] = flatten(this.startingAvatars)
 
     this.usersAvatars = this.usersAvatars.map((avatar) => {
-      const startingAvatar = startingAvatarsList.find(
-        (el) => el.id === avatar.id
-      )
-      if (startingAvatar) {
-        return {
-          ...avatar,
-          name: startingAvatar.name,
-          tagLine: startingAvatar.tagLine,
-          prompt: startingAvatar.prompt
-        }
+      if (avatar.category === EAvatarsCategory.Custom) {
+        return avatar
+      } else if (avatar.category === EAvatarsCategory.Starting) {
+        const starting = startingAvatarsList.find((el) => el.id === avatar.id)
+
+        if (starting) return merge({}, avatar, starting)
+        return avatar
       } else {
-        const commonAvatar = commonAvatarsList.find((el) => el.id === avatar.id)
-        if (!commonAvatar) return avatar
-        return {
-          ...avatar,
-          name: commonAvatar.name,
-          tagLine: commonAvatar.tagLine,
-          prompt: commonAvatar.prompt
-        }
+        const common = commonAvatarsList.find((el) => el.id === avatar.id)
+
+        if (common) return merge({}, avatar, common)
+        return avatar
       }
     })
     this._storageService.setUserAvatars(this.usersAvatars)
