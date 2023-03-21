@@ -21,15 +21,17 @@ import { Svg } from 'components/ui/Svg'
 
 import { deviceWidth } from 'utils/dimentions'
 
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import {ILocalizationService, ILocalizationServiceTid, INavigationService, INavigationServiceTid} from 'services'
 
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 
 import { ChatPreview, NewAvatar } from './components'
+import {CommonScreenName} from "constants/screen.types";
 
 export const MainFeed = observer(() => {
+  const navigation = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
@@ -39,14 +41,21 @@ export const MainFeed = observer(() => {
     bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
   }, [appStore, bottomPanelVM])
 
+  const openMenu = () => {
+    navigation.navigate(CommonScreenName.Menu);
+  }
+
   const header = useMemo(
     () => (
       <View style={SS.headerContainer}>
+        <Pressable onPress={openMenu}>
+          <Svg name={'Menu'}/>
+        </Pressable>
         <View style={SS.row}>
           <Svg name={'Logo'} />
           <Text style={SS.title}>{t.get('sideMind')}</Text>
         </View>
-        <Pressable onPress={openPanel} style={SS.addnote}>
+        <Pressable onPress={openPanel}>
           <Svg name={'AddNote'} />
         </Pressable>
       </View>
@@ -94,7 +103,7 @@ const SS = StyleSheet.create({
     alignItems: 'center',
     height: 44,
     backgroundColor: '#000000',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     paddingBottom: 18,
     borderBottomWidth: 1,
     borderBottomColor: '#333'
@@ -102,9 +111,5 @@ const SS = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: deviceWidth * 0.28
-  },
-  addnote: {
-    paddingRight: 14
   }
 })
