@@ -1,11 +1,9 @@
-import React, { useMemo } from 'react'
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useMemo, useCallback, useRef } from 'react'
+import { Alert, Pressable, StyleSheet, Text, View, Animated } from 'react-native'
 
 import { observer } from 'mobx-react'
 
 import RNFastImage from 'react-native-fast-image'
-
-import { useCallback } from 'react'
 
 import { useFocusEffect } from '@react-navigation/native'
 
@@ -56,23 +54,44 @@ export const Chat = observer(() => {
     () => chatVM.messages.length > 1,
     [chatVM.messages.length]
   )
-
   const reset = () => {
-    chatVM.changeResetState(true)
+    fadeOutResetButton()
+    setTimeout(() => {
+      chatVM.changeResetState(true)
+      fadeInResetButton()
+    }, 250)
   }
-
+  
   const editMindHandler = useCallback(() => {
     createMindVM.init(chatVM.avatar)
     bottomPanelVM.openPanel(EBottomPanelContent.CreateMind)
   }, [bottomPanelVM, chatVM.avatar, createMindVM])
+  
+  const resetButtonOpacity = useRef(new Animated.Value(1)).current
 
+  const fadeInResetButton = () => {
+    Animated.timing(resetButtonOpacity, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start()
+  }
+
+  const fadeOutResetButton = () => {
+    Animated.timing(resetButtonOpacity, {
+      toValue: 0.3,
+      duration: 250,
+      useNativeDriver: true,
+    }).start()
+  }
   const header = () => (
     <View style={SS.container}>
       <View style={SS.leftSide}>
         <Pressable style={SS.containerGoBack} onPress={goBack}>
           <Svg name={'PointerLeft'} />
         </Pressable>
-        <Pressable onPress={editMindHandler} style={SS.containerAvatarText}>
+        <Pressable onPress={editMindHandler} style={SS.containerAvatarText} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+ 
           {chatVM.avatar?.uri ? (
             <RNFastImage
               source={{
@@ -86,13 +105,17 @@ export const Chat = observer(() => {
           <Text style={SS.title}>{chatVM.avatar?.name}</Text>
         </Pressable>
       </View>
-      <Pressable
-        style={SS.resetContainer}
-        disabled={!resetAvailable}
-        onPress={reset}
-      >
-        <Svg name={'Reset'} color={!resetAvailable && '#666666'} />
-      </Pressable>
+
+      <Animated.View style={{ opacity: resetButtonOpacity }}>
+        <Pressable
+          style={SS.resetContainer}
+          disabled={!resetAvailable}
+          onPress={reset}
+        >
+          <Svg name={'Reset'} color={!resetAvailable && '#666666'} />
+        </Pressable>
+      </Animated.View>
+
     </View>
   )
 
@@ -137,7 +160,7 @@ const SS = StyleSheet.create({
   title: {
     fontWeight: '500',
     fontSize: 16,
-    lineHeight: 16,
+    lineHeight: 20,
     letterSpacing: -0.3,
     color: '#FFFFFF'
   },
@@ -152,7 +175,7 @@ const SS = StyleSheet.create({
     width: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 30
+    marginRight: 40
   },
   resetContainer: {
     height: 36,
