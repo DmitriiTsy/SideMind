@@ -1,13 +1,15 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import {Svg} from "components/ui/Svg";
-import {ScreenContainer} from "components/ScreenContainer";
-import {INavigationService, INavigationServiceTid} from "services";
-import {useInject} from "IoC";
+import { Svg } from "components/ui/Svg";
+import { ScreenContainer } from "components/ScreenContainer";
+import { INavigationService, INavigationServiceTid } from "services";
+import { useInject } from "IoC";
+import { MenuItem } from "components/Menu/components";
+import { SVG_MAP } from "components/ui/Svg/constants";
 
 interface menuItem {
-    icon: string,
+    icon: keyof typeof SVG_MAP,
     text: string
 }
 export const Menu = () => {
@@ -45,39 +47,24 @@ export const Menu = () => {
         >
             {header()}
             <View style={SS.container}>
-                {socialMediaItems.map((item, index) => (
-                    <View style={SS.menuItem}>
-                        <View style={{width: '10%'}}>
-                            <Svg name={item.icon} />
-                        </View>
-                        <View style={[SS.menuItemInfo, {
-                            marginBottom: index !== socialMediaItems.length - 1 ? 10 : 0,
-                            paddingBottom: index !== socialMediaItems.length - 1 ? 10 : 0,
-                            borderBottomWidth: index !== socialMediaItems.length - 1 ? 0.5 : 0,
-                        }]}>
-                            <Text style={SS.itemText}>{item.text}</Text>
-                            <Svg style={{marginRight: 18}} name={'PointerRight'} />
-                        </View>
-                    </View>
-                ))}
+                {socialMediaItems.map((item, index) =>
+                  <MenuItem
+                    key={index}
+                    item={item}
+                    index={index}
+                    arrayLength={socialMediaItems.length}
+                  />
+                )}
             </View>
-
             <View style={SS.container}>
-                {menuItems.map((item, index) => (
-                    <View style={SS.menuItem}>
-                        <View style={{width: '10%'}}>
-                            <Svg name={item.icon} />
-                        </View>
-                        <View style={[SS.menuItemInfo, {
-                            marginBottom: index !== menuItems.length - 1 ? 10 : 0,
-                            paddingBottom: index !== menuItems.length - 1 ? 10 : 0,
-                            borderBottomWidth: index !== menuItems.length - 1 ? 0.5 : 0,
-                        }]}>
-                            <Text style={SS.itemText}>{item.text}</Text>
-                            <Svg style={{marginRight: 18}} name={'PointerRight'} />
-                        </View>
-                    </View>
-                ))}
+                {menuItems.map((item, index) =>
+                  <MenuItem
+                    key={index}
+                    item={item}
+                    index={index}
+                    arrayLength={menuItems.length}
+                  />
+                )}
             </View>
         </ScreenContainer>
     )
@@ -108,22 +95,5 @@ const SS = StyleSheet.create({
         borderRadius: 12,
         marginTop: 34,
         paddingVertical: 10
-    },
-    menuItem: {
-        flexDirection: 'row',
-        paddingLeft: 18,
-    },
-    menuItemInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: "space-between",
-        width: '90%',
-        borderBottomColor: '#444444'
-    },
-    itemText: {
-        fontSize: 15,
-        color: '#FFFFFF',
-        letterSpacing: 0.5,
-        lineHeight: 21,
     }
 })

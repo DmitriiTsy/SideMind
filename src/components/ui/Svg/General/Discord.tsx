@@ -6,7 +6,7 @@ import { SvgStyleProps } from 'components/ui/Svg/Svg.types'
 import { createSvg } from 'utils/createSvg'
 
 const Component: FC<SvgStyleProps> = (props) => (
-    <Svg width="25" height="24" viewBox="0 0 25 24" fill="none" {...props}>
+    <Svg fill="none" {...props}>
         <Path d="M18.875 0H6.125C3.0184 0 0.5 2.5184 0.5 5.625V18.375C0.5 21.4816 3.0184 24 6.125 24H18.875C21.9816 24 24.5 21.4816 24.5 18.375V5.625C24.5 2.5184 21.9816 0 18.875 0Z" fill="#5865F2"/>
         <Mask id="mask0_2394_149667" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="3" y="4" width="19" height="16">
             <Path d="M3.125 4.78125H21.875V19.3059H3.125V4.78125Z" fill="white"/>

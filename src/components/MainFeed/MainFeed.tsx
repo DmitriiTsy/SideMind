@@ -55,7 +55,7 @@ export const MainFeed = observer(() => {
           <Svg name={'Logo'} />
           <Text style={SS.title}>{t.get('sideMind')}</Text>
         </View>
-        <Pressable onPress={openPanel}>
+        <Pressable onPress={openPanel} style={SS.addnote}>
           <Svg name={'AddNote'} />
         </Pressable>
       </View>
@@ -111,5 +111,8 @@ const SS = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  addnote: {
+    paddingRight: 14
   }
 })
