@@ -48,7 +48,7 @@ export const MainFeed = observer(() => {
   const header = useMemo(
     () => (
       <View style={SS.headerContainer}>
-        <Pressable onPress={openMenu}>
+        <Pressable onPress={openMenu} style={{paddingLeft: 16}}>
           <Svg name={'Menu'}/>
         </Pressable>
         <View style={SS.row}>
