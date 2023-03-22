@@ -26,6 +26,7 @@ import { globalConfig } from 'utils/config'
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 const TOKEN_LENGTH_ERROR = 'context_length_exceeded'
+const DATE_FORMAT = 'MM-DD-YYYY HH:MM'
 
 export enum EModel {
   davinci2 = 'text-davinci-002',
@@ -36,9 +37,13 @@ export enum EModel {
 export interface IOpenAIService {
   init(): void
 
-  createCompletion(prompt?: string, isFirst?: boolean): Promise<string | null>
+  createCompletion(
+    prompt?: string,
+    isFirst?: boolean,
+    resetFromTurbo?: boolean
+  ): Promise<string | Error>
 
-  createChatCompletion(message?: string | ITurboInit): Promise<string>
+  createChatCompletion(message?: string | ITurboInit): Promise<string | Error>
 
   generatePrompt(prompt?: string): Promise<string>
 
@@ -94,17 +99,25 @@ export class OpenAIService implements IOpenAIService {
     }
   }
 
-  async createCompletion(prompt?: string, isFirst?: boolean) {
-    if (prompt) {
-      this._history = `${this._history} \n\n###: ${prompt}. \n\n`
-    }
+  async createCompletion(
+    prompt?: string,
+    isFirst?: boolean,
+    resendFromTurbo?: boolean
+  ) {
+    prompt && (this._history = `${this._history} \n\n###: ${prompt}. \n\n`)
 
-    this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
+    !resendFromTurbo &&
+      this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
     try {
       const res = await this._openAIApi.createCompletion({
         model: this._model,
-        prompt: this._history,
+        prompt: resendFromTurbo
+          ? this._history.replace(
+              /{current_datetime}/m,
+              dayjs().format(DATE_FORMAT)
+            )
+          : this._history,
         temperature: this._avatar.params.temperature,
         max_tokens: this._avatar.params.max_tokens,
         frequency_penalty: this._avatar.params.frequency_penalty,
@@ -112,17 +125,22 @@ export class OpenAIService implements IOpenAIService {
         stop: ['###']
       })
 
-      if (isFirst) {
-        res.data.choices[0].text = this._checkQuotes(
-          res.data.choices[0].text.trim()
-        )
-      }
+      let { text } = res.data.choices[0]
 
-      this._history = `${this._history} ${res.data.choices[0].text}`
+      if (isFirst) {
+        text = this._checkQuotes(text.trim())
+      }
+      if (resendFromTurbo) {
+        this._historyTurbo.push({
+          role: ChatCompletionRequestMessageRoleEnum.Assistant,
+          content: text
+        })
+      }
+      this._history = `${this._history} ${text}`
 
       this._appStore.setHistoryToAvatar(this._avatar.id, this._history)
 
-      return res.data.choices[0].text.trim()
+      return text.trim()
     } catch (e) {
       return this._handleWithReset(e)
     }
@@ -153,21 +171,14 @@ export class OpenAIService implements IOpenAIService {
         this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
       }
 
-      const messages =
-        this._avatar.category !== EAvatarsCategory.Custom
-          ? this._historyTurbo.map((el, index) => {
-              if (index === 0) {
-                return {
-                  ...el,
-                  content: el.content.replace(
-                    '{current_datetime}',
-                    dayjs().format('YYYY-MM-DD HH:MM')
-                  )
-                }
-              }
-              return el
-            })
-          : this._historyTurbo
+      const messages = this._historyTurbo
+
+      if (this._avatar.category !== EAvatarsCategory.Custom) {
+        messages[0].content = messages[0].content.replace(
+          /{current_datetime}/m,
+          dayjs().format(DATE_FORMAT)
+        )
+      }
 
       const res = await this._openAIApi.createChatCompletion({
         model: EModel.davinci3turbo,
@@ -191,9 +202,8 @@ export class OpenAIService implements IOpenAIService {
 
   _handleWithReset(e, turbo?: boolean) {
     if (e.response?.data?.error?.code === TOKEN_LENGTH_ERROR) {
-      console.log('TOKEN ERROR')
-
       this._handleTokenLength()
+
       return this.createChatCompletion()
     } else if (
       e.response?.status.toString().startsWith('5') ||
@@ -201,6 +211,7 @@ export class OpenAIService implements IOpenAIService {
       e.response?.status == 400
     ) {
       turbo && this._convertHistoryTurboToHistory()
+
       return this._handle503(e)
     } else {
       this._firebaseService.setMessage(
@@ -222,12 +233,12 @@ export class OpenAIService implements IOpenAIService {
     console.log('Service Unavailable Error:', e.response?.status)
 
     if (this._countError === 1) {
-      return null
+      return new Error('Service Unavailable')
     } else if (this._countError === 2) {
       this._model = EModel.davinci2
-      return null
+      return new Error('Service Unavailable')
     } else if (this._countError === 3) {
-      return null
+      return new Error('Service Unavailable')
     } else {
       this._countError = 0
       this._model = EModel.davinci3
