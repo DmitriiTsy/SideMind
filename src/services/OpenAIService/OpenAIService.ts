@@ -5,6 +5,8 @@ import {
   OpenAIApi
 } from 'openai'
 
+import dayjs from 'dayjs'
+
 import { Inject, Injectable } from 'IoC'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 
@@ -151,9 +153,25 @@ export class OpenAIService implements IOpenAIService {
         this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
       }
 
+      const messages =
+        this._avatar.category !== EAvatarsCategory.Custom
+          ? this._historyTurbo.map((el, index) => {
+              if (index === 0) {
+                return {
+                  ...el,
+                  content: el.content.replace(
+                    '{current_datetime}',
+                    dayjs().format('YYYY-MM-DD HH:MM')
+                  )
+                }
+              }
+              return el
+            })
+          : this._historyTurbo
+
       const res = await this._openAIApi.createChatCompletion({
         model: EModel.davinci3turbo,
-        messages: this._historyTurbo,
+        messages,
         temperature: this._avatar.params.temperature,
         max_tokens: this._avatar.params.max_tokens,
         frequency_penalty: this._avatar.params.frequency_penalty,
