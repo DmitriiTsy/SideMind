@@ -167,27 +167,22 @@ export class OpenAIService implements IOpenAIService {
 
       return resMessage.content.trim()
     } catch (e) {
-      return this._handleWithReset(e)
+      return this._handleWithReset(e, true)
     }
   }
 
-  _handleWithReset(e) {
+  _handleWithReset(e, turbo?: boolean) {
     if (e.response?.data?.error?.code === TOKEN_LENGTH_ERROR) {
       console.log('TOKEN ERROR')
 
-      if (this._avatar.category === EAvatarsCategory.Custom) {
-        this._historyTurbo.splice(1, 1)
-      } else {
-        this._historyTurbo.splice(2, 1)
-      }
-
-      this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
+      this._handleTokenLength()
       return this.createChatCompletion()
     } else if (
       e.response?.status.toString().startsWith('5') ||
       e.response?.status == 429 ||
       e.response?.status == 400
     ) {
+      turbo && this._convertHistoryTurboToHistory()
       return this._handle503(e)
     } else {
       this._firebaseService.setMessage(
@@ -230,6 +225,29 @@ export class OpenAIService implements IOpenAIService {
       )
       return 'Something came up, can you get back to me in a few minutes.'
     }
+  }
+
+  _convertHistoryTurboToHistory() {
+    this._history = this._historyTurbo
+      .map(
+        (el, index) =>
+          `${el.content} ${
+            this._avatar.category !== EAvatarsCategory.Custom && index === 0
+              ? '\n'
+              : '\n\n###: \n\n'
+          }`
+      )
+      .join('')
+  }
+
+  _handleTokenLength() {
+    if (this._avatar.category === EAvatarsCategory.Custom) {
+      this._historyTurbo.splice(1, 1)
+    } else {
+      this._historyTurbo.splice(2, 1)
+    }
+
+    this._appStore.setHistoryToAvatar(this._avatar.id, this._historyTurbo)
   }
 
   _checkQuotes(text: string) {
