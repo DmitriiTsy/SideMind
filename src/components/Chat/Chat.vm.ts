@@ -62,7 +62,7 @@ export class ChatVM implements IChatVM {
       res = await this._openAIService.createChatCompletion(message)
     }
 
-    while (!res) {
+    while (res instanceof Error) {
       res = await this._resend()
     }
 
@@ -107,16 +107,18 @@ export class ChatVM implements IChatVM {
         : this.avatar.turbo_init
     )
 
-    while (!res) {
+    while (res instanceof Error) {
       res = await this._resend()
     }
 
     runInAction(() => {
-      const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
+      if (typeof res === 'string') {
+        const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
 
-      this.messages = [botMessage]
-      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
-      this.pending = false
+        this.messages = [botMessage]
+        this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
+        this.pending = false
+      }
     })
   }
 
@@ -136,10 +138,7 @@ export class ChatVM implements IChatVM {
       }, 500)
     )
 
-    if (this.avatar.isAvatarUseModel3) {
-      return await this._openAIService.createCompletion()
-    }
-    return await this._openAIService.createChatCompletion()
+    return await this._openAIService.createCompletion()
   }
 
   async getSharedAvatar(avatarId: string, general: boolean, starting: boolean) {
