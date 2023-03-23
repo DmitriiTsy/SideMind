@@ -4,6 +4,10 @@ import { flatten, merge } from 'lodash'
 
 import { ChatCompletionRequestMessage } from 'openai'
 
+import Rate from 'react-native-rate'
+
+import dayjs from 'dayjs'
+
 import { Inject, Injectable } from 'IoC'
 import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { IStorageService, IStorageServiceTid } from 'services/StorageService'
@@ -14,6 +18,7 @@ import {
   ISystemInfoServiceTid
 } from 'services/SystemInfoService'
 import { EModel } from 'services/OpenAIService'
+import { globalConfig } from 'utils/config'
 
 export const IAppStoreTid = Symbol.for('IAppStoreTid')
 
@@ -65,6 +70,8 @@ export class AppStore implements IAppStore {
 
   @observable startingAvatars: AvatarModel[][] = []
   @observable commonAvatars: AvatarModel[][] = []
+
+  private _countMessages = 0
 
   constructor(
     @Inject(IStorageServiceTid)
@@ -230,6 +237,8 @@ export class AppStore implements IAppStore {
   }
 
   setMessageToAvatar(avatarId: number, message: IMessage) {
+    message.sender === ESender.HUMAN && this._handleRate()
+
     let model: EModel
     this.usersAvatars = this.usersAvatars.map((el) => {
       if (el.id === avatarId) {
@@ -393,5 +402,32 @@ export class AppStore implements IAppStore {
   setStartingAvatars() {
     this.usersAvatars = [...this.usersAvatars, ...flatten(this.startingAvatars)]
     this._storageService.setUserAvatars(this.usersAvatars)
+  }
+
+  _handleRate() {
+    const lastRate = this._storageService.getLastRate()
+    const date1 = dayjs(lastRate || '')
+    const date2 = dayjs()
+
+    if (
+      this._countMessages < 5 &&
+      (!lastRate || date2.diff(date1, 'weeks') >= 2)
+    ) {
+      this._countMessages++
+      if (this._countMessages === 5) {
+        Rate.rate(
+          {
+            AppleAppID: globalConfig.APPLE_APP_ID,
+            preferInApp: true
+          },
+          (success) => {
+            if (success) {
+              this._storageService.setLastRate(dayjs().format('YYYY-MM-DD'))
+              console.log('Successfully rated')
+            }
+          }
+        )
+      }
+    }
   }
 }
