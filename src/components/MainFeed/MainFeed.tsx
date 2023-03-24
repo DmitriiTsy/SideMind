@@ -19,16 +19,20 @@ import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 import { Svg } from 'components/ui/Svg'
 
-import { deviceWidth } from 'utils/dimentions'
-
-import {ILocalizationService, ILocalizationServiceTid, INavigationService, INavigationServiceTid} from 'services'
+import {
+  ILocalizationService,
+  ILocalizationServiceTid,
+  INavigationService,
+  INavigationServiceTid
+} from 'services'
 
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 
+import { CommonScreenName } from 'constants/screen.types'
+
 import { ChatPreview, NewAvatar } from './components'
-import {CommonScreenName} from "constants/screen.types";
 
 export const MainFeed = observer(() => {
   const navigation = useInject<INavigationService>(INavigationServiceTid)
@@ -42,14 +46,14 @@ export const MainFeed = observer(() => {
   }, [appStore, bottomPanelVM])
 
   const openMenu = () => {
-    navigation.navigate(CommonScreenName.Menu);
+    navigation.navigate(CommonScreenName.Menu)
   }
 
   const header = useMemo(
     () => (
       <View style={SS.headerContainer}>
-        <Pressable onPress={openMenu} style={{paddingLeft: 16}}>
-          <Svg name={'Menu'}/>
+        <Pressable onPress={openMenu} style={{ paddingLeft: 16 }}>
+          <Svg name={'Menu'} />
         </Pressable>
         <View style={SS.row}>
           <Svg name={'Logo'} />
@@ -110,7 +114,7 @@ const SS = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   addnote: {
     paddingRight: 14
