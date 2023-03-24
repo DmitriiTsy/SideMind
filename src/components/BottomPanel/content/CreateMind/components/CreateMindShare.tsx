@@ -1,47 +1,26 @@
 import React, { useMemo } from 'react'
-import { Alert, Pressable, Share, StyleSheet, Text, View } from 'react-native'
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
 import { observer } from 'mobx-react'
 
 import { useInject } from 'IoC'
 import { ILocalizationService, ILocalizationServiceTid } from 'services'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 import { nop } from 'utils/nop'
-import {
-  ITinyUrlService,
-  ITinyUrlServiceTId
-} from 'services/TinyUrlService/TinyUrlService'
-import { EAvatarsCategory } from 'services/FirebaseService/types'
+
+import { IShareService, IShareServiceTId } from 'services/ShareService'
 
 export const CreateMindShare = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
-  const tinyUrlService = useInject<ITinyUrlService>(ITinyUrlServiceTId)
+  const shareService = useInject<IShareService>(IShareServiceTId)
 
   const shareHandler = async () => {
     try {
       createMindVM.pending = true
-      const avatar = createMindVM.editingAvatar
-
-      const tinyUrl = await tinyUrlService.getTinyUrl(
-        avatar.id,
-        avatar.name,
-        avatar.uri,
-        avatar.category !== EAvatarsCategory.Custom,
-        avatar.category === EAvatarsCategory.Starting
+      shareService.shareAvatar(
+        createMindVM.editingAvatar,
+        () => (createMindVM.pending = false)
       )
-      createMindVM.pending = false
-
-      const result = await Share.share({
-        url: tinyUrl
-      })
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          console.log(result.activityType)
-        } else {
-        }
-      } else if (result.action === Share.dismissedAction) {
-        console.log(result)
-      }
     } catch (error: any) {
       Alert.alert(error.message)
     }

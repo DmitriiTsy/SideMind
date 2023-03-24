@@ -2,6 +2,7 @@ import {
   SvgLogo,
   SvgCheck,
   SvgPointerLeft,
+  SvgPointerRight,
   SvgEnter,
   SvgAddNote,
   SvgEnterActive,
@@ -10,7 +11,16 @@ import {
   SvgCopy,
   SvgAvatarEmpty,
   SvgCleanTextInput,
-  SvgNewMind
+  SvgNewMind,
+  SvgMenu,
+  SvgDiscord,
+  SvgTwitter,
+  SvgShare,
+  SvgRate,
+  SvgFeedback,
+  SvgAbout,
+  SvgTermsAndConditions,
+  SvgPrivacyPolicy
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
@@ -18,6 +28,7 @@ export const SVG_MAP = {
   Check: SvgCheck,
   AddNote: SvgAddNote,
   PointerLeft: SvgPointerLeft,
+  PointerRight: SvgPointerRight,
   Enter: SvgEnter,
   EnterActive: SvgEnterActive,
   Cross: SvgCross,
@@ -25,5 +36,14 @@ export const SVG_MAP = {
   Copy: SvgCopy,
   AvatarEmpty: SvgAvatarEmpty,
   CleanTextInput: SvgCleanTextInput,
-  newMind: SvgNewMind
+  newMind: SvgNewMind,
+  Menu: SvgMenu,
+  Discord: SvgDiscord,
+  Twitter: SvgTwitter,
+  Share: SvgShare,
+  Rate: SvgRate,
+  Feedback: SvgFeedback,
+  About: SvgAbout,
+  TermsAndConditions: SvgTermsAndConditions,
+  PrivacyPolicy: SvgPrivacyPolicy
 }

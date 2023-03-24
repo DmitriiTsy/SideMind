@@ -16,7 +16,8 @@ import {
   BootScreen,
   ChatScreen,
   MainFeedScreen,
-  SelectBotsScreen
+  SelectBotsScreen,
+  MenuScreen
 } from 'screens'
 import { CommonScreenName, ScreenParamTypes } from 'constants/screen.types'
 
@@ -59,11 +60,15 @@ export const App = () => {
           component={SelectBotsScreen}
           options={OPTS}
         />
+        <Stack.Screen
+          name={CommonScreenName.Menu}
+          component={MenuScreen}
+          options={OPTS}
+        />
         <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
         <Stack.Screen
           name={CommonScreenName.MainFeed}
           component={MainFeedScreen}
-          options={OPTS}
         />
       </Stack.Navigator>
       <BottomPanel />

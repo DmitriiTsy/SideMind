@@ -18,7 +18,7 @@ import {
   ISystemInfoServiceTid
 } from 'services/SystemInfoService'
 import { EModel } from 'services/OpenAIService'
-import { globalConfig } from 'utils/config'
+import { RATE_CONFIG } from 'constants/rateConfig'
 
 export const IAppStoreTid = Symbol.for('IAppStoreTid')
 
@@ -415,18 +415,12 @@ export class AppStore implements IAppStore {
     ) {
       this._countMessages++
       if (this._countMessages === 5) {
-        Rate.rate(
-          {
-            AppleAppID: globalConfig.APPLE_APP_ID,
-            preferInApp: true
-          },
-          (success) => {
-            if (success) {
-              this._storageService.setLastRate(dayjs().format('YYYY-MM-DD'))
-              console.log('Successfully rated')
-            }
+        Rate.rate(RATE_CONFIG, (success) => {
+          if (success) {
+            this._storageService.setLastRate(dayjs().format('YYYY-MM-DD'))
+            console.log('Successfully rated')
           }
-        )
+        })
       }
     }
   }
