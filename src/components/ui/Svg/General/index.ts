@@ -29,3 +29,23 @@ export * from './ShareMind'
 export * from './ShareConversation'
 
 export * from './ShareApp'
+
+export * from './Menu'
+
+export * from './Discord'
+
+export * from './PointerRight'
+
+export * from './Twitter'
+
+export * from './Share'
+
+export * from './Rate'
+
+export * from './Feedback'
+
+export * from './About'
+
+export * from './TermsAndConditions'
+
+export * from './PrivacyPolicy'

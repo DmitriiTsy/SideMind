@@ -49,6 +49,12 @@ import {
 } from 'services/TinyUrlService/TinyUrlService'
 
 import {
+  IShareService,
+  IShareServiceTId,
+  ShareService
+} from 'services/ShareService'
+
+import {
   IStorageService,
   IStorageServiceTid,
   StorageService
@@ -95,6 +101,10 @@ export class ServiceModule implements IoCModule {
     ioc
       .bind<ITinyUrlService>(ITinyUrlServiceTId)
       .to(TinyUrlService)
+      .inSingletonScope()
+    ioc
+      .bind<IShareService>(IShareServiceTId)
+      .to(ShareService)
       .inSingletonScope()
   }
 }

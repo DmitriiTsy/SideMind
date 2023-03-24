@@ -2,13 +2,15 @@ export enum CommonScreenName {
   SelectAvatars = 'SelectAvatars',
   Boot = 'Boot',
   MainFeed = 'MainFeed',
-  Chat = 'Chat'
+  Chat = 'Chat',
+  Menu = 'Menu'
 }
 
 export interface CommonScreenParamsMap {
   SelectAvatars: undefined
   Boot: undefined
   MainFeed: undefined
+  Menu: undefined
   Chat: undefined | { bID: string; general: boolean; starting: boolean }
 }
 

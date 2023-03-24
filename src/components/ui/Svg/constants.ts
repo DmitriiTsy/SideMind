@@ -2,6 +2,7 @@ import {
   SvgLogo,
   SvgCheck,
   SvgPointerLeft,
+  SvgPointerRight,
   SvgEnter,
   SvgAddNote,
   SvgEnterActive,
@@ -11,10 +12,18 @@ import {
   SvgAvatarEmpty,
   SvgCleanTextInput,
   SvgNewMind,
-  SvgShare,
   SvgShareMind,
   SvgShareConversation,
-  SvgShareApp
+  SvgShareApp,
+  SvgMenu,
+  SvgDiscord,
+  SvgTwitter,
+  SvgShare,
+  SvgRate,
+  SvgFeedback,
+  SvgAbout,
+  SvgTermsAndConditions,
+  SvgPrivacyPolicy
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
@@ -22,6 +31,7 @@ export const SVG_MAP = {
   Check: SvgCheck,
   AddNote: SvgAddNote,
   PointerLeft: SvgPointerLeft,
+  PointerRight: SvgPointerRight,
   Enter: SvgEnter,
   EnterActive: SvgEnterActive,
   Cross: SvgCross,
@@ -33,5 +43,13 @@ export const SVG_MAP = {
   Share: SvgShare,
   ShareMind: SvgShareMind,
   ShareConversation: SvgShareConversation,
-  ShareApp: SvgShareApp
+  ShareApp: SvgShareApp,
+  Menu: SvgMenu,
+  Discord: SvgDiscord,
+  Twitter: SvgTwitter,
+  Rate: SvgRate,
+  Feedback: SvgFeedback,
+  About: SvgAbout,
+  TermsAndConditions: SvgTermsAndConditions,
+  PrivacyPolicy: SvgPrivacyPolicy
 }

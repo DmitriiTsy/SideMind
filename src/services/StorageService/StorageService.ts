@@ -26,6 +26,9 @@ export interface IStorageService {
   //release 1.3.4
   getAddedFieldsForOldAvatars(): boolean
   setAddedFieldsForOldAvatars(): void
+
+  getLastRate(): string
+  setLastRate(date: string): void
 }
 
 @Injectable()
@@ -77,5 +80,13 @@ export class StorageService implements IStorageService {
 
   setAddedFieldsForOldAvatars() {
     this.storage.setBool('getAddedFieldsForOldAvatars', true)
+  }
+
+  getLastRate() {
+    return this.storage.getString('lastRate')
+  }
+
+  setLastRate(date: string) {
+    this.storage.setString('lastRate', date)
   }
 }
