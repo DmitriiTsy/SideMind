@@ -1,5 +1,14 @@
-import React, { useMemo, useCallback } from 'react'
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useMemo, useCallback, useState } from 'react'
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  Dimensions,
+  TouchableOpacity
+} from 'react-native'
 
 import { observer } from 'mobx-react'
 
@@ -25,14 +34,32 @@ import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 import { useSharedAvatar } from 'components/Chat/utils/useSharedAvatar'
 
+import { SVG_MAP } from 'components/ui/Svg/constants'
+
+import {
+  ITinyUrlService,
+  ITinyUrlServiceTId
+} from 'services/TinyUrlService/TinyUrlService'
+
+import { shareHandler } from 'utils/helpers/shareHandler'
+
 import { ChatInput, List } from './components'
 
+interface IShareOption {
+  icon: keyof typeof SVG_MAP
+  text: string
+  onPress: () => void
+}
+
 export const Chat = observer(() => {
+  const [modalVisible, setModalVisible] = useState(false)
+
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
+  const tinyUrlService = useInject<ITinyUrlService>(ITinyUrlServiceTId)
 
   useSharedAvatar()
 
@@ -63,6 +90,39 @@ export const Chat = observer(() => {
     bottomPanelVM.openPanel(EBottomPanelContent.CreateMind)
   }, [bottomPanelVM, chatVM.avatar, createMindVM])
 
+  const shareOptions: IShareOption[] = [
+    {
+      icon: 'ShareMind',
+      text: 'Share Mind',
+      onPress: () => {
+        setModalVisible(false)
+        setTimeout(() => {
+          shareHandler('mind', tinyUrlService, chatVM.avatar)
+        }, 100)
+      }
+    },
+    {
+      icon: 'ShareConversation',
+      text: 'Share Conversation',
+      onPress: () => {
+        setModalVisible(false)
+        setTimeout(() => {
+          shareHandler('conv', tinyUrlService)
+        }, 100)
+      }
+    },
+    {
+      icon: 'ShareApp',
+      text: 'Share App',
+      onPress: () => {
+        setModalVisible(false)
+        setTimeout(() => {
+          shareHandler('app', tinyUrlService)
+        }, 100)
+      }
+    }
+  ]
+
   const header = () => (
     <View style={SS.container}>
       <View style={SS.leftSide}>
@@ -91,6 +151,13 @@ export const Chat = observer(() => {
       >
         <Svg name={'Reset'} color={!resetAvailable && '#666666'} />
       </Pressable>
+
+      <Pressable
+        style={SS.shareContainer}
+        onPress={() => setModalVisible(true)}
+      >
+        <Svg name={'Share'} />
+      </Pressable>
     </View>
   )
 
@@ -101,6 +168,45 @@ export const Chat = observer(() => {
       style={SS.screenContainer}
     >
       {header()}
+      <Modal transparent visible={modalVisible}>
+        <View style={{ position: 'relative' }}>
+          <Pressable
+            style={SS.pressModal}
+            onPress={() => {
+              setModalVisible(false)
+            }}
+          />
+          <View style={SS.viewModal}>
+            {shareOptions.map((item, index) => (
+              <TouchableOpacity
+                onPress={item.onPress}
+                key={index}
+                style={[
+                  SS.shareOption,
+                  {
+                    borderBottomWidth:
+                      index !== shareOptions.length - 1 ? 0.5 : 0
+                  }
+                ]}
+              >
+                <Text
+                  style={{
+                    color: '#FFFFFF',
+                    fontSize: 15,
+                    lineHeight: 21,
+                    letterSpacing: 0.5
+                  }}
+                >
+                  {item.text}
+                </Text>
+                <View style={{ marginRight: 34 }}>
+                  <Svg name={item.icon} />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
       <List />
       <Resetting />
       <ChatInput />
@@ -150,13 +256,42 @@ const SS = StyleSheet.create({
     width: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 40
+    marginRight: 32
   },
   resetContainer: {
     height: 36,
     width: 36,
-    marginRight: 19,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  shareContainer: {
+    marginRight: 6,
+    height: 40,
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  pressModal: {
+    flex: 1,
+    position: 'absolute',
+    width: Dimensions.get('screen').width,
+    height: Dimensions.get('screen').height
+  },
+  viewModal: {
+    backgroundColor: '#2C2C2D',
+    borderRadius: 12,
+    marginTop: 100,
+    width: 226,
+    position: 'absolute',
+    right: 0
+  },
+  shareOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 226,
+    marginLeft: 18,
+    paddingVertical: 11,
+    borderBottomColor: '#444444'
   }
 })

@@ -21,3 +21,11 @@ export * from './AvatarEmpy'
 export * from './CleanTextInput'
 
 export * from './NewMind'
+
+export * from './Share'
+
+export * from './ShareMind'
+
+export * from './ShareConversation'
+
+export * from './ShareApp'

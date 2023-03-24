@@ -10,7 +10,11 @@ import {
   SvgCopy,
   SvgAvatarEmpty,
   SvgCleanTextInput,
-  SvgNewMind
+  SvgNewMind,
+  SvgShare,
+  SvgShareMind,
+  SvgShareConversation,
+  SvgShareApp
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
@@ -25,5 +29,9 @@ export const SVG_MAP = {
   Copy: SvgCopy,
   AvatarEmpty: SvgAvatarEmpty,
   CleanTextInput: SvgCleanTextInput,
-  newMind: SvgNewMind
+  newMind: SvgNewMind,
+  Share: SvgShare,
+  ShareMind: SvgShareMind,
+  ShareConversation: SvgShareConversation,
+  ShareApp: SvgShareApp
 }
