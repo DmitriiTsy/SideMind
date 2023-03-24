@@ -26,7 +26,7 @@ import { globalConfig } from 'utils/config'
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 const TOKEN_LENGTH_ERROR = 'context_length_exceeded'
-const DATE_FORMAT = 'MM-DD-YYYY HH:MM'
+const DATE_FORMAT = 'MM-DD-YYYY'
 
 export enum EModel {
   davinci2 = 'text-davinci-002',
