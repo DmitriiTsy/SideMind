@@ -61,15 +61,14 @@ export const App = () => {
           options={OPTS}
         />
         <Stack.Screen
-            name={CommonScreenName.Menu}
-            component={MenuScreen}
-            options={OPTS}
+          name={CommonScreenName.Menu}
+          component={MenuScreen}
+          options={OPTS}
         />
         <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
         <Stack.Screen
           name={CommonScreenName.MainFeed}
           component={MainFeedScreen}
-          options={OPTS}
         />
       </Stack.Navigator>
       <BottomPanel />
