@@ -1,11 +1,9 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
 import RNFastImage from 'react-native-fast-image'
-
-import { useCallback } from 'react'
 
 import { useFocusEffect } from '@react-navigation/native'
 
@@ -56,7 +54,6 @@ export const Chat = observer(() => {
     () => chatVM.messages.length > 1,
     [chatVM.messages.length]
   )
-
   const reset = () => {
     chatVM.changeResetState(true)
   }
@@ -86,6 +83,7 @@ export const Chat = observer(() => {
           <Text style={SS.title}>{chatVM.avatar?.name}</Text>
         </Pressable>
       </View>
+
       <Pressable
         style={SS.resetContainer}
         disabled={!resetAvailable}
@@ -137,7 +135,7 @@ const SS = StyleSheet.create({
   title: {
     fontWeight: '500',
     fontSize: 16,
-    lineHeight: 16,
+    lineHeight: 20,
     letterSpacing: -0.3,
     color: '#FFFFFF'
   },
@@ -152,7 +150,7 @@ const SS = StyleSheet.create({
     width: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 30
+    marginRight: 40
   },
   resetContainer: {
     height: 36,
