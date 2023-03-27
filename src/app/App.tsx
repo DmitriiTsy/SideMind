@@ -69,6 +69,7 @@ export const App = () => {
         <Stack.Screen
           name={CommonScreenName.MainFeed}
           component={MainFeedScreen}
+          options={OPTS}
         />
       </Stack.Navigator>
       <BottomPanel />

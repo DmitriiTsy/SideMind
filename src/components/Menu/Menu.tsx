@@ -17,7 +17,7 @@ export const Menu = () => {
     return (
       <View style={SS.headerContainer}>
         <Pressable
-          style={{ position: 'absolute', left: 10 }}
+          style={{ position: 'absolute', left: 10, width: 20 }}
           onPress={() => navigation.goBack()}
         >
           <Svg name={'PointerLeft'} />
