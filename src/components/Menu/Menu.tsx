@@ -17,7 +17,7 @@ export const Menu = () => {
     return (
       <View style={SS.headerContainer}>
         <Pressable
-          style={{ position: 'absolute', left: 10, width: 20 }}
+          style={{ position: 'absolute', left: 0, width: 20 }}
           onPress={() => navigation.goBack()}
         >
           <Svg name={'PointerLeft'} />
@@ -61,7 +61,8 @@ export const Menu = () => {
 const SS = StyleSheet.create({
   screenContainer: {
     backgroundColor: '#000000',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingHorizontal: 18
   },
   title: {
     fontWeight: '600',

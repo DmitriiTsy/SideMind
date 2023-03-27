@@ -60,11 +60,7 @@ export const App = () => {
           component={SelectBotsScreen}
           options={OPTS}
         />
-        <Stack.Screen
-          name={CommonScreenName.Menu}
-          component={MenuScreen}
-          options={OPTS}
-        />
+        <Stack.Screen name={CommonScreenName.Menu} component={MenuScreen} />
         <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
         <Stack.Screen
           name={CommonScreenName.MainFeed}
