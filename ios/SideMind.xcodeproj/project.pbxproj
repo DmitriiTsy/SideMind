@@ -169,6 +169,7 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				0E98EF652F41FCC85A03F1CC /* [CP] Copy Pods Resources */,
+				2B9D707AEC1913BFF5DD96B7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -192,6 +193,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				7C5A9BBB3A5E58D533424E26 /* [CP] Copy Pods Resources */,
 				FFA7E4AF1129F482CD31CCEB /* [CP-User] [RNFB] Core Configuration */,
+				89C7ADAD00C33B592CFC5615 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -294,6 +296,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideMind-SideMindTests/Pods-SideMind-SideMindTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		2B9D707AEC1913BFF5DD96B7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SideMind-SideMindTests/Pods-SideMind-SideMindTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SideMind-SideMindTests/Pods-SideMind-SideMindTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideMind-SideMindTests/Pods-SideMind-SideMindTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		7C5A9BBB3A5E58D533424E26 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -309,6 +328,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideMind/Pods-SideMind-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		89C7ADAD00C33B592CFC5615 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SideMind/Pods-SideMind-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SideMind/Pods-SideMind-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SideMind/Pods-SideMind-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C83C6D1C2F52DED1CD51BFA0 /* [CP] Check Pods Manifest.lock */ = {
@@ -578,7 +614,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -650,7 +686,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

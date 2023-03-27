@@ -6874,6 +6874,11 @@ react-native-mmkv-storage@^0.8.0:
   resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.8.0.tgz#2ece5f441a6a818224a85315c68e105e0d6446b5"
   integrity sha512-L782Le5IuDYlDLGXF/qimbnzvkbYsSmV5PiDleo1DSS8Kr8Q31UK8YWtUICrDGQ9Fm7Xx4PxP9ffe2XzGeWaHQ==
 
+react-native-rate@1.2.9:
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/react-native-rate/-/react-native-rate-1.2.9.tgz#dc9fed2c8026602827c71d9a133104f98ce0c62a"
+  integrity sha512-XBA5XdcWYtRyVuGFKJrsufFfaA9fSwOI/bzzDsfcovJQbYMJ0KIXMD3dFmsxAn0Kd3LDKwnHqnpjrmXOSF9rcQ==
+
 react-native-reanimated@^2.14.1:
   version "2.14.4"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.14.4.tgz#3fa3da4e7b99f5dfb28f86bcf24d9d1024d38836"
@@ -6924,6 +6929,11 @@ react-native-uuid@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"
   integrity sha512-cptnoIbL53GTCrWlb/+jrDC6tvb7ypIyzbXNJcpR3Vab0mkeaaVd5qnB3f0whXYzS+SMoSQLcUUB0gEWqkPC0g==
+
+react-native-view-shot@^3.5.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-3.6.0.tgz#2c5febd03cb1effb9923372b29aed227c680d9fd"
+  integrity sha512-QUYGaIaAxQwOTydUzqGMooBwrg455cuOQgTloZ+gPO1QCUuLRdncCqrEMwKW5eUnN5U8JGMKeFRll2m6egOxtA==
 
 react-native@0.70.6:
   version "0.70.6"
