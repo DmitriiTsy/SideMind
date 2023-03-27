@@ -1,6 +1,8 @@
 import { Share as NativeShare } from 'react-native'
 
-import Share from 'react-native-share'
+import { captureScreen } from 'react-native-view-shot'
+
+import RNShare from 'react-native-share'
 
 import { Inject, Injectable } from 'IoC'
 import {
@@ -16,6 +18,8 @@ export interface IShareService {
   shareAvatar(avatar: AvatarModel, onGetUrl?: () => void): void
 
   shareApp(): void
+
+  shareConversation(): void
 }
 
 @Injectable()
@@ -41,8 +45,30 @@ export class ShareService implements IShareService {
   }
 
   async shareApp() {
-    await Share.open({
+    await NativeShare.share({
       url: globalConfig.APP_STORE_LINK
+    })
+  }
+
+  async shareConversation() {
+    const uri = await captureScreen({
+      format: 'jpg',
+      quality: 0.8
+    })
+
+    await RNShare.open({
+      failOnCancel: false,
+      activityItemSources: [
+        {
+          placeholderItem: { type: 'url', content: uri },
+          item: {
+            default: { type: 'url', content: uri }
+          },
+          linkMetadata: {
+            title: ''
+          }
+        }
+      ]
     })
   }
 }

@@ -25,6 +25,10 @@ import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 import { useSharedAvatar } from 'components/Chat/utils/useSharedAvatar'
 
+import { ModalShareOptions } from 'components/Chat/components/ModalShareOptions'
+
+import { useShareOptions } from 'components/Chat/utils/useShareOptions'
+
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
@@ -35,6 +39,7 @@ export const Chat = observer(() => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
 
   useSharedAvatar()
+  const { modalVisible, setModalVisible, shareOptions } = useShareOptions()
 
   useFocusEffect(
     useCallback(() => {
@@ -91,6 +96,10 @@ export const Chat = observer(() => {
       >
         <Svg name={'Reset'} color={!resetAvailable && '#666666'} />
       </Pressable>
+
+      <Pressable style={SS.shareContainer} onPress={setModalVisible(true)}>
+        <Svg name={'Share'} />
+      </Pressable>
     </View>
   )
 
@@ -101,8 +110,17 @@ export const Chat = observer(() => {
       style={SS.screenContainer}
     >
       {header()}
+
+      <ModalShareOptions
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        shareOptions={shareOptions}
+      />
+
       <List />
+
       <Resetting />
+
       <ChatInput />
     </ScreenContainer>
   )
@@ -150,12 +168,18 @@ const SS = StyleSheet.create({
     width: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 40
+    marginRight: 32
   },
   resetContainer: {
     height: 36,
     width: 36,
-    marginRight: 19,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  shareContainer: {
+    marginRight: 6,
+    height: 40,
+    width: 40,
     alignItems: 'center',
     justifyContent: 'center'
   }

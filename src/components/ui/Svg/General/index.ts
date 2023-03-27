@@ -22,6 +22,14 @@ export * from './CleanTextInput'
 
 export * from './NewMind'
 
+export * from './Share'
+
+export * from './ShareMind'
+
+export * from './ShareConversation'
+
+export * from './ShareApp'
+
 export * from './Menu'
 
 export * from './Discord'
