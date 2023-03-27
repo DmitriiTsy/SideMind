@@ -4,11 +4,10 @@ import {
   NavigationContainer,
   useNavigationContainerRef
 } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import { StatusBar } from 'react-native'
 
-import { StackAnimationTypes } from 'react-native-screens'
+import { createStackNavigator } from '@react-navigation/stack'
 
 import { useInject } from 'IoC'
 
@@ -25,9 +24,9 @@ import { IAppVM, IAppVMTid } from 'app/App.vm'
 import { BottomPanel } from 'components/BottomPanel'
 import { Blur } from 'components/Blur'
 
-const Stack = createNativeStackNavigator<ScreenParamTypes>()
+const Stack = createStackNavigator<ScreenParamTypes>()
 
-const OPTS: { animation: StackAnimationTypes } = { animation: 'none' }
+const OPTS = { animationEnabled: false }
 
 export const App = () => {
   const appVM = useInject<IAppVM>(IAppVMTid)
@@ -60,7 +59,13 @@ export const App = () => {
           component={SelectBotsScreen}
           options={OPTS}
         />
-        <Stack.Screen name={CommonScreenName.Menu} component={MenuScreen} />
+        <Stack.Screen
+          name={CommonScreenName.Menu}
+          component={MenuScreen}
+          options={{
+            gestureDirection: 'horizontal-inverted'
+          }}
+        />
         <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
         <Stack.Screen
           name={CommonScreenName.MainFeed}
