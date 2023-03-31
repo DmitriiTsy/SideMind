@@ -21,6 +21,8 @@ export const useSharedAvatar = () => {
         storage.setCustomAvatarsInCustomList()
         storage.setAddedFieldsForOldAvatars()
         appStore.setStartingAvatars()
+      } else {
+        appStore.setAvatarsFromStorage()
       }
 
       chatVM.getSharedAvatar(bID, general, starting)

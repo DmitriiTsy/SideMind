@@ -22,7 +22,8 @@ import {
   LOG_TYPE
 } from 'services/FirebaseService/types'
 import { IMessage } from 'components/Chat/types'
-import { EModel } from 'services/OpenAIService'
+
+import { EModel } from '../../classes/OpenAi'
 
 export const IFirebaseServiceTid = Symbol.for('IFirebaseServiceTid')
 

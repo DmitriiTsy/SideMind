@@ -32,7 +32,7 @@ export class ChatVM implements IChatVM {
   @observable avatar: AvatarModel
   @observable pending = false
   @observable resetting = false
-  @observable id
+  @observable id: string | number
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,

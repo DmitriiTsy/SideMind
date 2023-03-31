@@ -95,38 +95,14 @@ export class AppStore implements IAppStore {
   setUsersAvatars(avatar: AvatarModel) {
     this._storageService.setUserLogin()
 
-    const _avatars: IAvatar[] = [
-      new Avatar({
-        data: avatar,
-        updateStore: (
-          message: IMessage,
-          avatarID: string | number,
-          model: EModel
-        ) => {
-          this._updateStore(message, avatarID, model)
-        }
-      })
-    ]
+    const _avatars: IAvatar[] = [this._createAvatarInstance(avatar)]
     this.startingAvatars.map((bots) =>
-      bots.map((bot) =>
-        _avatars.unshift(
-          new Avatar({
-            data: bot,
-            updateStore: (
-              message: IMessage,
-              avatarID: string | number,
-              model: EModel
-            ) => {
-              this._updateStore(message, avatarID, model)
-            }
-          })
-        )
-      )
+      bots.map((bot) => _avatars.unshift(this._createAvatarInstance(bot)))
     )
     this.usersAvatars = _avatars
 
     this._storageService.setUserAvatars(this.usersAvatars)
-    // this._firebaseService.setAvatars(this.usersAvatars)
+    this._firebaseService.setAvatars(this.usersAvatars.map((el) => el.data))
   }
 
   async updateUsersAvatars(avatar: AvatarModel)
@@ -146,18 +122,7 @@ export class AppStore implements IAppStore {
       }
 
       runInAction(() => {
-        this.usersAvatars.unshift(
-          new Avatar({
-            data: avatar,
-            updateStore: (
-              message: IMessage,
-              avatarID: string | number,
-              model: EModel
-            ) => {
-              this._updateStore(message, avatarID, model)
-            }
-          })
-        )
+        this.usersAvatars.unshift(this._createAvatarInstance(avatar))
         this._storageService.setUserAvatars(this.usersAvatars)
         this._firebaseService.updateAvatars(avatar.id)
       })
@@ -210,12 +175,7 @@ export class AppStore implements IAppStore {
       if (!el.uri) {
         el.uri = el.imagePath
       }
-      return new Avatar({
-        data: el,
-        updateStore: (message: IMessage, avatarID: string, model: EModel) => {
-          this._updateStore(message, avatarID, model)
-        }
-      })
+      return this._createAvatarInstance(el)
     })
 
     //additional field in avatars obj for supporting chat with old model open ai
@@ -384,18 +344,7 @@ export class AppStore implements IAppStore {
         return avatarExist
       }
 
-      this.usersAvatars.unshift(
-        new Avatar({
-          data: avatar,
-          updateStore: (
-            message: IMessage,
-            avatarID: string | number,
-            model: EModel
-          ) => {
-            this._updateStore(message, avatarID, model)
-          }
-        })
-      )
+      this.usersAvatars.unshift(this._createAvatarInstance(avatar))
       return this.usersAvatars.find((el) => el.data.id === avatar.id)
     }
 
@@ -414,18 +363,8 @@ export class AppStore implements IAppStore {
   setStartingAvatars() {
     this.usersAvatars = [
       ...this.usersAvatars,
-      ...flatten(this.startingAvatars).map(
-        (el) =>
-          new Avatar({
-            data: el,
-            updateStore: (
-              message: IMessage,
-              avatarID: string | number,
-              model: EModel
-            ) => {
-              this._updateStore(message, avatarID, model)
-            }
-          })
+      ...flatten(this.startingAvatars).map((el) =>
+        this._createAvatarInstance(el)
       )
     ]
     this._storageService.setUserAvatars(this.usersAvatars)
@@ -450,5 +389,21 @@ export class AppStore implements IAppStore {
         })
       }
     }
+  }
+
+  _createAvatarInstance(data: AvatarModel) {
+    return new Avatar({
+      data,
+      updateStore: (
+        message: IMessage,
+        avatarID: string | number,
+        model: EModel
+      ) => {
+        this._updateStore(message, avatarID, model)
+      },
+      loadFBData: () => {
+        this.updateAvatarsFromFirebase()
+      }
+    })
   }
 }

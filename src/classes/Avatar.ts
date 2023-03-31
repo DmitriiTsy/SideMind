@@ -14,8 +14,7 @@ import { EModel, OpenAi } from './OpenAi'
 
 const DATE_FORMAT = 'MM-DD-YYYY'
 
-//todo update avatar data after reset
-//todo check update avatars logic
+//todo check update avatars from FB logic
 //todo change pending state if got Error
 //todo check firebase logs is works
 //todo what should we expect if get default shared avatar which already removed from FB
@@ -23,6 +22,7 @@ const DATE_FORMAT = 'MM-DD-YYYY'
 interface IAvatarProps {
   data: AvatarModel
   updateStore(message: IMessage, avatarID: string | number, model: EModel): void
+  loadFBData(): void
 }
 
 export interface IAvatar {
@@ -45,6 +45,7 @@ export class Avatar extends OpenAi implements IAvatar {
     avatarID: string | number,
     model: EModel
   ) => void
+  private readonly loadFBData: () => void
 
   constructor(props: IAvatarProps) {
     super()
@@ -59,6 +60,7 @@ export class Avatar extends OpenAi implements IAvatar {
       }
     }
     this.updateStore = props.updateStore
+    this.loadFBData = props.loadFBData
   }
 
   @action.bound
@@ -109,30 +111,25 @@ export class Avatar extends OpenAi implements IAvatar {
 
     const messages = this._replaceCurrentDate()
 
-    let res = await this.createChatCompletion(messages, this.data.params)
+    let res: ChatCompletionResponseMessage | string | Error =
+      await this.createChatCompletion(messages, this.data.params)
 
     while (res instanceof Error) {
+      console.log(res)
       if (res.message === this.ERROR_TOKEN_LENGTH) {
         const _messages = this._cutHistoryTurbo()
         res = await this.createChatCompletion(_messages, this.data.params)
+      } else if (res.message === this.ERROR_SERVICE_UNAVAILABLE) {
+        res = await this.createCompletion(
+          this.data.messages.history,
+          this.data.params
+        )
+      } else {
+        break
       }
     }
 
-    runInAction(() => {
-      if (!(res instanceof Error)) {
-        const msg: IMessage = {
-          sender: ESender.BOT,
-          text: res.content,
-          date: new Date()
-        }
-        this.data.messages = {
-          displayed: [msg],
-          history: '',
-          historyTurbo: [...this.data.messages.historyTurbo, res]
-        }
-        this.updateStore(msg, this.data.id, EModel.davinci3turbo)
-      }
-    })
+    this.setMessage(res)
 
     this._changePendingState(false)
   }
@@ -158,12 +155,13 @@ export class Avatar extends OpenAi implements IAvatar {
     )
 
     while (res instanceof Error) {
+      console.log(res)
       if (res.message === this.ERROR_SERVICE_UNAVAILABLE) {
         res = await this.createCompletion(
           this.data.messages.history,
           this.data.params
         )
-      } else if (res.message === this.ERROR_SERVICE_UNAVAILABLE_FATAL) {
+      } else {
         break
       }
     }
@@ -219,6 +217,7 @@ export class Avatar extends OpenAi implements IAvatar {
       )
 
     while (res instanceof Error) {
+      console.log(res)
       if (res.message === this.ERROR_TOKEN_LENGTH) {
         const _messages = this._cutHistoryTurbo()
         res = await this.createChatCompletion(_messages, this.data.params)
@@ -233,47 +232,7 @@ export class Avatar extends OpenAi implements IAvatar {
       }
     }
 
-    runInAction(() => {
-      if (res instanceof Error) {
-        const msg: IMessage = {
-          sender: ESender.BOT,
-          text: this.SOMETHING_CAME_UP,
-          date: new Date()
-        }
-        this.data.messages.displayed = [...this.data.messages.displayed, msg]
-        this.updateStore(msg, this.data.id, EModel.davinci3turbo)
-      } else if (typeof res === 'string') {
-        const msg: IMessage = {
-          sender: ESender.BOT,
-          text: res,
-          date: new Date()
-        }
-        this.data.messages = {
-          ...this.data.messages,
-          displayed: [...this.data.messages.displayed, msg],
-          historyTurbo: [
-            ...this.data.messages.historyTurbo,
-            {
-              role: ChatCompletionRequestMessageRoleEnum.Assistant,
-              content: res
-            }
-          ]
-        }
-        this.updateStore(msg, this.data.id, this._model)
-      } else {
-        const msg: IMessage = {
-          sender: ESender.BOT,
-          text: res.content,
-          date: new Date()
-        }
-        this.data.messages = {
-          ...this.data.messages,
-          displayed: [...this.data.messages.displayed, msg],
-          historyTurbo: [...this.data.messages.historyTurbo, res]
-        }
-        this.updateStore(msg, this.data.id, EModel.davinci3turbo)
-      }
-    })
+    this.setMessage(res)
   }
 
   @action.bound
@@ -289,6 +248,8 @@ export class Avatar extends OpenAi implements IAvatar {
       this.data.id,
       EModel.davinci3turbo
     )
+
+    this.loadFBData()
 
     this.getFirstMessage()
   }
@@ -340,6 +301,49 @@ export class Avatar extends OpenAi implements IAvatar {
     this.data = {
       ...this.data,
       ...data
+    }
+  }
+
+  @action.bound
+  private setMessage(res: ChatCompletionResponseMessage | string | Error) {
+    if (res instanceof Error) {
+      const msg: IMessage = {
+        sender: ESender.BOT,
+        text: this.SOMETHING_CAME_UP,
+        date: new Date()
+      }
+      this.data.messages.displayed = [...this.data.messages.displayed, msg]
+      this.updateStore(msg, this.data.id, EModel.davinci3turbo)
+    } else if (typeof res === 'string') {
+      const msg: IMessage = {
+        sender: ESender.BOT,
+        text: res,
+        date: new Date()
+      }
+      this.data.messages = {
+        ...this.data.messages,
+        displayed: [...this.data.messages.displayed, msg],
+        historyTurbo: [
+          ...this.data.messages.historyTurbo,
+          {
+            role: ChatCompletionRequestMessageRoleEnum.Assistant,
+            content: res
+          }
+        ]
+      }
+      this.updateStore(msg, this.data.id, this._model)
+    } else {
+      const msg: IMessage = {
+        sender: ESender.BOT,
+        text: res.content,
+        date: new Date()
+      }
+      this.data.messages = {
+        ...this.data.messages,
+        displayed: [...this.data.messages.displayed, msg],
+        historyTurbo: [...this.data.messages.historyTurbo, res]
+      }
+      this.updateStore(msg, this.data.id, EModel.davinci3turbo)
     }
   }
 }
