@@ -14,9 +14,7 @@ import { EModel, OpenAi } from './OpenAi'
 
 const DATE_FORMAT = 'MM-DD-YYYY'
 
-//todo check update avatars from FB logic
 //todo change pending state if got Error
-//todo check firebase logs is works
 //todo what should we expect if get default shared avatar which already removed from FB
 
 interface IAvatarProps {
