@@ -29,7 +29,9 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
 
   const set = useCallback(() => {
     selectAvatarsVM.setAvatars(avatar)
-    chatVM.setAvatar(avatar)
+    chatVM.setAvatar(
+      appStore.usersAvatars.find((el) => el.data.id === avatar.id)
+    )
     navigation.reset({
       index: 0,
       routes: [
@@ -37,11 +39,11 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
         { name: CommonScreenName.Chat }
       ]
     })
-  }, [selectAvatarsVM, avatar, chatVM, navigation])
+  }, [selectAvatarsVM, avatar, chatVM, appStore.usersAvatars, navigation])
 
   const update = useCallback(async () => {
     const _avatar = await appStore.updateUsersAvatars(avatar)
-    chatVM.setAvatar(_avatar || avatar)
+    chatVM.setAvatar(_avatar)
     bottomPanelVM.closePanel()
     navigation.navigate(CommonScreenName.Chat)
   }, [appStore, avatar, bottomPanelVM, chatVM, navigation])

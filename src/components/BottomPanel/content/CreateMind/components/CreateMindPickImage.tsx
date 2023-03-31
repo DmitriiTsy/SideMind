@@ -22,10 +22,10 @@ export const CreateMindPickImage = observer(() => {
 
   const isCustomAvatar = useMemo(() => {
     return (
-      !createMindVM.editingAvatar ||
-      createMindVM.editingAvatar?.category === EAvatarsCategory.Custom
+      !createMindVM.editableAvatar ||
+      createMindVM.editableAvatar?.category === EAvatarsCategory.Custom
     )
-  }, [createMindVM.editingAvatar])
+  }, [createMindVM.editableAvatar])
 
   const _setAvatar = useCallback(
     (res: ImagePickerResponse) => {
@@ -76,13 +76,13 @@ export const CreateMindPickImage = observer(() => {
         onPress={AvatarChooseHandler}
         disabled={!isCustomAvatar || !!createMindVM.ownerError}
       >
-        {createMindVM.image || createMindVM.editingAvatar?.uri ? (
+        {createMindVM.image || createMindVM.editableAvatar?.uri ? (
           <RNFastImage
             style={SS.image}
             source={{
               uri:
                 createMindVM.image?.localePath ||
-                createMindVM.editingAvatar?.uri,
+                createMindVM.editableAvatar?.uri,
               cache: createMindVM.image
                 ? RNFastImage.cacheControl.immutable
                 : RNFastImage.cacheControl.cacheOnly
