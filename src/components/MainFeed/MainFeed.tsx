@@ -19,7 +19,12 @@ import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 import { Svg } from 'components/ui/Svg'
 
-import { ILocalizationService, ILocalizationServiceTid } from 'services'
+import {
+  ILocalizationService,
+  ILocalizationServiceTid,
+  INavigationService,
+  INavigationServiceTid
+} from 'services'
 
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
@@ -29,7 +34,8 @@ import { IAvatar } from '../../classes/Avatar'
 
 import { ChatPreview, NewAvatar } from './components'
 
-export const MainFeed = observer(({ navigation }) => {
+export const MainFeed = observer(() => {
+  const navigationService = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
@@ -40,8 +46,8 @@ export const MainFeed = observer(({ navigation }) => {
   }, [appStore, bottomPanelVM])
 
   const openMenu = useCallback(() => {
-    navigation.dispatch(DrawerActions.openDrawer())
-  },[navigation])
+    navigationService.dispatch(DrawerActions.openDrawer())
+  }, [navigationService])
 
   const header = useMemo(
     () => (

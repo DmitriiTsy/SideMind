@@ -7,8 +7,11 @@ import {
 
 import { StatusBar } from 'react-native'
 
-import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+
+import { StackAnimationTypes } from 'react-native-screens'
 
 import { useInject } from 'IoC'
 
@@ -25,9 +28,10 @@ import { IAppVM, IAppVMTid } from 'app/App.vm'
 import { BottomPanel } from 'components/BottomPanel'
 import { Blur } from 'components/Blur'
 
-const Stack = createStackNavigator<ScreenParamTypes>()
+const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
-const OPTS = { animationEnabled: false }
+// const OPTS = { animationEnabled: false }
+const OPTS: { animation: StackAnimationTypes } = { animation: 'none' }
 
 export const App = () => {
   const appVM = useInject<IAppVM>(IAppVMTid)

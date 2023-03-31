@@ -27,7 +27,7 @@ const Component: FC<SvgStyleProps> = (props) => (
   </Svg>
 )
 
-export const SvgShare = createSvg({
+export const SvgShareMenu = createSvg({
   component: Component,
   originalHeight: 25,
   originalWidth: 24

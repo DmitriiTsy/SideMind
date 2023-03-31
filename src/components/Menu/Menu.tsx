@@ -49,7 +49,7 @@ export const Menu = () => {
         </View>
       </View>
 
-      <View style={{paddingHorizontal: 18}}>
+      <View style={{ paddingHorizontal: 18 }}>
         <Text style={[SS.menuTitle, { marginTop: 18 }]}>Settings</Text>
         <View style={SS.container}>
           {mainItems.map((item, index) => (
@@ -92,7 +92,7 @@ const SS = StyleSheet.create({
   },
   container: {
     backgroundColor: '#1C1C1E',
-    borderRadius: 12,
+    borderRadius: 12
     // paddingVertical: 10
   },
   menuTitle: {

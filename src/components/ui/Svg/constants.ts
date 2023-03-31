@@ -18,12 +18,13 @@ import {
   SvgMenu,
   SvgDiscord,
   SvgTwitter,
-  SvgShare,
+  SvgShareMenu,
   SvgRate,
   SvgFeedback,
   SvgAbout,
   SvgTermsAndConditions,
-  SvgPrivacyPolicy
+  SvgPrivacyPolicy,
+  SvgShareChatScreen
 } from 'components/ui/Svg/General'
 
 export const SVG_MAP = {
@@ -40,9 +41,10 @@ export const SVG_MAP = {
   AvatarEmpty: SvgAvatarEmpty,
   CleanTextInput: SvgCleanTextInput,
   newMind: SvgNewMind,
-  Share: SvgShare,
+  Share: SvgShareMenu,
   ShareMind: SvgShareMind,
   ShareConversation: SvgShareConversation,
+  ShareChatScreen: SvgShareChatScreen,
   ShareApp: SvgShareApp,
   Menu: SvgMenu,
   Discord: SvgDiscord,
