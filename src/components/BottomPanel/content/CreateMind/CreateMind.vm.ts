@@ -182,7 +182,7 @@ export class CreateMindVM implements ICreateMindVM {
     this._appStore.removeCustomAvatar(this.editingAvatar.id)
 
     this._bottomPanelVM.closePanel()
-    this._navigationService.navigate(CommonScreenName.MainFeed)
+    this._navigationService.navigate(CommonScreenName.Drawer)
 
     this.pending = false
   }

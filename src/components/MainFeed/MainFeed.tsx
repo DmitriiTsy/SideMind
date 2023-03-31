@@ -10,6 +10,8 @@ import {
 
 import { observer } from 'mobx-react'
 
+import { DrawerActions } from '@react-navigation/native'
+
 import { ScreenContainer } from 'components/ScreenContainer'
 
 import { AvatarModel } from 'services/FirebaseService/types'
@@ -19,23 +21,15 @@ import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
 import { Svg } from 'components/ui/Svg'
 
-import {
-  ILocalizationService,
-  ILocalizationServiceTid,
-  INavigationService,
-  INavigationServiceTid
-} from 'services'
+import { ILocalizationService, ILocalizationServiceTid } from 'services'
 
 import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 
-import { CommonScreenName } from 'constants/screen.types'
-
 import { ChatPreview, NewAvatar } from './components'
 
-export const MainFeed = observer(() => {
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
+export const MainFeed = observer(({ navigation }) => {
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
@@ -46,13 +40,13 @@ export const MainFeed = observer(() => {
   }, [appStore, bottomPanelVM])
 
   const openMenu = () => {
-    navigation.navigate(CommonScreenName.Menu)
+    navigation.dispatch(DrawerActions.openDrawer())
   }
 
   const header = useMemo(
     () => (
       <View style={SS.headerContainer}>
-        <Pressable onPress={openMenu} style={{ paddingLeft: 16 }}>
+        <Pressable onPress={openMenu} style={{ paddingLeft: 18 }}>
           <Svg name={'Menu'} />
         </Pressable>
         <View style={SS.row}>

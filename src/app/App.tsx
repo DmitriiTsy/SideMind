@@ -8,6 +8,7 @@ import {
 import { StatusBar } from 'react-native'
 
 import { createStackNavigator } from '@react-navigation/stack'
+import { createDrawerNavigator } from '@react-navigation/drawer'
 
 import { useInject } from 'IoC'
 
@@ -59,22 +60,37 @@ export const App = () => {
           component={SelectBotsScreen}
           options={OPTS}
         />
-        <Stack.Screen
-          name={CommonScreenName.Menu}
-          component={MenuScreen}
-          options={{
-            gestureDirection: 'horizontal-inverted'
-          }}
-        />
         <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
         <Stack.Screen
-          name={CommonScreenName.MainFeed}
-          component={MainFeedScreen}
-          options={OPTS}
+          name={CommonScreenName.Drawer}
+          component={DrawerNavigator}
         />
       </Stack.Navigator>
       <BottomPanel />
       <Blur />
     </NavigationContainer>
+  )
+}
+
+const Drawer = createDrawerNavigator()
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator
+      screenOptions={{
+        drawerStyle: {
+          borderRightWidth: 1,
+          borderRightColor: '#333333'
+        },
+        headerShown: false,
+        overlayColor: 'transparent'
+      }}
+      initialRouteName={CommonScreenName.MainFeed}
+      drawerContent={() => <MenuScreen />}
+    >
+      <Drawer.Screen
+        name={CommonScreenName.MainFeed}
+        component={MainFeedScreen}
+      />
+    </Drawer.Navigator>
   )
 }
