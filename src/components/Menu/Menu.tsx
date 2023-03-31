@@ -13,16 +13,17 @@ export const Menu = () => {
 
   const { socialMedia, mainItems } = useMenuItems()
 
+  const goBack = () => {
+    navigation.goBack()
+  }
+
   const header = () => {
     return (
       <View style={SS.headerContainer}>
-        <Pressable
-          style={{ position: 'absolute', left: 0, width: 20 }}
-          onPress={() => navigation.goBack()}
-        >
-          <Svg name={'PointerLeft'} />
-        </Pressable>
         <Text style={SS.title}>Menu</Text>
+        <Pressable onPress={goBack}>
+          <Svg style={{ marginRight: 18 }} size={30} name={'Cross'} />
+        </Pressable>
       </View>
     )
   }
@@ -34,25 +35,32 @@ export const Menu = () => {
       style={SS.screenContainer}
     >
       {header()}
-      <View style={SS.container}>
-        {socialMedia.map((item, index) => (
-          <MenuItem
-            key={index}
-            item={item}
-            index={index}
-            arrayLength={socialMedia.length}
-          />
-        ))}
+      <View style={{ paddingHorizontal: 18 }}>
+        <Text style={SS.menuTitle}>Social</Text>
+        <View style={SS.container}>
+          {socialMedia.map((item, index) => (
+            <MenuItem
+              key={index}
+              item={item}
+              index={index}
+              arrayLength={socialMedia.length}
+            />
+          ))}
+        </View>
       </View>
-      <View style={SS.container}>
-        {mainItems.map((item, index) => (
-          <MenuItem
-            key={index}
-            item={item}
-            index={index}
-            arrayLength={mainItems.length}
-          />
-        ))}
+
+      <View style={{ paddingHorizontal: 18 }}>
+        <Text style={[SS.menuTitle, { marginTop: 18 }]}>Settings</Text>
+        <View style={SS.container}>
+          {mainItems.map((item, index) => (
+            <MenuItem
+              key={index}
+              item={item}
+              index={index}
+              arrayLength={mainItems.length}
+            />
+          ))}
+        </View>
       </View>
     </ScreenContainer>
   )
@@ -60,29 +68,39 @@ export const Menu = () => {
 
 const SS = StyleSheet.create({
   screenContainer: {
-    backgroundColor: '#000000',
-    alignItems: 'center',
-    paddingHorizontal: 18
+    backgroundColor: '#000000'
   },
   title: {
     fontWeight: '600',
     fontSize: 20,
     lineHeight: 28,
     letterSpacing: 0.15,
-    color: '#FFFFFF'
+    color: '#FFFFFF',
+    marginLeft: 18
   },
   headerContainer: {
+    height: 44,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#000000',
-    position: 'relative'
+    backgroundColor: '#000',
+    justifyContent: 'space-between',
+    paddingBottom: 18,
+    marginBottom: 36,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333'
   },
   container: {
     backgroundColor: '#1C1C1E',
-    borderRadius: 12,
-    marginTop: 34,
-    paddingVertical: 10
+    borderRadius: 12
+    // paddingVertical: 10
+  },
+  menuTitle: {
+    color: '#989898',
+    fontWeight: '500',
+    fontSize: 16,
+    lineHeight: 16,
+    letterSpacing: -0.3,
+    marginBottom: 9
   }
 })

@@ -7,7 +7,11 @@ import {
 
 import { StatusBar } from 'react-native'
 
-import { createStackNavigator } from '@react-navigation/stack'
+import { createDrawerNavigator } from '@react-navigation/drawer'
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+
+import { StackAnimationTypes } from 'react-native-screens'
 
 import { useInject } from 'IoC'
 
@@ -24,9 +28,10 @@ import { IAppVM, IAppVMTid } from 'app/App.vm'
 import { BottomPanel } from 'components/BottomPanel'
 import { Blur } from 'components/Blur'
 
-const Stack = createStackNavigator<ScreenParamTypes>()
+const Stack = createNativeStackNavigator<ScreenParamTypes>()
 
-const OPTS = { animationEnabled: false }
+// const OPTS = { animationEnabled: false }
+const OPTS: { animation: StackAnimationTypes } = { animation: 'none' }
 
 export const App = () => {
   const appVM = useInject<IAppVM>(IAppVMTid)
@@ -59,22 +64,37 @@ export const App = () => {
           component={SelectBotsScreen}
           options={OPTS}
         />
-        <Stack.Screen
-          name={CommonScreenName.Menu}
-          component={MenuScreen}
-          options={{
-            gestureDirection: 'horizontal-inverted'
-          }}
-        />
         <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
         <Stack.Screen
-          name={CommonScreenName.MainFeed}
-          component={MainFeedScreen}
-          options={OPTS}
+          name={CommonScreenName.Drawer}
+          component={DrawerNavigator}
         />
       </Stack.Navigator>
       <BottomPanel />
       <Blur />
     </NavigationContainer>
+  )
+}
+
+const Drawer = createDrawerNavigator()
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator
+      screenOptions={{
+        drawerStyle: {
+          borderRightWidth: 1,
+          borderRightColor: '#333333'
+        },
+        headerShown: false,
+        overlayColor: 'transparent'
+      }}
+      initialRouteName={CommonScreenName.MainFeed}
+      drawerContent={() => <MenuScreen />}
+    >
+      <Drawer.Screen
+        name={CommonScreenName.MainFeed}
+        component={MainFeedScreen}
+      />
+    </Drawer.Navigator>
   )
 }

@@ -2,6 +2,7 @@ import { Route } from '@react-navigation/routers'
 
 import { RefObject } from 'react'
 import {
+  NavigationAction,
   NavigationContainerRef,
   NavigationState,
   PartialState,
@@ -40,6 +41,8 @@ export interface INavigationService<RouteName extends ScreenName = any> {
   setParamsFromUrl(url: string): void
 
   reset(state: PartialState<NavigationState> | NavigationState): void
+
+  dispatch(action: NavigationAction): void
 }
 
 @Injectable()
@@ -112,5 +115,9 @@ export class NavigationService implements INavigationService {
 
   isReady() {
     return this._navigationRef?.current?.isReady()
+  }
+
+  dispatch(action: NavigationAction) {
+    this._navigationRef?.current?.dispatch(action)
   }
 }

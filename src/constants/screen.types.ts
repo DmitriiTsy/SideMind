@@ -3,7 +3,8 @@ export enum CommonScreenName {
   Boot = 'Boot',
   MainFeed = 'MainFeed',
   Chat = 'Chat',
-  Menu = 'Menu'
+  Menu = 'Menu',
+  Drawer = 'Drawer'
 }
 
 export interface CommonScreenParamsMap {
@@ -11,6 +12,7 @@ export interface CommonScreenParamsMap {
   Boot: undefined
   MainFeed: undefined
   Menu: undefined
+  Drawer: undefined
   Chat: undefined | { bID: string; general: boolean; starting: boolean }
 }
 

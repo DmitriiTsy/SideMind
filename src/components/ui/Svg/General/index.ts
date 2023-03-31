@@ -22,7 +22,7 @@ export * from './CleanTextInput'
 
 export * from './NewMind'
 
-export * from './Share'
+export * from './ShareMenu'
 
 export * from './ShareMind'
 
@@ -38,7 +38,7 @@ export * from './PointerRight'
 
 export * from './Twitter'
 
-export * from './Share'
+export * from './ShareMenu'
 
 export * from './Rate'
 
@@ -49,3 +49,5 @@ export * from './About'
 export * from './TermsAndConditions'
 
 export * from './PrivacyPolicy'
+
+export * from './ShareChatScreen'

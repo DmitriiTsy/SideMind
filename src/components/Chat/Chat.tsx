@@ -107,7 +107,7 @@ export const Chat = observer(() => {
       </Pressable>
 
       <Pressable style={SS.shareContainer} onPress={setModalVisible(true)}>
-        <Svg name={'Share'} />
+        <Svg name={'ShareChatScreen'} />
       </Pressable>
     </View>
   )

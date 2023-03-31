@@ -26,7 +26,7 @@ export const Boot = () => {
         appStore.setAvatarsFromStorage()
         navigation.reset({
           index: 0,
-          routes: [{ name: CommonScreenName.MainFeed }]
+          routes: [{ name: CommonScreenName.Drawer }]
         })
       } else {
         storage.setCustomAvatarsInCustomList()

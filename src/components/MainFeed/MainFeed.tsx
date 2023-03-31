@@ -10,6 +10,8 @@ import {
 
 import { observer } from 'mobx-react'
 
+import { DrawerActions } from '@react-navigation/native'
+
 import { ScreenContainer } from 'components/ScreenContainer'
 
 import { useInject } from 'IoC'
@@ -28,14 +30,12 @@ import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 
-import { CommonScreenName } from 'constants/screen.types'
-
 import { IAvatar } from '../../classes/Avatar'
 
 import { ChatPreview, NewAvatar } from './components'
 
 export const MainFeed = observer(() => {
-  const navigation = useInject<INavigationService>(INavigationServiceTid)
+  const navigationService = useInject<INavigationService>(INavigationServiceTid)
   const t = useInject<ILocalizationService>(ILocalizationServiceTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
@@ -46,13 +46,13 @@ export const MainFeed = observer(() => {
   }, [appStore, bottomPanelVM])
 
   const openMenu = useCallback(() => {
-    navigation.navigate(CommonScreenName.Menu)
-  }, [navigation])
+    navigationService.dispatch(DrawerActions.openDrawer())
+  }, [navigationService])
 
   const header = useMemo(
     () => (
       <View style={SS.headerContainer}>
-        <Pressable onPress={openMenu} style={{ paddingLeft: 16 }}>
+        <Pressable onPress={openMenu} style={{ paddingLeft: 18 }}>
           <Svg name={'Menu'} />
         </Pressable>
         <View style={SS.row}>

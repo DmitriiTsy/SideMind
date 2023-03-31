@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg'
 
 import { SvgStyleProps } from 'components/ui/Svg/Svg.types'
 import { createSvg } from 'utils/createSvg'
@@ -22,8 +22,8 @@ const Component: FC<SvgStyleProps> = (props) => (
   </Svg>
 )
 
-export const SvgShare = createSvg({
+export const SvgShareChatScreen = createSvg({
   component: Component,
-  originalHeight: 20,
-  originalWidth: 20
+  originalHeight: 25,
+  originalWidth: 24
 })

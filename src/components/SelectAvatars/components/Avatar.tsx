@@ -35,7 +35,7 @@ export const Avatar: FC<IBotProps> = observer(({ avatar, single }) => {
     navigation.reset({
       index: 0,
       routes: [
-        { name: CommonScreenName.MainFeed },
+        { name: CommonScreenName.Drawer },
         { name: CommonScreenName.Chat }
       ]
     })
