@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
@@ -29,10 +29,13 @@ import { ModalShareOptions } from 'components/Chat/components/ModalShareOptions'
 
 import { useShareOptions } from 'components/Chat/utils/useShareOptions'
 
+import { IAppStore, IAppStoreTid } from 'store/AppStore'
+
 import { ChatInput, List } from './components'
 
 export const Chat = observer(() => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
+  const appStore = useInject<IAppStore>(IAppStoreTid)
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const createMindVM = useInject<ICreateMindVM>(ICreateMindVMTid)
@@ -55,18 +58,24 @@ export const Chat = observer(() => {
     navigation.popToTop()
   }
 
-  const resetAvailable = useMemo(
-    () => chatVM.messages.length > 1,
-    [chatVM.messages.length]
+  const avatar = useMemo(
+    () => appStore.usersAvatars.find((el) => el.data.id === chatVM.id),
+    [appStore.usersAvatars, chatVM.id]
   )
+
+  const resetAvailable = useMemo(
+    () => avatar?.data?.messages.displayed.length > 1,
+    [avatar?.data?.messages.displayed.length]
+  )
+
   const reset = () => {
     chatVM.changeResetState(true)
   }
 
   const editMindHandler = useCallback(() => {
-    createMindVM.init(chatVM.avatar)
+    createMindVM.init(chatVM.id)
     bottomPanelVM.openPanel(EBottomPanelContent.CreateMind)
-  }, [bottomPanelVM, chatVM.avatar, createMindVM])
+  }, [bottomPanelVM, chatVM.id, createMindVM])
 
   const header = () => (
     <View style={SS.container}>

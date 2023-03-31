@@ -33,13 +33,7 @@ export interface AvatarModel {
   id: number | string
   prompt: string
   turbo_init?: ITurboInit //default avatars
-  params: {
-    temperature: number
-    frequency_penalty: number
-    max_tokens: number
-    presence_penalty: number
-    top_p: number
-  }
+  params: IAvatarModelParams
   creatorId?: number | string //custom avatars
   bio: string
   messages?: {
@@ -49,6 +43,14 @@ export interface AvatarModel {
   }
   deleted?: boolean
   isAvatarUseModel3?: boolean
+}
+
+export interface IAvatarModelParams {
+  temperature: number
+  frequency_penalty: number
+  max_tokens: number
+  presence_penalty: number
+  top_p: number
 }
 
 export interface IFirebaseResponseBots {

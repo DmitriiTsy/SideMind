@@ -12,8 +12,6 @@ import { observer } from 'mobx-react'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
-import { AvatarModel } from 'services/FirebaseService/types'
-
 import { useInject } from 'IoC'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
 
@@ -32,6 +30,8 @@ import { EBottomPanelContent } from 'components/BottomPanel/types'
 
 import { CommonScreenName } from 'constants/screen.types'
 
+import { IAvatar } from '../../classes/Avatar'
+
 import { ChatPreview, NewAvatar } from './components'
 
 export const MainFeed = observer(() => {
@@ -45,9 +45,9 @@ export const MainFeed = observer(() => {
     bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
   }, [appStore, bottomPanelVM])
 
-  const openMenu = () => {
+  const openMenu = useCallback(() => {
     navigation.navigate(CommonScreenName.Menu)
-  }
+  }, [navigation])
 
   const header = useMemo(
     () => (
@@ -64,10 +64,10 @@ export const MainFeed = observer(() => {
         </Pressable>
       </View>
     ),
-    [openPanel, t]
+    [openMenu, openPanel, t]
   )
 
-  const renderItem = ({ item, index }: ListRenderItemInfo<AvatarModel>) => {
+  const renderItem = ({ item, index }: ListRenderItemInfo<IAvatar>) => {
     return <ChatPreview avatar={item} index={index} />
   }
 
@@ -81,7 +81,7 @@ export const MainFeed = observer(() => {
     >
       {header}
       <FlatList
-        data={appStore.usersAvatars}
+        data={appStore.usersAvatars.slice()}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListFooterComponent={NewAvatar}

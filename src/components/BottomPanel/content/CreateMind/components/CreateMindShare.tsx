@@ -18,7 +18,7 @@ export const CreateMindShare = observer(() => {
     try {
       createMindVM.pending = true
       shareService.shareAvatar(
-        createMindVM.editingAvatar,
+        createMindVM.editableAvatar,
         () => (createMindVM.pending = false)
       )
     } catch (error: any) {
@@ -47,8 +47,8 @@ export const CreateMindShare = observer(() => {
   }
 
   const disableDelete = useMemo(
-    () => !createMindVM.editingAvatar || !!createMindVM.ownerError,
-    [createMindVM.editingAvatar, createMindVM.ownerError]
+    () => !createMindVM.editableAvatar || !!createMindVM.ownerError,
+    [createMindVM.editableAvatar, createMindVM.ownerError]
   )
 
   return (

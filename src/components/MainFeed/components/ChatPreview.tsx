@@ -5,7 +5,6 @@ import RNFastImage from 'react-native-fast-image'
 
 import { observer } from 'mobx-react'
 
-import { AvatarModel } from 'services/FirebaseService/types'
 import { useInject } from 'IoC'
 import { IChatVM, IChatVMTid } from 'components/Chat/Chat.vm'
 import { INavigationService, INavigationServiceTid } from 'services'
@@ -13,8 +12,10 @@ import { CommonScreenName } from 'constants/screen.types'
 import { useTimestamp } from 'utils/timestamp/useTimestamp'
 import { Svg } from 'components/ui/Svg'
 
+import { IAvatar } from '../../../classes/Avatar'
+
 interface IChatPreview {
-  avatar: AvatarModel
+  avatar: IAvatar
   index: number
 }
 
@@ -22,10 +23,13 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
   const chatVM = useInject<IChatVM>(IChatVMTid)
   const navigation = useInject<INavigationService>(INavigationServiceTid)
   const isFirst = useMemo(() => index === 0, [index])
-  const existMessage = useMemo(
-    () => avatar.messages?.displayed?.length > 0,
-    [avatar.messages?.displayed?.length]
-  )
+  const message = useMemo(() => {
+    if (avatar.data.messages?.displayed?.length > 0) {
+      const messages = avatar.data.messages.displayed
+      return messages[messages.length - 1]
+    }
+    return undefined
+  }, [avatar.data.messages.displayed])
 
   const onPress = () => {
     chatVM.setAvatar(avatar)
@@ -33,16 +37,16 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
   }
 
   const timestamp = useMemo(
-    () => (existMessage ? useTimestamp(avatar.messages.displayed[0].date) : ''),
-    [avatar.messages?.displayed, existMessage]
+    () => (message ? useTimestamp(message.date) : ''),
+    [message]
   )
 
   return (
     <Pressable style={SS.container} onPress={onPress}>
-      {!!avatar.uri ? (
+      {!!avatar.data.uri ? (
         <RNFastImage
           source={{
-            uri: avatar.uri
+            uri: avatar.data.uri
           }}
           style={SS.avatar}
         />
@@ -52,12 +56,11 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
 
       <View style={[SS.containerRight, !isFirst && SS.line]}>
         <View style={SS.firstLine}>
-          <Text style={SS.botName}>{avatar.name}</Text>
-          {existMessage && <Text style={SS.timestamp}>{timestamp}</Text>}
+          <Text style={SS.botName}>{avatar.data.name}</Text>
+          {message && <Text style={SS.timestamp}>{timestamp}</Text>}
         </View>
         <Text style={SS.botDesc} numberOfLines={2}>
-          {(existMessage && avatar.messages.displayed[0].text.trim()) ||
-            avatar.tagLine}
+          {(message && message.text.trim()) || avatar.data.tagLine}
         </Text>
       </View>
     </Pressable>
