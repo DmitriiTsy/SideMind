@@ -5,6 +5,8 @@ import { observable } from 'mobx'
 import { Injectable } from 'IoC'
 import { AvatarModel } from 'services/FirebaseService/types'
 
+import { IAvatar } from '../../classes/Avatar'
+
 export const IStorageServiceTid = Symbol.for('IStorageServiceTid')
 
 export interface IStorageService {
@@ -12,7 +14,7 @@ export interface IStorageService {
 
   setUserLogin(): void
   getUserLogin(): boolean
-  setUserAvatars(avatars: AvatarModel[]): void
+  setUserAvatars(avatars: IAvatar[]): void
   getUserAvatars(): AvatarModel[] | null
   setFCMToken(token: string): void
   getFCMToken(): string
@@ -47,8 +49,9 @@ export class StorageService implements IStorageService {
     return this.storage.getBool('userLogin')
   }
 
-  setUserAvatars(avatars) {
-    this.storage.setArray('Avatars', avatars)
+  setUserAvatars(avatars: IAvatar[]) {
+    const _avatars = avatars.map((el) => ({ ...el.data }))
+    this.storage.setArray('Avatars', _avatars)
   }
 
   getUserAvatars() {

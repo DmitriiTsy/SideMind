@@ -1,11 +1,13 @@
-import { action, observable, runInAction } from 'mobx'
+import { action, observable } from 'mobx'
 
 import { Inject, Injectable } from 'IoC'
 import { IOpenAIService, IOpenAIServiceTid } from 'services/OpenAIService'
-import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
+import { AvatarModel } from 'services/FirebaseService/types'
 import { IFirebaseService, IFirebaseServiceTid } from 'services/FirebaseService'
 import { IAppStore, IAppStoreTid } from 'store/AppStore'
-import { ESender, IMessage } from 'components/Chat/types'
+import { IMessage } from 'components/Chat/types'
+
+import { IAvatar } from '../../classes/Avatar'
 
 export const IChatVMTid = Symbol.for('IChatVMTid')
 
@@ -14,16 +16,14 @@ export interface IChatVM {
   avatar: AvatarModel
   pending: boolean
   resetting: boolean
+  id: string | number
 
   changeResetState(value: boolean): void
   sendMessage(message: string): void
-  setAvatar(avatar: AvatarModel): void
-  getFirstMessage(): void
+  setAvatar(avatar: IAvatar): void
   resetMessages(): void
 
   getSharedAvatar(avatarId: string, general: boolean, starting: boolean): void
-
-  removeAvatar(): void
 }
 
 @Injectable()
@@ -32,6 +32,7 @@ export class ChatVM implements IChatVM {
   @observable avatar: AvatarModel
   @observable pending = false
   @observable resetting = false
+  @observable id: string | number
 
   constructor(
     @Inject(IOpenAIServiceTid) private _openAIService: IOpenAIService,
@@ -41,104 +42,34 @@ export class ChatVM implements IChatVM {
 
   @action.bound
   async sendMessage(message: string) {
-    if (this.avatar?.deleted) return
-
-    this.pending = true
-
-    const humanMessage = {
-      sender: ESender.HUMAN,
-      text: message,
-      date: new Date()
-    }
-
-    this.messages = [humanMessage, ...this.messages]
-    this._appStore.setMessageToAvatar(this.avatar.id, humanMessage)
-
-    let res
-
-    if (this.avatar.isAvatarUseModel3) {
-      res = await this._openAIService.createCompletion(message)
-    } else {
-      res = await this._openAIService.createChatCompletion(message)
-    }
-
-    while (res instanceof Error) {
-      res = await this._resend()
-    }
-
-    runInAction(() => {
-      const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
-
-      this.messages = [botMessage, ...this.messages]
-      this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
-
-      this.pending = false
-    })
+    this._appStore.usersAvatars.map(
+      (el) => el.data.id === this.id && el.sendMessage(message)
+    )
   }
 
   @action.bound
-  setAvatar(avatar: AvatarModel) {
-    this.avatar = avatar
-    this._openAIService.setAvatar(avatar)
-    this.messages = avatar.messages?.displayed || []
+  setAvatar(avatar: IAvatar) {
+    this.id = avatar.data.id
+    this.avatar = avatar.data
 
-    if (this.messages.length === 0) {
-      this.getFirstMessage()
-    }
+    this._appStore.usersAvatars.map(
+      (el) =>
+        el.data.id === avatar.data.id &&
+        el.data.messages.displayed.length === 0 &&
+        el.getFirstMessage()
+    )
   }
 
   @action.bound
   async resetMessages() {
-    this.pending = true
-
-    this.messages = []
-    this.setAvatar(await this._appStore.resetMessages(this.avatar.id))
-  }
-
-  @action.bound
-  async getFirstMessage() {
-    if (this.avatar?.deleted) return
-
-    this.pending = true
-
-    let res = await this._openAIService?.createChatCompletion(
-      this.avatar.category === EAvatarsCategory.Custom
-        ? this.avatar.prompt
-        : this.avatar.turbo_init
+    this._appStore.usersAvatars.map(
+      (el) => el.data.id === this.id && el.reset()
     )
-
-    while (res instanceof Error) {
-      res = await this._resend()
-    }
-
-    runInAction(() => {
-      if (typeof res === 'string') {
-        const botMessage = { sender: ESender.BOT, text: res, date: new Date() }
-
-        this.messages = [botMessage]
-        this._appStore.setMessageToAvatar(this.avatar.id, botMessage)
-        this.pending = false
-      }
-    })
   }
 
   @action.bound
   changeResetState(value: boolean) {
     this.resetting = value
-  }
-
-  @action.bound
-  async _resend() {
-    runInAction(() => (this.pending = false))
-
-    await new Promise((resolve) =>
-      setTimeout(() => {
-        runInAction(() => (this.pending = true))
-        resolve(0)
-      }, 500)
-    )
-
-    return await this._openAIService.createCompletion()
   }
 
   async getSharedAvatar(avatarId: string, general: boolean, starting: boolean) {
@@ -151,10 +82,5 @@ export class ChatVM implements IChatVM {
     if (avatar) {
       this.setAvatar(avatar)
     }
-  }
-
-  @action.bound
-  removeAvatar() {
-    this.avatar = undefined
   }
 }

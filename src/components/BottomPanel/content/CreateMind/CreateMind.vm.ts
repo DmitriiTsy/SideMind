@@ -43,12 +43,12 @@ export interface ICreateMindVM {
   inputBio: InputVM
   inputGenerateAvatar: InputVM
 
-  editingAvatar: AvatarModel | undefined
+  editableAvatar: AvatarModel | undefined
 
   hasError: keyof Translation | boolean
   ownerError: keyof Translation | boolean
 
-  init(avatar?: AvatarModel): void
+  init(avatarID?: string | number): void
 
   submit(): void
   goBack(): void
@@ -65,7 +65,7 @@ export class CreateMindVM implements ICreateMindVM {
   inputBio: InputVM
   inputGenerateAvatar: InputVM
 
-  @observable editingAvatar: AvatarModel | undefined
+  @observable editableAvatar: AvatarModel | undefined
 
   constructor(
     @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService,
@@ -81,42 +81,48 @@ export class CreateMindVM implements ICreateMindVM {
   ) {}
 
   @action.bound
-  init(avatar?: AvatarModel) {
-    this.editingAvatar = avatar
+  init(avatarID?: string | number) {
+    this.editableAvatar = this._appStore.usersAvatars.find(
+      (el) => el.data.id === avatarID
+    )?.data
     this.image = null
 
     const refInputName = createRef<TextInput>()
     const refInputTag = createRef<TextInput>()
     const refInputBio = createRef<TextInput>()
 
-    const editable = avatar
-      ? avatar.category === EAvatarsCategory.Custom &&
-        avatar.creatorId === this._systemInfoService.deviceId
-      : true
+    // const isEditable = this.editableAvatar
+    //   ? this.editableAvatar.category === EAvatarsCategory.Custom &&
+    //     this.editableAvatar.creatorId === this._systemInfoService.deviceId
+    //   : true
+
+    const isEditable = !this.ownerError
 
     const isDefaultAvatar =
-      avatar && avatar.category !== EAvatarsCategory.Custom
+      this.editableAvatar &&
+      this.editableAvatar.category !== EAvatarsCategory.Custom
 
     this.inputName = new InputVM({
       label: 'full name',
       placeholder: isDefaultAvatar
-        ? avatar.name
+        ? this.editableAvatar.name
         : this._t.get('placeholder full name'),
       minLength: 2,
       errorText: 'name requirements',
-      autoFocus: !avatar ? true : editable,
+      autoFocus: !this.editableAvatar ? true : isEditable,
       ref: refInputName,
       onSubmitEditing: () => {
         refInputName.current.blur()
         refInputTag.current.focus()
       },
-      defaultValue: avatar && !isDefaultAvatar && avatar.name,
-      editable
+      defaultValue:
+        this.editableAvatar && !isDefaultAvatar && this.editableAvatar.name,
+      editable: isEditable
     })
     this.inputTagLine = new InputVM({
       label: 'tagline',
       placeholder: isDefaultAvatar
-        ? avatar.tagLine
+        ? this.editableAvatar.tagLine
         : this._t.get('placeholder tagline'),
       minLength: 5,
       errorText: 'tagline requirements',
@@ -125,19 +131,21 @@ export class CreateMindVM implements ICreateMindVM {
         refInputTag.current.blur()
         refInputBio.current.focus()
       },
-      defaultValue: avatar && !isDefaultAvatar && avatar.tagLine,
-      editable
+      defaultValue:
+        this.editableAvatar && !isDefaultAvatar && this.editableAvatar.tagLine,
+      editable: isEditable
     })
     this.inputBio = new InputVM({
       label: 'bio',
       placeholder: isDefaultAvatar
-        ? avatar.bio
+        ? this.editableAvatar.bio
         : this._t.get('placeholder bio'),
       minLength: 10,
       errorText: 'bio requirements',
       ref: refInputBio,
-      defaultValue: avatar && !isDefaultAvatar && avatar.bio,
-      editable
+      defaultValue:
+        this.editableAvatar && !isDefaultAvatar && this.editableAvatar.bio,
+      editable: isEditable
     })
     this.inputGenerateAvatar = new InputVM({
       label: 'generate avatar input label',
@@ -157,15 +165,15 @@ export class CreateMindVM implements ICreateMindVM {
 
   @computed
   get ownerError() {
-    return this.editingAvatar &&
-      this.editingAvatar.creatorId !== this._systemInfoService.deviceId
+    return this.editableAvatar &&
+      this.editableAvatar.creatorId !== this._systemInfoService.deviceId
       ? 'cant edit someones avatar'
       : false
   }
 
   @action.bound
   goBack() {
-    if (this.editingAvatar) {
+    if (this.editableAvatar) {
       this._bottomPanelVM.closePanel()
     } else {
       this._bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
@@ -177,9 +185,8 @@ export class CreateMindVM implements ICreateMindVM {
     Keyboard.dismiss()
     this.pending = true
 
-    await this._firebaseService.deleteCustomAvatar(this.editingAvatar.id)
-    this._chatVM.removeAvatar()
-    this._appStore.removeCustomAvatar(this.editingAvatar.id)
+    await this._firebaseService.deleteCustomAvatar(this.editableAvatar.id)
+    this._appStore.removeCustomAvatar(this.editableAvatar.id)
 
     this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.MainFeed)
@@ -194,7 +201,7 @@ export class CreateMindVM implements ICreateMindVM {
     if (error) {
       Alert.alert(this._t.get(error), '', [], { userInterfaceStyle: 'dark' })
     } else {
-      if (this.editingAvatar) {
+      if (this.editableAvatar) {
         this._editAvatar()
       } else {
         this._createAvatar()
@@ -210,32 +217,33 @@ export class CreateMindVM implements ICreateMindVM {
     const tagLine = this.inputTagLine.value
     const imagePath = this.image
       ? `Custom/${this._systemInfoService.deviceId}/${this.image.fileName}`
-      : this.editingAvatar.imagePath
+      : this.editableAvatar.imagePath
 
     const master = await this._firebaseService.getMasterPrompt()
     master.prompt = master.prompt.replace('{generated name by user}', name)
     master.prompt = master.prompt.replace('{generated bio by user}', bio)
 
     const generatedPrompt = `${await this._OpenAIService.generatePrompt(
-      master.prompt
+      master.prompt,
+      this.editableAvatar.id
     )}${master.introduce}`
 
     const editedAvatar: AvatarModel = {
       name,
       tagLine,
       imagePath,
-      category: this.editingAvatar.category,
-      id: this.editingAvatar.id,
+      category: this.editableAvatar.category,
+      id: this.editableAvatar.id,
       prompt: generatedPrompt,
-      params: this.editingAvatar.params,
+      params: this.editableAvatar.params,
       bio: bio,
-      creatorId: this.editingAvatar.creatorId
+      creatorId: this.editableAvatar.creatorId
     }
 
     await this._appStore.editCustomAvatar(editedAvatar, this.image?.localePath)
 
     this._chatVM.setAvatar(
-      this._appStore.usersAvatars.find((el) => el.id === editedAvatar.id)
+      this._appStore.usersAvatars.find((el) => el.data.id === editedAvatar.id)
     )
     this._bottomPanelVM.closePanel()
 
@@ -252,13 +260,15 @@ export class CreateMindVM implements ICreateMindVM {
     const imagePath = image
       ? `Custom/${this._systemInfoService.deviceId}/${image.fileName}`
       : ''
+    const id = uuid.v4() as string
 
     const master = await this._firebaseService.getMasterPrompt()
     master.prompt = master.prompt.replace('{generated name by user}', name)
     master.prompt = master.prompt.replace('{generated bio by user}', bio)
 
     const generatedPrompt = `${await this._OpenAIService.generatePrompt(
-      master.prompt
+      master.prompt,
+      id
     )}${master.introduce}`
 
     const avatar = {
@@ -266,7 +276,7 @@ export class CreateMindVM implements ICreateMindVM {
       tagLine,
       imagePath,
       category: EAvatarsCategory.Custom,
-      id: uuid.v4() as string,
+      id,
       prompt: generatedPrompt,
       params: {
         temperature: 0.73,
@@ -285,7 +295,7 @@ export class CreateMindVM implements ICreateMindVM {
       image ? image.localePath : ''
     )
     this._chatVM.setAvatar(
-      this._appStore.usersAvatars.find((el) => el.id === avatar.id)
+      this._appStore.usersAvatars.find((el) => el.data.id === avatar.id)
     )
     this._bottomPanelVM.closePanel()
     this._navigationService.navigate(CommonScreenName.Chat)

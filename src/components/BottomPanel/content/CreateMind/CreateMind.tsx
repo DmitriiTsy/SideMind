@@ -40,7 +40,7 @@ export const CreateMind = observer(() => {
       >
         <CreateMindPickImage />
 
-        {createMindVM.editingAvatar && <CreateMindShare />}
+        {createMindVM.editableAvatar && <CreateMindShare />}
 
         <CreateMindInputs />
       </ScrollView>
