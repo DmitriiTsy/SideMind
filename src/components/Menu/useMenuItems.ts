@@ -35,7 +35,11 @@ export const useMenuItems = () => {
       text: 'Share with Friends',
       onPress: () => shareService.shareApp()
     },
-    { icon: 'Rate', text: 'Rate Us', onPress: () => Rate.rate(RATE_CONFIG) },
+    {
+      icon: 'Rate',
+      text: 'Rate Us',
+      onPress: () => Rate.rate({ ...RATE_CONFIG, inAppDelay: 1.5 })
+    },
     {
       icon: 'Feedback',
       text: 'Send Feedback',
