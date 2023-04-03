@@ -381,12 +381,15 @@ export class AppStore implements IAppStore {
     ) {
       this._countMessages++
       if (this._countMessages === 5) {
-        Rate.rate(RATE_CONFIG, (success) => {
-          if (success) {
-            this._storageService.setLastRate(dayjs().format('YYYY-MM-DD'))
-            console.log('Successfully rated')
+        Rate.rate(
+          { ...RATE_CONFIG, openAppStoreIfInAppFails: false },
+          (success) => {
+            if (success) {
+              this._storageService.setLastRate(dayjs().format('YYYY-MM-DD'))
+              console.log('Successfully rated')
+            }
           }
-        })
+        )
       }
     }
   }
