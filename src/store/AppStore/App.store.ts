@@ -54,6 +54,8 @@ export interface IAppStore {
 
   removeCustomAvatar(avatarId: string | number): void
 
+  removeAvatarFromList(avatarId: string | number): void
+
   setStartingAvatars(): void
 }
 
@@ -89,6 +91,15 @@ export class AppStore implements IAppStore {
   async _getStartingAvatars() {
     const avatars = await this._firebaseService.getStartingAvatars(true)
     runInAction(() => (this.startingAvatars = avatars))
+  }
+
+  @action.bound
+  removeAvatarFromList(avatarId: string | number) {
+    this.usersAvatars = this.usersAvatars.filter(
+      (el) => el.data.id !== avatarId
+    )
+
+    this._storageService.setUserAvatars(this.usersAvatars)
   }
 
   @action.bound

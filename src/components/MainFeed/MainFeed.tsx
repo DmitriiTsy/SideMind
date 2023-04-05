@@ -1,16 +1,11 @@
-import React, { useCallback, useMemo } from 'react'
-import {
-  FlatList,
-  ListRenderItemInfo,
-  Pressable,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native'
+import React, { useCallback, useMemo, useRef } from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { observer } from 'mobx-react'
 
 import { DrawerActions } from '@react-navigation/native'
+
+import { ScrollView } from 'react-native-gesture-handler'
 
 import { ScreenContainer } from 'components/ScreenContainer'
 
@@ -30,6 +25,8 @@ import { IBottomPanelVM, IBottomPanelVMTid } from 'components/BottomPanel'
 
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 
+import { SwipeableArea } from 'components/MainFeed/components/SwipableArea'
+
 import { IAvatar } from '../../classes/Avatar'
 
 import { ChatPreview, NewAvatar } from './components'
@@ -40,6 +37,8 @@ export const MainFeed = observer(() => {
   const bottomPanelVM = useInject<IBottomPanelVM>(IBottomPanelVMTid)
   const appStore = useInject<IAppStore>(IAppStoreTid)
 
+  const ScrollRef = useRef(null)
+
   const openPanel = useCallback(() => {
     appStore.updateAvatarsFromFirebase()
     bottomPanelVM.openPanel(EBottomPanelContent.AddMind)
@@ -48,6 +47,13 @@ export const MainFeed = observer(() => {
   const openMenu = useCallback(() => {
     navigationService.dispatch(DrawerActions.openDrawer())
   }, [navigationService])
+
+  const removeAvatar = useCallback(
+    (avatarId: string | number) => {
+      appStore.removeAvatarFromList(avatarId)
+    },
+    [appStore]
+  )
 
   const header = useMemo(
     () => (
@@ -67,11 +73,21 @@ export const MainFeed = observer(() => {
     [openMenu, openPanel, t]
   )
 
-  const renderItem = ({ item, index }: ListRenderItemInfo<IAvatar>) => {
-    return <ChatPreview avatar={item} index={index} />
+  const renderItem = (item: IAvatar | null, index) => {
+    if (!item) {
+      return <NewAvatar key={index} />
+    }
+    const action = () => removeAvatar(item.data.id)
+    return (
+      <SwipeableArea
+        action={action}
+        simultaneousHandlers={ScrollRef}
+        key={item.data.id}
+      >
+        <ChatPreview avatar={item} index={index} />
+      </SwipeableArea>
+    )
   }
-
-  const keyExtractor = (item, index) => index
 
   return (
     <ScreenContainer
@@ -80,12 +96,11 @@ export const MainFeed = observer(() => {
       style={SS.screenContainer}
     >
       {header}
-      <FlatList
-        data={appStore.usersAvatars.slice()}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        ListFooterComponent={NewAvatar}
-      />
+      <ScrollView showsVerticalScrollIndicator={false} ref={ScrollRef}>
+        {[...appStore.usersAvatars, null]
+          .slice()
+          .map((el, index) => renderItem(el, index))}
+      </ScrollView>
     </ScreenContainer>
   )
 })

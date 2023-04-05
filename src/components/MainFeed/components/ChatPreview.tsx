@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { StyleSheet, Text, View, Pressable } from 'react-native'
 
 import RNFastImage from 'react-native-fast-image'
@@ -31,10 +31,10 @@ export const ChatPreview: FC<IChatPreview> = observer(({ avatar, index }) => {
     return undefined
   }, [avatar.data.messages.displayed])
 
-  const onPress = () => {
+  const onPress = useCallback(() => {
     chatVM.setAvatar(avatar)
     navigation.navigate(CommonScreenName.Chat)
-  }
+  }, [avatar, chatVM, navigation])
 
   const timestamp = useMemo(
     () => (message ? useTimestamp(message.date) : ''),
@@ -73,7 +73,8 @@ const SS = StyleSheet.create({
     height: 77,
     alignItems: 'center',
     flexDirection: 'row',
-    paddingLeft: 18
+    paddingLeft: 18,
+    backgroundColor: 'black'
   },
   containerRight: {
     alignItems: 'flex-start',
