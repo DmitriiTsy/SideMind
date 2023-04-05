@@ -13,6 +13,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import { StackAnimationTypes } from 'react-native-screens'
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+
 import { useInject } from 'IoC'
 
 import {
@@ -43,36 +45,38 @@ export const App = () => {
   }, [])
 
   return (
-    <NavigationContainer
-      ref={navigationContainerRef}
-      onReady={appVM.onReady}
-      linking={appVM.deeplink.linking}
-      onStateChange={appVM.emitNavigationStateChange}
-    >
-      <StatusBar translucent={true} barStyle={'light-content'} />
-      <Stack.Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName={CommonScreenName.Boot}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer
+        ref={navigationContainerRef}
+        onReady={appVM.onReady}
+        linking={appVM.deeplink.linking}
+        onStateChange={appVM.emitNavigationStateChange}
       >
-        <Stack.Screen
-          name={CommonScreenName.Boot}
-          component={BootScreen}
-          options={OPTS}
-        />
-        <Stack.Screen
-          name={CommonScreenName.SelectAvatars}
-          component={SelectBotsScreen}
-          options={OPTS}
-        />
-        <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
-        <Stack.Screen
-          name={CommonScreenName.Drawer}
-          component={DrawerNavigator}
-        />
-      </Stack.Navigator>
-      <BottomPanel />
-      <Blur />
-    </NavigationContainer>
+        <StatusBar translucent={true} barStyle={'light-content'} />
+        <Stack.Navigator
+          screenOptions={{ headerShown: false }}
+          initialRouteName={CommonScreenName.Boot}
+        >
+          <Stack.Screen
+            name={CommonScreenName.Boot}
+            component={BootScreen}
+            options={OPTS}
+          />
+          <Stack.Screen
+            name={CommonScreenName.SelectAvatars}
+            component={SelectBotsScreen}
+            options={OPTS}
+          />
+          <Stack.Screen name={CommonScreenName.Chat} component={ChatScreen} />
+          <Stack.Screen
+            name={CommonScreenName.Drawer}
+            component={DrawerNavigator}
+          />
+        </Stack.Navigator>
+        <BottomPanel />
+        <Blur />
+      </NavigationContainer>
+    </GestureHandlerRootView>
   )
 }
 
