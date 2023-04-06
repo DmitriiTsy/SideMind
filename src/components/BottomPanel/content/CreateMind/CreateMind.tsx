@@ -1,11 +1,13 @@
 import { observer } from 'mobx-react'
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
 import React, { useRef } from 'react'
 
 import { useInject } from 'IoC'
 import { ICreateMindVM, ICreateMindVMTid } from 'components/BottomPanel/content'
 
 import { ScreenContainer } from 'components/ScreenContainer'
+
+import { Loader } from 'components/BottomPanel/content/CreateMind/components/Loader'
 
 import {
   CreateMindHeader,
@@ -21,6 +23,10 @@ export const CreateMind = observer(() => {
 
   const onContentSizeChange = () => {
     refScrollView?.current?.scrollToEnd()
+  }
+
+  if (createMindVM.pending) {
+    return <Loader />
   }
 
   return (
@@ -44,11 +50,6 @@ export const CreateMind = observer(() => {
 
         <CreateMindInputs />
       </ScrollView>
-      {createMindVM.pending && (
-        <View style={SS.loading}>
-          <ActivityIndicator size="large" color="#D3D3D3" />
-        </View>
-      )}
     </ScreenContainer>
   )
 })
