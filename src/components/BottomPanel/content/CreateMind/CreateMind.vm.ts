@@ -27,6 +27,8 @@ import {
 import { AvatarModel, EAvatarsCategory } from 'services/FirebaseService/types'
 import { EBottomPanelContent } from 'components/BottomPanel/types'
 
+type AvatarPreview = Pick<AvatarModel, 'name' | 'tagLine' | 'uri'>
+
 export const ICreateMindVMTid = Symbol.for('ICreateMindVMTid')
 
 interface IImage {
@@ -44,6 +46,7 @@ export interface ICreateMindVM {
   inputGenerateAvatar: InputVM
 
   editableAvatar: AvatarModel | undefined
+  readonly previewAvatar: AvatarPreview | undefined
 
   hasError: keyof Translation | boolean
   ownerError: keyof Translation | boolean
@@ -66,6 +69,7 @@ export class CreateMindVM implements ICreateMindVM {
   inputGenerateAvatar: InputVM
 
   @observable editableAvatar: AvatarModel | undefined
+  @observable previewAvatar: AvatarPreview | undefined
 
   constructor(
     @Inject(IOpenAIServiceTid) private _OpenAIService: IOpenAIService,
@@ -108,6 +112,7 @@ export class CreateMindVM implements ICreateMindVM {
         ? this.editableAvatar.name
         : this._t.get('placeholder full name'),
       minLength: 2,
+      maxLength: 30,
       errorText: 'name requirements',
       autoFocus: !this.editableAvatar ? true : isEditable,
       ref: refInputName,
@@ -125,6 +130,7 @@ export class CreateMindVM implements ICreateMindVM {
         ? this.editableAvatar.tagLine
         : this._t.get('placeholder tagline'),
       minLength: 5,
+      maxLength: 47,
       errorText: 'tagline requirements',
       ref: refInputTag,
       onSubmitEditing: () => {
@@ -201,6 +207,11 @@ export class CreateMindVM implements ICreateMindVM {
     if (error) {
       Alert.alert(this._t.get(error), '', [], { userInterfaceStyle: 'dark' })
     } else {
+      this.previewAvatar = {
+        name: this.inputName.value,
+        tagLine: this.inputTagLine.value,
+        uri: this.image?.localePath
+      }
       if (this.editableAvatar) {
         this._editAvatar()
       } else {

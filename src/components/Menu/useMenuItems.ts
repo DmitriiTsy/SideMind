@@ -38,7 +38,7 @@ export const useMenuItems = () => {
     {
       icon: 'Rate',
       text: 'Rate Us',
-      onPress: () => Rate.rate({ ...RATE_CONFIG, inAppDelay: 1.5 })
+      onPress: () => Rate.rate({ ...RATE_CONFIG, preferInApp: false })
     },
     {
       icon: 'Feedback',

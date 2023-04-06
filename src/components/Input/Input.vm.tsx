@@ -99,7 +99,10 @@ export class InputVM implements IInputVM {
 
   @action.bound
   onChangeText(text: string) {
-    this.value = text
+    if (this.value.length >= this.maxLength) {
+    } else {
+      this.value = text
+    }
   }
 
   @action.bound
