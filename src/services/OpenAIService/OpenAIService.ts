@@ -12,11 +12,12 @@ import { ESender } from 'components/Chat/types'
 import { globalConfig } from 'utils/config'
 
 import { EModel } from '../../classes/OpenAi'
+import axios from 'axios'
 
 export const IOpenAIServiceTid = Symbol.for('IOpenAIServiceTid')
 
 export interface IOpenAIService {
-  init(): void
+  init(): Promise<void>
 
   generatePrompt(prompt: string, avatarID: string | number): Promise<string>
 }
@@ -33,11 +34,16 @@ export class OpenAIService implements IOpenAIService {
     private readonly _systemInfo: ISystemInfoService
   ) {}
 
-  init() {
-    this._config = new Configuration({
-      apiKey: globalConfig.OPEN_AI_KEY
-    })
-    this._openAIApi = new OpenAIApi(this._config)
+  async init() {
+    try {
+      const credentials = (await axios.get(
+        globalConfig.SIDEMIND_CREDENTAILS
+      )) as { OPENAI_KEY: string }
+      this._config = new Configuration({
+        apiKey: credentials['data']['OPENAI_KEY']
+      })
+      this._openAIApi = new OpenAIApi(this._config)
+    } catch (error: any) {}
   }
 
   async generatePrompt(prompt: string, avatarID: string | number) {

@@ -1089,6 +1089,7 @@ PODS:
     - react-native-config/App (= 1.5.0)
   - react-native-config/App (1.5.0):
     - React-Core
+  - react-native-config/Extension (1.5.0)
   - react-native-image-picker (5.3.1):
     - React-Core
   - react-native-mmkv-storage (0.8.0):
@@ -1293,6 +1294,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-config (from `../node_modules/react-native-config`)
+  - react-native-config/Extension (from `../node_modules/react-native-config`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-mmkv-storage (from `../node_modules/react-native-mmkv-storage`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1594,6 +1596,6 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
 
-PODFILE CHECKSUM: 1b9579ad8d9c8de450c52a9c41821b7d47bb4f1d
+PODFILE CHECKSUM: 34ff6ec6ea083fe9635f64c6de7aef69e64a5fd9
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.12.1

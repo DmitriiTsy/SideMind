@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 $RNFirebaseAsStaticFramework = true
 
-platform :ios, '12.4'
+platform :ios, '16.4'
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'SideMind' do
@@ -33,7 +33,7 @@ target 'SideMind' do
     inherit! :complete
     # Pods for testing
   end
-
+  pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
   post_install do |installer|
     react_native_post_install(
       installer,

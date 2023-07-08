@@ -2,6 +2,7 @@ import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai'
 
 import { globalConfig } from 'utils/config'
 import { IAvatarModelParams } from 'services/FirebaseService/types'
+import axios from 'axios'
 
 export enum EModel {
   davinci2 = 'text-davinci-002',
@@ -10,8 +11,8 @@ export enum EModel {
 }
 
 export class OpenAi {
-  private readonly _config: Configuration
-  private readonly _openAiApi: OpenAIApi
+  private _config: Configuration
+  private _openAiApi: OpenAIApi
   protected _model: EModel
   private _countOfError = 0
   protected readonly ERROR_TOKEN_LENGTH = 'context_length_exceeded'
@@ -20,11 +21,26 @@ export class OpenAi {
     'Service Unavailable Fatal'
 
   constructor() {
-    this._config = new Configuration({
-      apiKey: globalConfig.OPEN_AI_KEY
+    this.init().catch((error: string) => {
+      throw new Error(error)
     })
-    this._openAiApi = new OpenAIApi(this._config)
-    this._model = EModel.davinci3
+  }
+
+  protected async init() {
+    try {
+      const credentials = (await axios.post(
+        globalConfig.SIDEMIND_CREDENTAILS
+      )) as { data: string }
+
+      this._config = new Configuration({
+        apiKey: credentials['data']['OPENAI_KEY']
+      })
+
+      this._openAiApi = new OpenAIApi(this._config)
+      this._model = EModel.davinci3
+    } catch (error: any) {
+      throw 'Open ai failed to initialize'
+    }
   }
 
   protected async createCompletion(prompt: string, params: IAvatarModelParams) {
