@@ -28,7 +28,7 @@ export class OpenAi {
 
   protected async init() {
     try {
-      const credentials = (await axios.post(
+      const credentials = (await axios.get(
         globalConfig.SIDEMIND_CREDENTAILS
       )) as { data: string }
 
