@@ -21,7 +21,7 @@ yarn install / yarn rebuild
 
 
     
-## Update the ios podfile with below code if exist
+## Update the ios podfile with below code if not exist
 
 
 ```bash
